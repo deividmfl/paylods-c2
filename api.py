@@ -299,6 +299,12 @@ def api_send_command():
     if not command:
         return jsonify({"status": "error", "message": "Missing required field: command"}), 400
     
+    # Limpar a fila existente de comandos para garantir que não tenha comandos antigos duplicados
+    with storage.lock:
+        if hostname in storage.commands:
+            storage.commands[hostname] = []
+            
+    # Adicionar o novo comando
     storage.add_command(hostname, command)
     log_event(f"Command queued for {hostname}: {command}")
     
