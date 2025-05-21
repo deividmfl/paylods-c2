@@ -287,12 +287,20 @@ def api_get_host_errors(hostname):
 @admin_required
 def api_send_command():
     """API route for admin to send a command to a host"""
-    data = request.json
-    if not all(k in data for k in ['hostname', 'command']):
-        return jsonify({"status": "error", "message": "Missing required fields"}), 400
+    data = request.json or {}
     
-    storage.add_command(data['hostname'], data['command'])
-    log_event(f"Command queued for {data['hostname']}: {data['command']}")
+    # Verificando campos obrigatórios
+    hostname = data.get('hostname')
+    command = data.get('command')
+    
+    if not hostname:
+        return jsonify({"status": "error", "message": "Missing required field: hostname"}), 400
+    
+    if not command:
+        return jsonify({"status": "error", "message": "Missing required field: command"}), 400
+    
+    storage.add_command(hostname, command)
+    log_event(f"Command queued for {hostname}: {command}")
     
     return jsonify({"status": "success"}), 200
 
