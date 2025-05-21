@@ -1,330 +1,269 @@
-// Código JavaScript para o Terminal moderno
 document.addEventListener('DOMContentLoaded', function() {
-    // Elementos do terminal
-    const logsBtn = document.getElementById('logs-btn');
-    const errorsBtn = document.getElementById('errors-btn');
-    const logsPanel = document.getElementById('logs-panel');
-    const errorsPanel = document.getElementById('errors-panel');
-    const terminalInput = document.getElementById('command-input');
-    const runBtn = document.getElementById('send-command');
-    
-    // Alternar entre os painéis do terminal
-    logsBtn.addEventListener('click', function() {
-        // Ativar botão
-        document.querySelectorAll('.btn-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        logsBtn.classList.add('active');
-        
-        // Mostrar painel
-        document.querySelectorAll('.terminal-panel').forEach(panel => {
-            panel.classList.remove('active');
-        });
-        logsPanel.classList.add('active');
+    // Configurar os botões de tab do terminal
+    document.getElementById('terminal-cmd-tab').addEventListener('click', function() {
+        activateTerminalTab(this);
+        document.getElementById('terminal-cmd-panel').classList.add('active');
+        document.getElementById('terminal-err-panel').classList.remove('active');
     });
-    
-    errorsBtn.addEventListener('click', function() {
-        // Ativar botão
-        document.querySelectorAll('.btn-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
-        errorsBtn.classList.add('active');
-        
-        // Mostrar painel
-        document.querySelectorAll('.terminal-panel').forEach(panel => {
-            panel.classList.remove('active');
-        });
-        errorsPanel.classList.add('active');
+
+    document.getElementById('terminal-err-tab').addEventListener('click', function() {
+        activateTerminalTab(this);
+        document.getElementById('terminal-cmd-panel').classList.remove('active');
+        document.getElementById('terminal-err-panel').classList.add('active');
     });
+
+    // Configurar o envio de comando
+    document.getElementById('send-command').addEventListener('click', sendTerminalCommand);
     
-    // Enviar comando ao pressionar Enter no input
-    terminalInput.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
+    // Lidar com a tecla Enter no campo de entrada (considerando que agora é textarea)
+    document.getElementById('command-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            e.preventDefault(); // Evitar quebra de linha
             sendTerminalCommand();
         }
     });
-    
-    // Enviar comando ao clicar no botão
-    runBtn.addEventListener('click', sendTerminalCommand);
-    
-    // Função para enviar comando
+
+    function activateTerminalTab(tab) {
+        // Remover a classe ativa de todos os botões de guia
+        document.querySelectorAll('.terminal-tab').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Adicionar a classe ativa ao botão clicado
+        tab.classList.add('active');
+    }
+
     function sendTerminalCommand() {
-        const command = terminalInput.value.trim();
-        if (!command) return;
+        const commandInput = document.getElementById('command-input');
+        const command = commandInput.value.trim();
         
-        // Pegar o hostname do elemento detailHostname
-        const hostname = document.getElementById('detail-hostname').textContent;
-        if (!hostname) {
-            alert('Nenhum host selecionado!');
-            return;
-        }
-        
-        // Enviar comando para o servidor
-        fetch('/api/send-command', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({
-                hostname: hostname,
-                command: command
-            })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Falha ao enviar comando');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Adicionar o comando ao terminal
+        if (command) {
+            const hostname = document.getElementById('detail-hostname').textContent;
+            
+            // Adicionar comando ao terminal
             addCommandToTerminal(command);
             
-            // Limpar o input
-            terminalInput.value = '';
+            // Enviar comando para o servidor
+            fetch('/api/send-command', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    hostname: hostname,
+                    command: command
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Comando enviado com sucesso');
+                } else {
+                    console.error('Erro ao enviar comando:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+            });
             
-            // Focar no input
-            terminalInput.focus();
-        })
-        .catch(error => {
-            console.error('Erro ao enviar comando:', error);
-            alert(`Erro ao enviar comando: ${error.message}`);
-        });
+            // Limpar o campo de entrada
+            commandInput.value = '';
+        }
     }
-    
-    // Função para adicionar comando ao terminal
+
     function addCommandToTerminal(command) {
-        const now = new Date();
-        const timeStr = now.getHours().toString().padStart(2, '0') + ":" + 
-                        now.getMinutes().toString().padStart(2, '0');
+        const logsContent = document.getElementById('logs-content');
         
-        const commandBlock = document.createElement('div');
-        commandBlock.className = 'command-block';
-        commandBlock.innerHTML = `
-            <div class="command-line">
-                <span class="timestamp">${timeStr}</span>
-                <span class="cmd-content">${escapeHtml(command)}</span>
+        // Remover a mensagem vazia se existir
+        const emptyMessage = logsContent.querySelector('.terminal-empty');
+        if (emptyMessage) {
+            emptyMessage.remove();
+        }
+        
+        // Criar um timestamp para o comando
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString();
+        const formattedTime = now.toLocaleTimeString();
+        
+        // Adicionar comando formatado ao terminal
+        const cmdEntry = document.createElement('div');
+        cmdEntry.classList.add('terminal-entry');
+        cmdEntry.innerHTML = `
+            <div class="terminal-prompt">
+                <span class="prompt-indicator">$</span>
+                <span class="prompt-time">${formattedDate}, ${formattedTime}</span>
+                <span class="prompt-command">${escapeHtml(command)}</span>
             </div>
-            <div class="output-block">
-                <span class="dim-text">Aguardando resposta...</span>
+            <div class="terminal-output">
+                <span class="output-waiting">Aguardando resposta...</span>
             </div>
         `;
         
-        // Adicionar ao terminal
-        const logsContent = document.getElementById('logs-content');
-        logsContent.appendChild(commandBlock);
+        logsContent.appendChild(cmdEntry);
         
-        // Rolar para o final
+        // Rolar para o final do terminal
         logsContent.scrollTop = logsContent.scrollHeight;
     }
-    
-    // Função para escapar HTML
+
     function escapeHtml(str) {
-        if (!str) return '';
-        return String(str)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
     }
-    
-    // Atualizar o terminal automaticamente
+
+    // Atualizar o terminal a cada 2 segundos
+    setInterval(updateTerminal, 2000);
+
     function updateTerminal() {
         const hostname = document.getElementById('detail-hostname').textContent;
-        if (!hostname) return;
+        if (!hostname) return; // Não atualizar se nenhum host estiver selecionado
         
-        // Buscar logs do host
-        fetch(`/api/logs/${encodeURIComponent(hostname)}`, {
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Falha ao buscar logs');
-            }
-            return response.json();
-        })
-        .then(logs => {
-            renderTerminalOutput(logs);
-        })
-        .catch(error => {
-            console.error('Erro ao buscar logs:', error);
-        });
+        // Buscar logs mais recentes
+        fetch(`/api/host-logs/${hostname}`)
+            .then(response => response.json())
+            .then(data => {
+                renderTerminalOutput(data.logs);
+            })
+            .catch(error => {
+                console.error('Erro ao buscar logs:', error);
+            });
         
-        // Buscar erros do host
-        fetch(`/api/errors/${encodeURIComponent(hostname)}`, {
-            credentials: 'same-origin'
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Falha ao buscar erros');
-            }
-            return response.json();
-        })
-        .then(errors => {
-            renderErrorsOutput(errors);
-        })
-        .catch(error => {
-            console.error('Erro ao buscar erros:', error);
-        });
+        // Buscar erros mais recentes
+        fetch(`/api/host-errors/${hostname}`)
+            .then(response => response.json())
+            .then(data => {
+                renderErrorsOutput(data.errors);
+            })
+            .catch(error => {
+                console.error('Erro ao buscar erros:', error);
+            });
     }
-    
-    // Renderizar logs no terminal
+
+    function formatTimestamp(timestamp) {
+        const date = new Date(timestamp * 1000);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const seconds = date.getSeconds().toString().padStart(2, '0');
+        
+        return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+    }
+
     function renderTerminalOutput(logs) {
-        if (logs.length === 0) {
-            document.getElementById('logs-content').innerHTML = '<div class="dim-text">Nenhum comando executado ainda...</div>';
-            return;
+        if (!logs || logs.length === 0) return;
+        
+        const logsContent = document.getElementById('logs-content');
+        
+        // Remover a mensagem vazia se existir
+        const emptyMessage = logsContent.querySelector('.terminal-empty');
+        if (emptyMessage) {
+            emptyMessage.remove();
         }
         
-        // Filtrar logs de "Script atualizado"
-        const filteredLogs = logs.filter((log, index, self) => {
-            if (log.data === "Script atualizado.") {
-                // Excluir mensagens repetidas de script atualizado
-                const lastItem = self[index - 1];
-                if (lastItem && lastItem.data === "Script atualizado.") {
-                    return false;
-                }
-            }
-            return true;
-        });
+        // Organizar logs por tipo
+        const commandLogs = logs.filter(log => log.command !== undefined);
+        const infoLogs = logs.filter(log => log.data !== undefined && !log.command);
         
-        // Agrupar logs por tipo e criar blocos de comando
-        let terminalContent = '';
-        let currentCommand = null;
-        let currentCommandTime = null;
-        
-        filteredLogs.forEach(log => {
-            // Converter timestamp para formato de hora
-            let timestamp = "";
-            if (typeof log.timestamp === 'number') {
-                const date = new Date(log.timestamp * 1000);
-                timestamp = date.getHours().toString().padStart(2, '0') + ":" + 
-                          date.getMinutes().toString().padStart(2, '0');
-            } else if (typeof log.timestamp === 'string') {
-                // Extrair hora de timestamp string 
-                const match = log.timestamp.match(/(\d{1,2}):(\d{1,2})/);
-                if (match) {
-                    timestamp = match[1].padStart(2, '0') + ":" + match[2].padStart(2, '0');
-                }
-            }
+        // Processar registros de comando
+        commandLogs.forEach(log => {
+            // Verificar se o log já existe no terminal
+            const logId = `cmd-${log.timestamp}-${log.command}`;
+            let existingLog = document.getElementById(logId);
             
-            // Verificar se é comando e saída
-            if (log.command && log.output !== undefined) {
-                // Novo bloco de comando com saída
-                terminalContent += `
-                    <div class="command-block">
-                        <div class="command-line">
-                            <span class="timestamp">${timestamp}</span>
-                            <span class="cmd-content">${escapeHtml(log.command)}</span>
-                        </div>
-                        <div class="output-block">
-                            ${log.output.trim() ? escapeHtml(log.output) : '<span class="dim-text">Sem saída</span>'}
-                        </div>
+            if (!existingLog) {
+                // Criar entrada para o novo comando
+                const formattedTime = formatTimestamp(log.timestamp);
+                
+                const cmdEntry = document.createElement('div');
+                cmdEntry.classList.add('terminal-entry');
+                cmdEntry.id = logId;
+                cmdEntry.innerHTML = `
+                    <div class="terminal-prompt">
+                        <span class="prompt-indicator">$</span>
+                        <span class="prompt-time">${formattedTime}</span>
+                        <span class="prompt-command">${escapeHtml(log.command)}</span>
+                    </div>
+                    <div class="terminal-output">
+                        ${log.output ? escapeHtml(log.output) : 'Sem saída do comando.'}
                     </div>
                 `;
-            } 
-            // Verificar se é mensagem "Executando comando"
-            else if (log.data && log.data.startsWith("Executando comando:")) {
-                const cmdMatch = log.data.match(/Executando comando: (.+)/);
-                const cmdText = cmdMatch ? cmdMatch[1] : "";
                 
-                // Salvar o comando atual para associar com a próxima saída
-                currentCommand = cmdText;
-                currentCommandTime = timestamp;
-                
-                // Não vamos exibir "Executando comando" pois já mostramos quando enviou
-            }
-            // Verificar se é log genérico
-            else if (log.data && log.data !== "Script atualizado.") {
-                // Mensagem do sistema
-                terminalContent += `
-                    <div class="command-block">
-                        <div class="system-line">
-                            <span class="timestamp">${timestamp}</span>
-                            <span class="info-output">${escapeHtml(log.data)}</span>
-                        </div>
-                    </div>
-                `;
+                logsContent.appendChild(cmdEntry);
+            } else {
+                // Atualizar a saída do comando existente
+                const outputDiv = existingLog.querySelector('.terminal-output');
+                outputDiv.innerHTML = log.output ? escapeHtml(log.output) : 'Sem saída do comando.';
             }
         });
         
-        // Atualizar o conteúdo do terminal
-        document.getElementById('logs-content').innerHTML = terminalContent || '<div class="dim-text">Nenhum comando executado ainda...</div>';
+        // Processar registros de informação
+        infoLogs.forEach(log => {
+            // Verificar se o log já existe no terminal
+            const logId = `info-${log.timestamp}-${log.data.substring(0, 20)}`;
+            let existingLog = document.getElementById(logId);
+            
+            if (!existingLog) {
+                // Criar entrada para o novo log de informação
+                const formattedTime = formatTimestamp(log.timestamp);
+                
+                const infoEntry = document.createElement('div');
+                infoEntry.classList.add('terminal-message');
+                infoEntry.id = logId;
+                infoEntry.innerHTML = `
+                    <span class="message-icon message-info"><i class="bi bi-info-circle"></i></span>
+                    <span class="message-text">${escapeHtml(log.data)}</span>
+                    <span class="message-time">${formattedTime}</span>
+                `;
+                
+                logsContent.appendChild(infoEntry);
+            }
+        });
         
-        // Rolar para o final
-        const terminal = document.getElementById('logs-panel');
-        terminal.scrollTop = terminal.scrollHeight;
+        // Rolar para o final do terminal se o usuário estiver próximo do fim
+        if (logsContent.scrollTop + logsContent.clientHeight >= logsContent.scrollHeight - 100) {
+            logsContent.scrollTop = logsContent.scrollHeight;
+        }
     }
-    
-    // Renderizar erros no terminal
+
     function renderErrorsOutput(errors) {
-        if (errors.length === 0) {
-            document.getElementById('errors-content').innerHTML = '<div class="dim-text">Nenhum erro reportado.</div>';
-            return;
+        if (!errors || errors.length === 0) return;
+        
+        const errorsContent = document.getElementById('errors-content');
+        
+        // Remover a mensagem vazia se existir
+        const emptyMessage = errorsContent.querySelector('.terminal-empty');
+        if (emptyMessage) {
+            emptyMessage.remove();
         }
         
-        let errorsContent = '';
-        
+        // Adicionar cada erro ao painel de erros
         errors.forEach(error => {
-            // Converter timestamp para formato de hora
-            let timestamp = "";
-            if (typeof error.timestamp === 'number') {
-                const date = new Date(error.timestamp * 1000);
-                timestamp = date.getHours().toString().padStart(2, '0') + ":" + 
-                          date.getMinutes().toString().padStart(2, '0');
-            } else if (typeof error.timestamp === 'string') {
-                // Extrair hora de timestamp string 
-                const match = error.timestamp.match(/(\d{1,2}):(\d{1,2})/);
-                if (match) {
-                    timestamp = match[1].padStart(2, '0') + ":" + match[2].padStart(2, '0');
-                }
-            }
+            // Verificar se o erro já existe no painel
+            const errorId = `error-${error.timestamp}-${error.error.substring(0, 20)}`;
+            let existingError = document.getElementById(errorId);
             
-            errorsContent += `
-                <div class="command-block">
-                    <div class="system-line">
-                        <span class="timestamp">${timestamp}</span>
-                        <span class="error-output">${escapeHtml(error.error)}</span>
-                    </div>
-                </div>
-            `;
+            if (!existingError) {
+                // Criar entrada para o novo erro
+                const formattedTime = formatTimestamp(error.timestamp);
+                
+                const errorEntry = document.createElement('div');
+                errorEntry.classList.add('terminal-error');
+                errorEntry.id = errorId;
+                errorEntry.innerHTML = `
+                    <span class="error-icon"><i class="bi bi-exclamation-triangle-fill"></i></span>
+                    <span class="error-text">${escapeHtml(error.error)}</span>
+                    <span class="error-time">${formattedTime}</span>
+                `;
+                
+                errorsContent.appendChild(errorEntry);
+            }
         });
         
-        // Atualizar o conteúdo do terminal de erros
-        document.getElementById('errors-content').innerHTML = errorsContent;
-        
-        // Atualizar o contador de erros no botão
-        const errorsCount = errors.length;
-        if (errorsCount > 0) {
-            errorsBtn.innerHTML = `Errors (${errorsCount})`;
-        } else {
-            errorsBtn.innerHTML = 'Errors';
+        // Rolar para o final do painel de erros se o usuário estiver próximo do fim
+        if (errorsContent.scrollTop + errorsContent.clientHeight >= errorsContent.scrollHeight - 100) {
+            errorsContent.scrollTop = errorsContent.scrollHeight;
         }
     }
-    
-    // Atualizar a interface quando um host é selecionado
-    const originalViewHostDetails = window.viewHostDetails;
-    if (originalViewHostDetails) {
-        window.viewHostDetails = function(hostname, hostData) {
-            // Chamar a função original
-            originalViewHostDetails(hostname, hostData);
-            
-            // Limpar o terminal
-            document.getElementById('logs-content').innerHTML = '<div class="dim-text">Carregando logs...</div>';
-            document.getElementById('errors-content').innerHTML = '<div class="dim-text">Carregando erros...</div>';
-            
-            // Atualizar o terminal
-            updateTerminal();
-        };
-    }
-    
-    // Definir intervalo para atualizar o terminal periodicamente quando um host está selecionado
-    setInterval(() => {
-        const hostname = document.getElementById('detail-hostname').textContent;
-        if (hostname) {
-            updateTerminal();
-        }
-    }, 3000); // Atualizar a cada 3 segundos
 });

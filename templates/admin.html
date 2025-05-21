@@ -70,80 +70,68 @@
                 </div>
 
                 <!-- Host Details Section -->
-                <div id="host-details" class="card mb-4 d-none">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Host Details: <span id="detail-hostname"></span></h5>
-                        <button class="btn btn-sm btn-outline-secondary" id="close-details">
-                            Close
-                        </button>
+                <div id="host-details" class="host-details-card d-none">
+                    <div class="host-details-header">
+                        <h3 class="host-title">Host Details: <span id="detail-hostname"></span></h3>
+                        <button class="host-close-btn" id="close-details">Close</button>
                     </div>
-                    <div class="card-body">
+                    
+                    <div class="host-info-panel">
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>System Information</h6>
-                                <ul class="list-group mb-3">
-                                    <li class="list-group-item d-flex justify-content-between">
-                                        <span>IP Address:</span>
-                                        <span id="detail-ip"></span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between">
-                                        <span>Username:</span>
-                                        <span id="detail-username"></span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between">
-                                        <span>Operating System:</span>
-                                        <span id="detail-os"></span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between">
-                                        <span>First Seen:</span>
-                                        <span id="detail-first-seen"></span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between">
-                                        <span>Last Seen:</span>
-                                        <span id="detail-last-seen"></span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-12">
-                                <!-- Terminal moderno -->
-                                <div class="terminal-container">
-                                    <div class="terminal-header">
-                                        <div class="terminal-controls">
-                                            <span class="control-dot red"></span>
-                                            <span class="control-dot yellow"></span>
-                                            <span class="control-dot green"></span>
-                                        </div>
-                                        <div class="terminal-title">Terminal</div>
-                                        <div class="terminal-nav">
-                                            <button class="btn-tab active" id="logs-btn" data-target="#logs-panel">Console</button>
-                                            <button class="btn-tab" id="errors-btn" data-target="#errors-panel">Errors</button>
-                                        </div>
+                                <div class="info-grid">
+                                    <div class="info-item">
+                                        <span class="info-label">IP Address:</span>
+                                        <span id="detail-ip" class="info-value"></span>
                                     </div>
-                                    
-                                    <div class="terminal-body">
-                                        <div class="terminal-panel active" id="logs-panel">
-                                            <div id="logs-content" class="terminal-output">
-                                                <div class="dim-text">Nenhum comando executado ainda...</div>
-                                            </div>
-                                        </div>
-                                        <div class="terminal-panel" id="errors-panel">
-                                            <div id="errors-content" class="terminal-output">
-                                                <div class="dim-text">Nenhum erro reportado.</div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="terminal-input-area">
-                                            <div class="prompt-wrapper">
-                                                <span class="prompt-symbol">$</span>
-                                                <input type="text" id="command-input" class="terminal-input-field" placeholder="Digite um comando PowerShell..." />
-                                            </div>
-                                            <button class="terminal-run-btn" id="send-command">
-                                                <i class="bi bi-play-fill"></i>
-                                            </button>
-                                        </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Username:</span>
+                                        <span id="detail-username" class="info-value"></span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Operating System:</span>
+                                        <span id="detail-os" class="info-value"></span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">First Seen:</span>
+                                        <span id="detail-first-seen" class="info-value"></span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Last Seen:</span>
+                                        <span id="detail-last-seen" class="info-value"></span>
                                     </div>
                                 </div>
                             </div>
+                            
+                            <div class="col-md-6">
+                                <div class="command-input-panel">
+                                    <label class="command-input-label">Enter Command</label>
+                                    <div class="command-input-container">
+                                        <textarea id="command-input" class="command-textarea" rows="3" placeholder="Enter PowerShell command..."></textarea>
+                                        <button id="send-command" class="command-send-btn">Send Command</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="terminal-tabs">
+                        <button class="terminal-tab active" id="terminal-cmd-tab">Command Outputs</button>
+                        <button class="terminal-tab" id="terminal-err-tab">Errors</button>
+                    </div>
+                    
+                    <div class="terminal-panel active" id="terminal-cmd-panel">
+                        <div id="logs-content">
+                            <!-- Terminal output will be populated here -->
+                            <div class="terminal-empty">No command outputs yet.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="terminal-panel" id="terminal-err-panel">
+                        <div id="errors-content">
+                            <!-- Error output will be populated here -->
+                            <div class="terminal-empty">No errors reported.</div>
                         </div>
                     </div>
                 </div>
