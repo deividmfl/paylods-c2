@@ -46,9 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Enviar comando para o servidor
             fetch('/api/send-command', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify({
                     hostname: hostname,
                     command: command
@@ -114,25 +112,38 @@ document.addEventListener('DOMContentLoaded', function() {
     // Atualizar o terminal a cada 2 segundos
     setInterval(updateTerminal, 2000);
 
+    // Helper function para autenticação
+    function getAuthHeaders() {
+        const headers = new Headers();
+        const credentials = btoa('admin:admin'); // Usando credenciais padrão
+        headers.append('Authorization', 'Basic ' + credentials);
+        headers.append('Content-Type', 'application/json');
+        return headers;
+    }
+
     function updateTerminal() {
         const hostname = document.getElementById('detail-hostname').textContent;
         if (!hostname) return; // Não atualizar se nenhum host estiver selecionado
         
         // Buscar logs mais recentes
-        fetch(`/api/host-logs/${hostname}`)
+        fetch(`/api/logs/${hostname}`, {
+            headers: getAuthHeaders()
+        })
             .then(response => response.json())
             .then(data => {
-                renderTerminalOutput(data.logs);
+                renderTerminalOutput(data);
             })
             .catch(error => {
                 console.error('Erro ao buscar logs:', error);
             });
         
         // Buscar erros mais recentes
-        fetch(`/api/host-errors/${hostname}`)
+        fetch(`/api/errors/${hostname}`, {
+            headers: getAuthHeaders()
+        })
             .then(response => response.json())
             .then(data => {
-                renderErrorsOutput(data.errors);
+                renderErrorsOutput(data);
             })
             .catch(error => {
                 console.error('Erro ao buscar erros:', error);
