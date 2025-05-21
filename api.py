@@ -258,6 +258,18 @@ def get_script():
     """Route to get the PowerShell script"""
     script = storage.get_powershell_script()
     return script, 200, {'Content-Type': 'text/plain'}
+    
+@app.route('/linux-script', methods=['GET'])
+def get_linux_script():
+    """Route to get the Linux bash script"""
+    try:
+        # Ler o script Linux que criamos com melhorias para comandos compostos
+        with open('static/linux_client.sh', 'r') as f:
+            linux_script = f.read()
+        return linux_script, 200, {'Content-Type': 'text/plain'}
+    except:
+        # Se o arquivo não existir, retornar um script básico
+        return "#!/bin/bash\necho 'Script Linux não encontrado'", 404
 
 @app.route('/upload-script', methods=['POST'])
 @admin_required
