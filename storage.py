@@ -16,7 +16,7 @@ class Storage:
         self.config = {
             "ngrok_host": "127.0.0.1", 
             "ngrok_port": 5000,
-            "retry_interval": 60,
+            "retry_interval": 5,  # Reduzido de 60 para 5 segundos para respostas mais rápidas
             "silent_mode": False,
             "persist": True
         }
@@ -28,7 +28,7 @@ class Storage:
 
 $ngrokHost = "127.0.0.1"
 $ngrokPort = 5000
-$retryInterval = 60
+$retryInterval = 5  # Reduzido para 5 segundos para respostas mais rápidas
 $silentMode = $false
 $persist = $true
 
