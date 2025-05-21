@@ -116,9 +116,17 @@
                         </div>
                     </div>
                     
-                    <div class="terminal-tabs">
-                        <button class="terminal-tab active" id="terminal-cmd-tab">Command Outputs</button>
-                        <button class="terminal-tab" id="terminal-err-tab">Errors</button>
+                    <div class="terminal-header-controls">
+                        <div class="terminal-tabs">
+                            <button class="terminal-tab active" id="terminal-cmd-tab">Command Outputs</button>
+                            <button class="terminal-tab" id="terminal-err-tab">Errors</button>
+                        </div>
+                        <div class="terminal-filters">
+                            <div class="filter-option">
+                                <input type="checkbox" id="filter-script-updates" checked>
+                                <label for="filter-script-updates">Ocultar "Script atualizado"</label>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="terminal-panel active" id="terminal-cmd-panel">

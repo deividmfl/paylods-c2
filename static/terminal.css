@@ -123,11 +123,34 @@
     background-color: #6675dd;
 }
 
-.terminal-tabs {
+.terminal-header-controls {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: #1f2430;
     padding: 0 10px;
     border-bottom: 1px solid #2c3039;
+}
+
+.terminal-tabs {
+    display: flex;
+}
+
+.terminal-filters {
+    display: flex;
+    align-items: center;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #a0a6b3;
+    margin-right: 10px;
+}
+
+.filter-option input[type="checkbox"] {
+    margin-right: 5px;
 }
 
 .terminal-tab {

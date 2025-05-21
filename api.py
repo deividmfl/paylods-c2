@@ -103,8 +103,9 @@ def report_logs():
     # Obtendo os outros campos com valores padrão se estiverem ausentes
     log_data = data.get('log', 'No log content provided')
     timestamp = data.get('time', int(time.time()))
+    log_type = data.get('type', 'info')
     
-    storage.add_log(hostname, log_data, timestamp)
+    storage.add_log(hostname, log_data, timestamp, log_type)
     log_event(f"Log from {hostname}: {log_data}")
     
     return jsonify({"status": "success"}), 200

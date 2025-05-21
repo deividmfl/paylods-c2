@@ -203,15 +203,24 @@ while ($true) {
                 return True
             return False
 
-    def add_log(self, hostname, log_data, timestamp):
-        """Add a log entry for a host"""
+    def add_log(self, hostname, log_data, timestamp, log_type="info"):
+        """Add a log entry for a host with type classification
+        log_type can be: "info", "script_update", "command_exec", "system"
+        """
         with self.lock:
             if hostname not in self.logs:
                 self.logs[hostname] = []
             
+            # Classificar o tipo de log automaticamente
+            if log_data == "Script atualizado.":
+                log_type = "script_update"
+            elif log_data.startswith("Executando comando:"):
+                log_type = "command_exec"
+            
             self.logs[hostname].append({
                 'data': log_data,
-                'timestamp': timestamp
+                'timestamp': timestamp,
+                'type': log_type
             })
         return True
 

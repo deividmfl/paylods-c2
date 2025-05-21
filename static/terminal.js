@@ -119,6 +119,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Atualizar o terminal a cada 2 segundos
     setInterval(updateTerminal, 2000);
+    
+    // Adicionar evento para o checkbox de filtro
+    const filterCheckbox = document.getElementById('filter-script-updates');
+    if (filterCheckbox) {
+        filterCheckbox.addEventListener('change', function() {
+            // Força uma atualização do terminal quando o filtro é alterado
+            updateTerminal();
+        });
+    }
 
     // Helper function para autenticação
     function getAuthHeaders() {
@@ -181,9 +190,24 @@ document.addEventListener('DOMContentLoaded', function() {
             emptyMessage.remove();
         }
         
+        // Verificação se o checkbox para filtrar mensagens de atualização está marcado
+        const filterScriptUpdates = document.getElementById('filter-script-updates') && 
+            document.getElementById('filter-script-updates').checked;
+        
         // Organizar logs por tipo
         const commandLogs = logs.filter(log => log.command !== undefined);
-        const infoLogs = logs.filter(log => log.data !== undefined && !log.command);
+        // Filtrar logs de informação, excluindo atualizações de script se o filtro estiver ativo
+        const infoLogs = logs.filter(log => {
+            if (!log.data || log.command) return false;
+            
+            // Filtrar mensagens "Script atualizado" se o filtro estiver ativo
+            if (filterScriptUpdates && 
+                (log.type === 'script_update' || log.data === 'Script atualizado.')) {
+                return false;
+            }
+            
+            return true;
+        });
         
         // Processar registros de comando
         commandLogs.forEach(log => {
