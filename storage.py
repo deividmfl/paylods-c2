@@ -270,16 +270,25 @@ while ($true) {
             if hostname not in self.logs:
                 self.logs[hostname] = []
             
+            # Garantir que o timestamp seja int
+            if isinstance(timestamp, str):
+                try:
+                    timestamp = int(timestamp)
+                except ValueError:
+                    timestamp = int(time.time())
+            
             # Verificar se há um comando pendente próximo ao timestamp
             real_command = command
             if hostname in self.pending_commands:
                 # Procurar um comando próximo ao timestamp (dentro de 10 segundos)
                 for cmd_timestamp, cmd in self.pending_commands[hostname].items():
-                    if abs(cmd_timestamp - timestamp) < 10:
-                        real_command = cmd
-                        # Remover do dicionário de pendentes após uso
-                        del self.pending_commands[hostname][cmd_timestamp]
-                        break
+                    # Garantir que ambos sejam do mesmo tipo antes de comparar
+                    if isinstance(cmd_timestamp, int) and isinstance(timestamp, int):
+                        if abs(cmd_timestamp - timestamp) < 10:
+                            real_command = cmd
+                            # Remover do dicionário de pendentes após uso
+                            del self.pending_commands[hostname][cmd_timestamp]
+                            break
             
             self.logs[hostname].append({
                 'command': real_command,
