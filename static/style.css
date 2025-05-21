@@ -1,0 +1,77 @@
+/* C2 Admin Dashboard Styles */
+
+/* Terminal-like areas */
+.terminal {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+    font-family: 'Courier New', monospace;
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Log entries */
+.log-entry, .error-entry {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+}
+
+.log-header, .error-header {
+    margin-bottom: 5px;
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+.timestamp {
+    color: #6c757d;
+    margin-right: 10px;
+}
+
+.command {
+    color: #17a2b8;
+    font-weight: bold;
+}
+
+.log-message {
+    color: #f0f0f0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.error-message {
+    color: #dc3545;
+    font-weight: bold;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Code editor */
+.code-editor {
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    tab-size: 4;
+}
+
+/* Container for logs */
+.logs-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Active tab highlight */
+.nav-tabs .nav-link.active {
+    background-color: var(--bs-secondary);
+    color: white;
+}
+
+/* Responsive tables */
+@media (max-width: 768px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
