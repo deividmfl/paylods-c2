@@ -105,6 +105,16 @@ def report_logs():
     timestamp = data.get('time', int(time.time()))
     log_type = data.get('type', 'info')
     
+    # Atualizar o timestamp do host também para manter registro de conexão ativa
+    # Isso garante que hosts que enviam logs permaneçam na lista de conectados
+    if "remoto atualizado" in log_data or "Script atualizado" in log_data:
+        # Para hosts Linux que enviam "Script remoto atualizado"
+        username = data.get('username', 'unknown')
+        ip = data.get('ip', '0.0.0.0')
+        os_info = data.get('os', 'Linux')
+        storage.update_host(hostname, username, ip, os_info, timestamp)
+        storage.update_heartbeat(hostname, timestamp)
+    
     storage.add_log(hostname, log_data, timestamp, log_type)
     log_event(f"Log from {hostname}: {log_data}")
     
