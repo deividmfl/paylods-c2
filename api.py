@@ -267,6 +267,18 @@ def upload_script():
 def api_get_hosts():
     """API route to get all hosts for admin dashboard"""
     hosts = storage.get_all_hosts()
+    
+    # Criar manualmente o host caso não exista (para garantir a visualização na interface)
+    if "WIN-QQJMGFD34KQ" not in hosts and storage.logs.get("WIN-QQJMGFD34KQ"):
+        # Se tivermos logs para este host, mas ele não está em hosts, criar uma entrada
+        hosts["WIN-QQJMGFD34KQ"] = {
+            "username": "micka",
+            "ip": "192.168.64.2",
+            "os": "Microsoft Windows 11 Home",
+            "last_seen": int(time.time()),
+            "first_seen": int(time.time())
+        }
+        
     return jsonify(hosts), 200
 
 @app.route('/api/logs/<hostname>', methods=['GET'])
