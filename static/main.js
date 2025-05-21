@@ -1,14 +1,27 @@
 // C2 Admin Dashboard JavaScript
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tabs
-    const triggerTabList = document.querySelectorAll('a[data-bs-toggle="tab"]');
-    triggerTabList.forEach(tabTriggerEl => {
-        tabTriggerEl.addEventListener('click', event => {
-            event.preventDefault();
-            new bootstrap.Tab(tabTriggerEl).show();
-        });
-    });
+    // Helper function to escape HTML
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    // Helper function to unescape HTML
+    function unescapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#039;/g, "'");
+    }
 
     // Elements cache
     const elements = {
@@ -36,10 +49,22 @@ document.addEventListener('DOMContentLoaded', function() {
         saveScriptBtn: document.getElementById('save-script'),
         resetScriptBtn: document.getElementById('reset-script'),
         downloadScriptBtn: document.getElementById('download-script'),
-        commandOutputModal: new bootstrap.Modal(document.getElementById('commandOutputModal')),
         modalCommand: document.getElementById('modal-command'),
         modalOutput: document.getElementById('modal-output')
     };
+
+    // Initialize Bootstrap elements
+    const commandOutputModal = new bootstrap.Modal(document.getElementById('commandOutputModal'));
+    
+    // Setup tab functionality
+    document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(el => {
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
+            const tabTarget = this.getAttribute('href');
+            const tabInstance = new bootstrap.Tab(this);
+            tabInstance.show();
+        });
+    });
 
     // Current selected host
     let currentHostname = null;
@@ -87,13 +112,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const lastSeen = new Date(hostData.last_seen * 1000).toLocaleString();
             
             row.innerHTML = `
-                <td>${hostname}</td>
-                <td>${hostData.ip}</td>
-                <td>${hostData.username}</td>
-                <td>${hostData.os}</td>
+                <td>${escapeHtml(hostname)}</td>
+                <td>${escapeHtml(hostData.ip)}</td>
+                <td>${escapeHtml(hostData.username)}</td>
+                <td>${escapeHtml(hostData.os)}</td>
                 <td>${lastSeen}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary view-host" data-hostname="${hostname}">
+                    <button class="btn btn-sm btn-primary view-host" data-hostname="${escapeHtml(hostname)}">
                         <i class="bi bi-eye"></i> View
                     </button>
                 </td>
@@ -133,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch logs for a host
     function fetchHostLogs(hostname) {
-        fetch(`/api/logs/${hostname}`, {
+        fetch(`/api/logs/${encodeURIComponent(hostname)}`, {
             credentials: 'same-origin'
         })
             .then(response => {
@@ -153,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch errors for a host
     function fetchHostErrors(hostname) {
-        fetch(`/api/errors/${hostname}`, {
+        fetch(`/api/errors/${encodeURIComponent(hostname)}`, {
             credentials: 'same-origin'
         })
             .then(response => {
@@ -191,10 +216,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 logEntry.innerHTML = `
                     <div class="log-header">
                         <span class="timestamp">${timestamp}</span>
-                        <span class="command">${log.command}</span>
+                        <span class="command">${escapeHtml(log.command)}</span>
                     </div>
                     <div class="log-output">
-                        <button class="btn btn-sm btn-outline-info view-output" data-command="${escape(log.command)}" data-output="${escape(log.output)}">
+                        <button class="btn btn-sm btn-outline-info view-output" data-command="${escapeHtml(log.command)}" data-output="${escapeHtml(log.output)}">
                             View Output
                         </button>
                     </div>
@@ -213,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="timestamp">${timestamp}</span>
                     </div>
                     <div class="log-message">
-                        ${typeof log.data === 'object' ? JSON.stringify(log.data) : log.data}
+                        ${typeof log.data === 'object' ? JSON.stringify(log.data) : escapeHtml(log.data)}
                     </div>
                 `;
                 
@@ -224,12 +249,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add event listeners for View Output buttons
         document.querySelectorAll('.view-output').forEach(btn => {
             btn.addEventListener('click', function() {
-                const command = unescape(this.getAttribute('data-command'));
-                const output = unescape(this.getAttribute('data-output'));
+                const command = unescapeHtml(this.getAttribute('data-command'));
+                const output = unescapeHtml(this.getAttribute('data-output'));
                 
                 elements.modalCommand.textContent = command;
                 elements.modalOutput.textContent = output;
-                elements.commandOutputModal.show();
+                commandOutputModal.show();
             });
         });
     }
@@ -254,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="timestamp">${timestamp}</span>
                 </div>
                 <div class="error-message">
-                    ${error.error}
+                    ${escapeHtml(error.error)}
                 </div>
             `;
             
@@ -426,43 +451,20 @@ document.addEventListener('DOMContentLoaded', function() {
         URL.revokeObjectURL(url);
     }
 
-    // Helper function to escape HTML
-    function escape(str) {
-        return str
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-    }
-
-    // Helper function to unescape HTML
-    function unescape(str) {
-        return str
-            .replace(/&amp;/g, '&')
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&quot;/g, '"')
-            .replace(/&#039;/g, "'");
-    }
-
     // Event listeners
-    elements.refreshHostsBtn.addEventListener('click', fetchHosts);
-    elements.closeDetailsBtn.addEventListener('click', () => {
+    if (elements.refreshHostsBtn) elements.refreshHostsBtn.addEventListener('click', fetchHosts);
+    if (elements.closeDetailsBtn) elements.closeDetailsBtn.addEventListener('click', () => {
         elements.hostDetails.classList.add('d-none');
         currentHostname = null;
     });
-    elements.sendCommandBtn.addEventListener('click', sendCommand);
-    elements.configForm.addEventListener('submit', saveConfig);
-    elements.saveScriptBtn.addEventListener('click', savePowershellScript);
-    elements.resetScriptBtn.addEventListener('click', resetPowershellScript);
-    elements.downloadScriptBtn.addEventListener('click', downloadPowershellScript);
+    if (elements.sendCommandBtn) elements.sendCommandBtn.addEventListener('click', sendCommand);
+    if (elements.configForm) elements.configForm.addEventListener('submit', saveConfig);
+    if (elements.saveScriptBtn) elements.saveScriptBtn.addEventListener('click', savePowershellScript);
+    if (elements.resetScriptBtn) elements.resetScriptBtn.addEventListener('click', resetPowershellScript);
+    if (elements.downloadScriptBtn) elements.downloadScriptBtn.addEventListener('click', downloadPowershellScript);
 
     // Initialize the dashboard
     fetchHosts();
     fetchConfig();
     fetchPowershellScript();
-
-    // Set up auto-refresh for hosts every 30 seconds
-    setInterval(fetchHosts, 30000);
 });
