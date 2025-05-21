@@ -204,23 +204,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         elements.logsContent.innerHTML = '';
+        console.log("Logs recebidos:", logs);
         
         logs.forEach(log => {
-            if (log.command) {
+            if (log.command && log.output !== undefined) {
                 // If it's a command output
                 const logEntry = document.createElement('div');
                 logEntry.className = 'log-entry';
                 
                 const timestamp = new Date(log.timestamp * 1000).toLocaleString();
+                const output = log.output || "Sem saída do comando";
                 
                 logEntry.innerHTML = `
                     <div class="log-header">
                         <span class="timestamp">${timestamp}</span>
-                        <span class="command">${escapeHtml(log.command)}</span>
+                        <span class="command">$ ${escapeHtml(log.command)}</span>
                     </div>
                     <div class="log-output">
-                        <button class="btn btn-sm btn-outline-info view-output" data-command="${escapeHtml(log.command)}" data-output="${escapeHtml(log.output)}">
-                            View Output
+                        <pre class="command-result mb-2 p-2 bg-dark">${escapeHtml(output)}</pre>
+                        <button class="btn btn-sm btn-outline-info view-output" data-command="${escapeHtml(log.command)}" data-output="${escapeHtml(output)}">
+                            Ver em Tela Cheia
                         </button>
                     </div>
                 `;
@@ -239,6 +242,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="log-message">
                         ${typeof log.data === 'object' ? JSON.stringify(log.data) : escapeHtml(log.data)}
+                    </div>
+                `;
+                
+                elements.logsContent.appendChild(logEntry);
+            } else if (log.command) {
+                // Se for um comando sem output definido
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                
+                const timestamp = new Date(log.timestamp * 1000).toLocaleString();
+                
+                logEntry.innerHTML = `
+                    <div class="log-header">
+                        <span class="timestamp">${timestamp}</span>
+                        <span class="command">$ ${escapeHtml(log.command)}</span>
+                    </div>
+                    <div class="log-output">
+                        <div class="text-muted">Comando executado, sem saída retornada</div>
                     </div>
                 `;
                 
