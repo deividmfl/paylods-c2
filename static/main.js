@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="command-prompt">$ ${escapeHtml(log.command)}</span>
                         <span class="timestamp">${timestamp}</span>
                     </div>
-                    <pre class="command-result">${escapeHtml(output)}</pre>
+                    ${output.trim() ? `<pre class="command-result">${escapeHtml(output)}</pre>` : '<div class="no-output">Sem saída</div>'}
                 `;
                 
                 elements.logsContent.appendChild(logEntry);
@@ -277,12 +277,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 
-                logEntry.innerHTML = `
-                    <div class="log-message">
-                        <span class="system-icon">🔵</span> ${typeof log.data === 'object' ? JSON.stringify(log.data) : escapeHtml(log.data)}
-                        <span class="timestamp-small">${timestamp}</span>
-                    </div>
-                `;
+                // Verifica se é um comando executado
+                const isExecutingCommand = log.data && log.data.startsWith("Executando comando:");
+                if (isExecutingCommand) {
+                    const cmdMatch = log.data.match(/Executando comando: (.+)/);
+                    const cmdText = cmdMatch ? cmdMatch[1] : "";
+                    
+                    logEntry.innerHTML = `
+                        <div class="log-message command-executing">
+                            <span class="system-icon">▶️</span> ${escapeHtml(cmdText)}
+                            <span class="timestamp-small">${timestamp}</span>
+                        </div>
+                    `;
+                } else {
+                    logEntry.innerHTML = `
+                        <div class="log-message">
+                            <span class="system-icon">ℹ️</span> ${typeof log.data === 'object' ? JSON.stringify(log.data) : escapeHtml(log.data)}
+                            <span class="timestamp-small">${timestamp}</span>
+                        </div>
+                    `;
+                }
                 
                 elements.logsContent.appendChild(logEntry);
             } else if (log.command) {
