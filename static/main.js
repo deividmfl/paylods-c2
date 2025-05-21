@@ -203,7 +203,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Criar um container grid para os logs
         elements.logsContent.innerHTML = '';
+        elements.logsContent.className = 'logs-content-grid';
         console.log("Logs recebidos:", logs);
         
         // Filtrar logs para não mostrar mensagens repetidas de "Script atualizado"
