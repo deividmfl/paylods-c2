@@ -1,3 +1,4 @@
+
 """
 In-memory storage module for the C2 server.
 Provides functionality for storing host data, logs, errors, commands, and configuration.
@@ -196,6 +197,9 @@ while ($true) {
         with self.lock:
             if hostname in self.hosts:
                 self.hosts[hostname]['last_seen'] = timestamp
+                # Também garante que first_seen existe
+                if 'first_seen' not in self.hosts[hostname]:
+                    self.hosts[hostname]['first_seen'] = timestamp
                 return True
             return False
 
