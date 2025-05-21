@@ -12,16 +12,39 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('terminal-err-panel').classList.add('active');
     });
 
-    // Configurar o envio de comando
-    document.getElementById('send-command').addEventListener('click', sendTerminalCommand);
+    // Configurar o envio de comando (campo lateral)
+    const sendCommandBtn = document.getElementById('send-command');
+    if (sendCommandBtn) {
+        sendCommandBtn.addEventListener('click', sendTerminalCommand);
+    }
     
-    // Lidar com a tecla Enter no campo de entrada (considerando que agora é textarea)
-    document.getElementById('command-input').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && e.ctrlKey) {
-            e.preventDefault(); // Evitar quebra de linha
-            sendTerminalCommand();
-        }
-    });
+    // Configurar o envio de comando (campo integrado)
+    const inlineSendCommandBtn = document.getElementById('inline-send-command');
+    if (inlineSendCommandBtn) {
+        inlineSendCommandBtn.addEventListener('click', sendInlineCommand);
+    }
+    
+    // Lidar com a tecla Enter no campo de entrada lateral (textarea)
+    const commandInput = document.getElementById('command-input');
+    if (commandInput) {
+        commandInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault(); // Evitar quebra de linha
+                sendTerminalCommand();
+            }
+        });
+    }
+    
+    // Lidar com a tecla Enter no campo de entrada integrado
+    const inlineCommandInput = document.getElementById('inline-command-input');
+    if (inlineCommandInput) {
+        inlineCommandInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendInlineCommand();
+            }
+        });
+    }
 
     function activateTerminalTab(tab) {
         // Remover a classe ativa de todos os botões de guia
@@ -74,6 +97,50 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Limpar o campo de entrada
             commandInput.value = '';
+        }
+    }
+    
+    function sendInlineCommand() {
+        const commandInput = document.getElementById('inline-command-input');
+        const command = commandInput.value.trim();
+        
+        // Evitar envio duplicado do mesmo comando
+        if (command && !isCommandSending) {
+            isCommandSending = true;
+            const hostname = document.getElementById('detail-hostname').textContent;
+            
+            // Adicionar comando ao terminal
+            addCommandToTerminal(command);
+            
+            // Enviar comando para o servidor
+            fetch('/api/send-command', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    hostname: hostname,
+                    command: command
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Comando enviado com sucesso');
+                } else {
+                    console.error('Erro ao enviar comando:', data.message);
+                }
+                // Resetar flag ao finalizar
+                isCommandSending = false;
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                isCommandSending = false;
+            });
+            
+            // Limpar o campo de entrada
+            commandInput.value = '';
+            
+            // Focar o campo de entrada para facilitar comandos contínuos
+            commandInput.focus();
         }
     }
 

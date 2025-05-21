@@ -325,3 +325,52 @@
     color: #707580;
     font-style: italic;
 }
+
+/* Estilos para entrada de comando integrada ao terminal */
+.terminal-output-area {
+    height: calc(100% - 40px);
+    overflow-y: auto;
+}
+
+.terminal-input-area-inline {
+    display: flex;
+    align-items: center;
+    background-color: #1a1e24;
+    border-top: 1px solid #2c3039;
+    padding: 8px 12px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+}
+
+.prompt-inline {
+    color: #5666d3;
+    font-weight: bold;
+    margin-right: 8px;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+}
+
+.terminal-input-inline {
+    flex-grow: 1;
+    background-color: transparent;
+    border: none;
+    color: #e4e6eb;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    outline: none;
+}
+
+.inline-send-btn {
+    background-color: transparent;
+    border: none;
+    color: #5666d3;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.inline-send-btn:hover {
+    color: #6675dd;
+}

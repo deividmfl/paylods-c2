@@ -130,9 +130,18 @@
                     </div>
                     
                     <div class="terminal-panel active" id="terminal-cmd-panel">
-                        <div id="logs-content">
+                        <div id="logs-content" class="terminal-output-area">
                             <!-- Terminal output will be populated here -->
                             <div class="terminal-empty">No command outputs yet.</div>
+                        </div>
+                        
+                        <!-- Command input area integrada à saída -->
+                        <div class="terminal-input-area-inline">
+                            <div class="prompt-inline">$</div>
+                            <input type="text" id="inline-command-input" class="terminal-input-inline" placeholder="Digite um comando PowerShell...">
+                            <button id="inline-send-command" class="inline-send-btn">
+                                <i class="bi bi-arrow-return-right"></i>
+                            </button>
                         </div>
                     </div>
                     
