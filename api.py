@@ -115,12 +115,19 @@ def report_error():
     Route for clients to report errors.
     Expected JSON: {'hostname': str, 'error': str, 'time': int}
     """
-    data = request.json
-    if not all(k in data for k in ['hostname', 'error', 'time']):
-        return jsonify({"status": "error", "message": "Missing required fields"}), 400
+    data = request.json or {}
     
-    storage.add_error(data['hostname'], data['error'], data['time'])
-    log_event(f"ERROR from {data['hostname']}: {data['error']}", level="error")
+    # Verificando se hostname existe (campo obrigatório)
+    hostname = data.get('hostname')
+    if not hostname:
+        return jsonify({"status": "error", "message": "Missing required field: hostname"}), 400
+    
+    # Obtendo os outros campos com valores padrão se estiverem ausentes
+    error_message = data.get('error', 'No error description provided')
+    timestamp = data.get('time', int(time.time()))
+    
+    storage.add_error(hostname, error_message, timestamp)
+    log_event(f"ERROR from {hostname}: {error_message}", level="error")
     
     return jsonify({"status": "success"}), 200
 
@@ -130,13 +137,19 @@ def heartbeat():
     Route for clients to send heartbeats.
     Expected JSON: {'hostname': str, 'time': int}
     """
-    data = request.json
-    if not all(k in data for k in ['hostname', 'time']):
-        return jsonify({"status": "error", "message": "Missing required fields"}), 400
+    data = request.json or {}
     
-    result = storage.update_heartbeat(data['hostname'], data['time'])
+    # Verificando se hostname existe (campo obrigatório)
+    hostname = data.get('hostname')
+    if not hostname:
+        return jsonify({"status": "error", "message": "Missing required field: hostname"}), 400
+    
+    # Obtendo o timestamp com valor padrão se estiver ausente
+    timestamp = data.get('time', int(time.time()))
+    
+    result = storage.update_heartbeat(hostname, timestamp)
     if result:
-        log_event(f"Heartbeat from {data['hostname']}")
+        log_event(f"Heartbeat from {hostname}")
         return jsonify({"status": "success"}), 200
     else:
         return jsonify({"status": "error", "message": "Host not found"}), 404
@@ -163,12 +176,20 @@ def report_output():
     Route for clients to report command output.
     Expected JSON: {'hostname': str, 'command': str, 'output': str, 'time': int}
     """
-    data = request.json
-    if not all(k in data for k in ['hostname', 'command', 'output', 'time']):
-        return jsonify({"status": "error", "message": "Missing required fields"}), 400
+    data = request.json or {}
     
-    storage.add_command_output(data['hostname'], data['command'], data['output'], data['time'])
-    log_event(f"Command output from {data['hostname']} for command '{data['command']}': {data['output']}")
+    # Verificando se hostname existe (campo obrigatório)
+    hostname = data.get('hostname')
+    if not hostname:
+        return jsonify({"status": "error", "message": "Missing required field: hostname"}), 400
+    
+    # Obtendo os outros campos com valores padrão se estiverem ausentes
+    command = data.get('command', 'unknown_command')
+    output = data.get('output', 'No output provided')
+    timestamp = data.get('time', int(time.time()))
+    
+    storage.add_command_output(hostname, command, output, timestamp)
+    log_event(f"Command output from {hostname} for command '{command}': {output}")
     
     return jsonify({"status": "success"}), 200
 
@@ -185,12 +206,39 @@ def update_config():
     Route for admin to update configuration.
     Expected JSON: any of {'ngrok_host': str, 'ngrok_port': int, 'retry_interval': int, 'silent_mode': bool, 'persist': bool}
     """
-    data = request.json
+    data = request.json or {}
+    
+    # Verifica se há dados de configuração
     if not data:
         return jsonify({"status": "error", "message": "No configuration data provided"}), 400
     
-    storage.update_config(data)
-    log_event(f"Configuration updated: {data}")
+    # Validar tipos dos dados recebidos
+    valid_config = {}
+    
+    # Validar e converter cada campo para o tipo apropriado
+    if 'ngrok_host' in data:
+        valid_config['ngrok_host'] = str(data['ngrok_host'])
+        
+    if 'ngrok_port' in data:
+        try:
+            valid_config['ngrok_port'] = int(data['ngrok_port'])
+        except (ValueError, TypeError):
+            return jsonify({"status": "error", "message": "ngrok_port must be an integer"}), 400
+    
+    if 'retry_interval' in data:
+        try:
+            valid_config['retry_interval'] = int(data['retry_interval'])
+        except (ValueError, TypeError):
+            return jsonify({"status": "error", "message": "retry_interval must be an integer"}), 400
+    
+    if 'silent_mode' in data:
+        valid_config['silent_mode'] = bool(data['silent_mode'])
+    
+    if 'persist' in data:
+        valid_config['persist'] = bool(data['persist'])
+    
+    storage.update_config(valid_config)
+    log_event(f"Configuration updated: {valid_config}")
     
     return jsonify({"status": "success"}), 200
 
