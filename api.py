@@ -69,12 +69,21 @@ def report_status():
     Route for clients to report their status.
     Expected JSON: {'hostname': str, 'username': str, 'ip': str, 'os': str, 'time': int}
     """
-    data = request.json
-    if not all(k in data for k in ['hostname', 'username', 'ip', 'os', 'time']):
-        return jsonify({"status": "error", "message": "Missing required fields"}), 400
+    data = request.json or {}
     
-    storage.update_host(data['hostname'], data['username'], data['ip'], data['os'], data['time'])
-    log_event(f"Host {data['hostname']} ({data['ip']}) reported status: {data['os']} as {data['username']}")
+    # Verificando se hostname existe (campo obrigatório)
+    hostname = data.get('hostname')
+    if not hostname:
+        return jsonify({"status": "error", "message": "Missing required field: hostname"}), 400
+    
+    # Obtendo os outros campos com valores padrão se estiverem ausentes
+    username = data.get('username', 'unknown')
+    ip = data.get('ip', '0.0.0.0')
+    os_info = data.get('os', 'unknown')
+    timestamp = data.get('time', int(time.time()))
+    
+    storage.update_host(hostname, username, ip, os_info, timestamp)
+    log_event(f"Host {hostname} ({ip}) reported status: {os_info} as {username}")
     
     return jsonify({"status": "success"}), 200
 
@@ -84,12 +93,19 @@ def report_logs():
     Route for clients to report logs.
     Expected JSON: {'hostname': str, 'log': any, 'time': int}
     """
-    data = request.json
-    if not all(k in data for k in ['hostname', 'log', 'time']):
-        return jsonify({"status": "error", "message": "Missing required fields"}), 400
+    data = request.json or {}
     
-    storage.add_log(data['hostname'], data['log'], data['time'])
-    log_event(f"Log from {data['hostname']}: {data['log']}")
+    # Verificando se hostname existe (campo obrigatório)
+    hostname = data.get('hostname')
+    if not hostname:
+        return jsonify({"status": "error", "message": "Missing required field: hostname"}), 400
+    
+    # Obtendo os outros campos com valores padrão se estiverem ausentes
+    log_data = data.get('log', 'No log content provided')
+    timestamp = data.get('time', int(time.time()))
+    
+    storage.add_log(hostname, log_data, timestamp)
+    log_event(f"Log from {hostname}: {log_data}")
     
     return jsonify({"status": "success"}), 200
 
