@@ -1,0 +1,220 @@
+/* Novo Terminal Estilo VSCode/Modern */
+
+/* Container principal do terminal */
+.terminal-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    border: 1px solid #333;
+    margin-top: 15px;
+}
+
+/* Cabeçalho do Terminal */
+.terminal-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: #252526;
+    border-bottom: 1px solid #333;
+}
+
+/* Controles do terminal (círculos coloridos) */
+.terminal-controls {
+    display: flex;
+    margin-right: 15px;
+}
+
+.control-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.red { background-color: #ff5f56; }
+.yellow { background-color: #ffbd2e; }
+.green { background-color: #27c93f; }
+
+/* Título do terminal */
+.terminal-title {
+    flex-grow: 1;
+    text-align: center;
+    color: #ccc;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+/* Navegação do terminal */
+.terminal-nav {
+    display: flex;
+}
+
+.btn-tab {
+    background-color: transparent;
+    border: none;
+    color: #888;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-left: 5px;
+    transition: all 0.2s;
+}
+
+.btn-tab:hover {
+    background-color: #333;
+    color: #ccc;
+}
+
+.btn-tab.active {
+    background-color: #2d2d2d;
+    color: #fff;
+}
+
+/* Corpo do terminal */
+.terminal-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #1e1e1e;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Painéis dentro do terminal (console, errors, etc) */
+.terminal-panel {
+    display: none;
+    height: 350px;
+    overflow-y: auto;
+}
+
+.terminal-panel.active {
+    display: block;
+}
+
+/* Área de saída do terminal */
+.terminal-output {
+    padding: 8px 12px;
+    color: #f0f0f0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Área de entrada de comandos */
+.terminal-input-area {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-top: 1px solid #333;
+    background-color: #252526;
+}
+
+.prompt-wrapper {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.prompt-symbol {
+    color: #27c93f;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.terminal-input-field {
+    background: transparent;
+    border: none;
+    color: #f0f0f0;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 13px;
+    flex-grow: 1;
+    outline: none;
+    width: 100%;
+}
+
+.terminal-run-btn {
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.terminal-run-btn:hover {
+    background-color: #0086f0;
+}
+
+/* Estilos para os blocos de comando */
+.command-block {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.command-line {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2px;
+}
+
+.timestamp {
+    color: #666;
+    font-size: 11px;
+    margin-right: 8px;
+    min-width: 40px;
+}
+
+.cmd-content {
+    color: #27c93f;
+    flex-grow: 1;
+}
+
+.output-block {
+    padding-left: 48px;
+    color: #ddd;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.error-output {
+    color: #ff5f56;
+}
+
+.info-output {
+    color: #4e94ce;
+}
+
+.success-output {
+    color: #27c93f; 
+}
+
+/* Estilização do scrollbar */
+.terminal-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminal-panel::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+.terminal-panel::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.terminal-panel::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
