@@ -199,49 +199,88 @@ document.addEventListener('DOMContentLoaded', function() {
     // Display logs in the logs tab
     function displayLogs(logs) {
         if (logs.length === 0) {
-            elements.logsContent.innerHTML = `<div class="text-muted">No command outputs yet.</div>`;
+            elements.logsContent.innerHTML = `<div class="text-muted">Nenhum comando executado ainda.</div>`;
             return;
         }
 
         elements.logsContent.innerHTML = '';
         console.log("Logs recebidos:", logs);
         
-        logs.forEach(log => {
+        // Filtrar logs para não mostrar mensagens repetidas de "Script atualizado"
+        const filteredLogs = logs.filter((log, index, self) => {
+            // Se for um log de "Script atualizado", verificar se é repetido
+            if (log.data === "Script atualizado.") {
+                // Verificar se o último log filtrado não é também "Script atualizado"
+                const lastItem = self[index - 1];
+                if (lastItem && lastItem.data === "Script atualizado.") {
+                    return false;
+                }
+            }
+            return true;
+        });
+        
+        filteredLogs.forEach(log => {
             if (log.command && log.output !== undefined) {
-                // If it's a command output
+                // Se for saída de comando
                 const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
+                logEntry.className = 'log-entry command-entry';
                 
-                const timestamp = new Date(log.timestamp * 1000).toLocaleString();
+                // Formatação de timestamp
+                let timestamp = "";
+                if (log.timestamp) {
+                    // Verificar se timestamp é número (Unix) ou string (ISO)
+                    if (typeof log.timestamp === 'number') {
+                        timestamp = new Date(log.timestamp * 1000).toLocaleString();
+                    } else if (typeof log.timestamp === 'string') {
+                        // Remover possível "PM" ou "AM" e tentar converter
+                        const cleanTimestamp = log.timestamp.replace(/\s(AM|PM)$/, '');
+                        timestamp = new Date(cleanTimestamp).toLocaleString();
+                        
+                        // Se ainda for Invalid Date, usar o timestamp original
+                        if (timestamp === "Invalid Date") {
+                            timestamp = log.timestamp;
+                        }
+                    }
+                }
+                
                 const output = log.output || "Sem saída do comando";
                 
                 logEntry.innerHTML = `
                     <div class="log-header">
+                        <span class="command-prompt">$ ${escapeHtml(log.command)}</span>
                         <span class="timestamp">${timestamp}</span>
-                        <span class="command">$ ${escapeHtml(log.command)}</span>
                     </div>
-                    <div class="log-output">
-                        <pre class="command-result mb-2 p-2 bg-dark">${escapeHtml(output)}</pre>
-                        <button class="btn btn-sm btn-outline-info view-output" data-command="${escapeHtml(log.command)}" data-output="${escapeHtml(output)}">
-                            Ver em Tela Cheia
-                        </button>
-                    </div>
+                    <pre class="command-result">${escapeHtml(output)}</pre>
                 `;
                 
                 elements.logsContent.appendChild(logEntry);
-            } else if (log.data) {
-                // If it's a generic log
+            } else if (log.data && log.data !== "Script atualizado.") {
+                // Se for log genérico (exceto "Script atualizado")
                 const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
+                logEntry.className = 'log-entry system-entry';
                 
-                const timestamp = new Date(log.timestamp * 1000).toLocaleString();
+                // Formatação de timestamp
+                let timestamp = "";
+                if (log.timestamp) {
+                    // Verificar se timestamp é número (Unix) ou string (ISO)
+                    if (typeof log.timestamp === 'number') {
+                        timestamp = new Date(log.timestamp * 1000).toLocaleString();
+                    } else if (typeof log.timestamp === 'string') {
+                        // Remover possível "PM" ou "AM" e tentar converter
+                        const cleanTimestamp = log.timestamp.replace(/\s(AM|PM)$/, '');
+                        timestamp = new Date(cleanTimestamp).toLocaleString();
+                        
+                        // Se ainda for Invalid Date, usar o timestamp original
+                        if (timestamp === "Invalid Date") {
+                            timestamp = log.timestamp;
+                        }
+                    }
+                }
                 
                 logEntry.innerHTML = `
-                    <div class="log-header">
-                        <span class="timestamp">${timestamp}</span>
-                    </div>
                     <div class="log-message">
-                        ${typeof log.data === 'object' ? JSON.stringify(log.data) : escapeHtml(log.data)}
+                        <span class="system-icon">🔵</span> ${typeof log.data === 'object' ? JSON.stringify(log.data) : escapeHtml(log.data)}
+                        <span class="timestamp-small">${timestamp}</span>
                     </div>
                 `;
                 
@@ -249,18 +288,32 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (log.command) {
                 // Se for um comando sem output definido
                 const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
+                logEntry.className = 'log-entry command-entry';
                 
-                const timestamp = new Date(log.timestamp * 1000).toLocaleString();
+                // Formatação de timestamp
+                let timestamp = "";
+                if (log.timestamp) {
+                    // Verificar se timestamp é número (Unix) ou string (ISO)
+                    if (typeof log.timestamp === 'number') {
+                        timestamp = new Date(log.timestamp * 1000).toLocaleString();
+                    } else if (typeof log.timestamp === 'string') {
+                        // Remover possível "PM" ou "AM" e tentar converter
+                        const cleanTimestamp = log.timestamp.replace(/\s(AM|PM)$/, '');
+                        timestamp = new Date(cleanTimestamp).toLocaleString();
+                        
+                        // Se ainda for Invalid Date, usar o timestamp original
+                        if (timestamp === "Invalid Date") {
+                            timestamp = log.timestamp;
+                        }
+                    }
+                }
                 
                 logEntry.innerHTML = `
                     <div class="log-header">
+                        <span class="command-prompt">$ ${escapeHtml(log.command)}</span>
                         <span class="timestamp">${timestamp}</span>
-                        <span class="command">$ ${escapeHtml(log.command)}</span>
                     </div>
-                    <div class="log-output">
-                        <div class="text-muted">Comando executado, sem saída retornada</div>
-                    </div>
+                    <div class="no-output">Comando executado, sem saída retornada</div>
                 `;
                 
                 elements.logsContent.appendChild(logEntry);

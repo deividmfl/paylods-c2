@@ -15,36 +15,64 @@
 
 /* Log entries */
 .log-entry, .error-entry {
-    margin-bottom: 15px;
-    padding-bottom: 15px;
+    margin-bottom: 8px;
     border-bottom: 1px solid #333;
-    background-color: rgba(0, 0, 0, 0.15);
-    border-radius: 5px;
-    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    padding: 6px 8px;
+}
+
+.command-entry {
+    background-color: rgba(0, 20, 40, 0.2);
+}
+
+.system-entry {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 4px 8px;
+    margin-bottom: 4px;
 }
 
 .log-header, .error-header {
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     color: #6c757d;
-    font-size: 0.9em;
+    font-size: 0.85em;
     border-bottom: 1px solid #444;
-    padding-bottom: 5px;
+    padding-bottom: 3px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .timestamp {
     color: #6c757d;
-    margin-right: 10px;
+    font-size: 0.85em;
+    margin-left: auto;
 }
 
-.command {
+.timestamp-small {
+    color: #6c757d;
+    font-size: 0.8em;
+    margin-left: 8px;
+}
+
+.command-prompt {
     color: #17a2b8;
     font-weight: bold;
+    font-family: 'Courier New', monospace;
+}
+
+.system-icon {
+    color: #17a2b8;
+    margin-right: 5px;
+    font-size: 0.8em;
 }
 
 .log-message {
-    color: #f0f0f0;
+    color: #ccc;
     white-space: pre-wrap;
     word-break: break-word;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
 }
 
 .error-message {
@@ -54,17 +82,25 @@
     word-break: break-word;
 }
 
+.no-output {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 0.9em;
+    padding: 3px 0;
+}
+
 /* Command result styling */
 .command-result {
     font-family: 'Courier New', monospace;
     background-color: #1a1a1a !important;
     color: #aaffaa !important;
-    border-radius: 4px;
-    padding: 8px !important;
-    margin-bottom: 10px;
-    max-height: 300px;
+    border-radius: 3px;
+    padding: 6px !important;
+    margin: 0;
+    max-height: 250px;
     overflow-y: auto;
     white-space: pre;
+    font-size: 0.9em;
 }
 
 /* Code editor */
