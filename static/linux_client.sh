@@ -4,7 +4,7 @@
 
 NGROK_HOST="127.0.0.1"
 NGROK_PORT=5000
-RETRY_INTERVAL=5
+RETRY_INTERVAL=2
 SILENT_MODE=false
 
 # Obter informações do host
@@ -112,15 +112,27 @@ execute_command() {
     
     send_log "Executando comando: $COMMAND"
     
-    # Executar comando e capturar saída
-    # O uso de 'script' permite capturar mesmo a saída de comandos como 'cd'
-    OUTPUT=$(script -q -c "$COMMAND" /dev/null | sed '1d;$d')
+    # Criar diretório temporário para armazenar a saída
+    TEMP_DIR=$(mktemp -d)
+    TEMP_FILE="$TEMP_DIR/output.txt"
+    
+    # Executar comando em um subshell com diretório temporário para manter contexto de diretório
+    # A opção -l executa login shell para garantir o mesmo ambiente de login
+    # Redirecionar saída padrão e erro para arquivo temporário
+    (cd "$PWD" && eval "$COMMAND" > "$TEMP_FILE" 2>&1)
+    
+    # Ler a saída do arquivo
+    OUTPUT=$(cat "$TEMP_FILE")
+    
+    # Limpar arquivos temporários
+    rm -rf "$TEMP_DIR"
     
     # Se não houver saída, usar uma mensagem padrão
     if [ -z "$OUTPUT" ]; then
         OUTPUT="Comando executado com sucesso, sem saída."
     fi
     
+    # Enviar saída de comando imediatamente
     send_command_output "$COMMAND" "$OUTPUT"
 }
 
@@ -138,6 +150,9 @@ update_config() {
     fi
 }
 
+# Variável para controlar a execução de comandos
+EXECUTING_COMMAND=false
+
 # Loop principal
 main() {
     # Enviar relatório de status inicial
@@ -145,22 +160,32 @@ main() {
     
     # Loop principal
     while true; do
-        # Enviar heartbeat
-        send_heartbeat
+        # Enviar heartbeat em paralelo para não bloquear
+        send_heartbeat &
         
-        # Obter e executar comando
-        COMMAND=$(get_command)
-        if [ ! -z "$COMMAND" ]; then
-            execute_command "$COMMAND"
+        # Obter comando do servidor se não estiver executando outro comando
+        if [ "$EXECUTING_COMMAND" = false ]; then
+            COMMAND=$(get_command)
+            if [ ! -z "$COMMAND" ]; then
+                # Marcar que está executando um comando
+                EXECUTING_COMMAND=true
+                
+                # Executar comando em background para não bloquear o loop principal
+                (
+                    execute_command "$COMMAND"
+                    # Após terminar a execução, liberar para o próximo comando
+                    EXECUTING_COMMAND=false
+                ) &
+            fi
         fi
         
-        # Atualizar configuração
-        update_config
+        # Atualizar configuração (em background)
+        update_config &
         
         # Informar que o script está atualizado
         send_log "Script remoto atualizado." "script_update"
         
-        # Aguardar intervalo de tempo
+        # Aguardar intervalo de tempo mais curto para comandos
         sleep $RETRY_INTERVAL
     done
 }
