@@ -261,6 +261,18 @@ while ($true) {
                 timestamp = int(time.time())
                 self.pending_commands[hostname][timestamp] = command
                 
+                # Armazenar um log com o comando sendo enviado para rastreamento
+                # Este log será usado para mostrar o comando correto na saída
+                if hostname not in self.logs:
+                    self.logs[hostname] = []
+                
+                self.logs[hostname].append({
+                    'command': command,
+                    'output': "Aguardando execução...",
+                    'timestamp': timestamp,
+                    'pending': True
+                })
+                
                 return command
             return ""
 
@@ -279,22 +291,42 @@ while ($true) {
             
             # Verificar se há um comando pendente próximo ao timestamp
             real_command = command
-            if hostname in self.pending_commands:
-                # Procurar um comando próximo ao timestamp (dentro de 10 segundos)
-                for cmd_timestamp, cmd in self.pending_commands[hostname].items():
+            
+            # Procurar um log pendente com o mesmo comando ou verificar comandos pendentes
+            pending_log_found = False
+            
+            # Verificar primeiro em logs pendentes que já tenham o comando correto
+            if hostname in self.logs:
+                for i, log in enumerate(self.logs[hostname]):
+                    # Procurar logs pendentes com o mesmo comando
+                    if log.get('pending') and 'Aguardando execução' in log.get('output', ''):
+                        # Encontrou um log pendente, atualizar em vez de criar um novo
+                        self.logs[hostname][i]['output'] = output
+                        self.logs[hostname][i]['timestamp'] = timestamp
+                        self.logs[hostname][i]['pending'] = False
+                        pending_log_found = True
+                        real_command = log.get('command')
+                        break
+            
+            # Se não encontrou em logs pendentes, verificar em comandos pendentes
+            if not pending_log_found and hostname in self.pending_commands:
+                for cmd_timestamp, cmd in list(self.pending_commands[hostname].items()):
                     # Garantir que ambos sejam do mesmo tipo antes de comparar
                     if isinstance(cmd_timestamp, int) and isinstance(timestamp, int):
-                        if abs(cmd_timestamp - timestamp) < 10:
+                        if abs(cmd_timestamp - timestamp) < 15:  # Aumentado para 15 segundos para mais tolerância
                             real_command = cmd
                             # Remover do dicionário de pendentes após uso
                             del self.pending_commands[hostname][cmd_timestamp]
                             break
             
-            self.logs[hostname].append({
-                'command': real_command,
-                'output': output,
-                'timestamp': timestamp
-            })
+            # Se não encontrou nem em logs pendentes nem em comandos pendentes, criar um novo log
+            if not pending_log_found:
+                self.logs[hostname].append({
+                    'command': real_command,
+                    'output': output,
+                    'timestamp': timestamp,
+                    'pending': False
+                })
         return True
 
     def update_config(self, config_data):
