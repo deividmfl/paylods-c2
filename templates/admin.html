@@ -104,51 +104,44 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-md-6">
-                                <h6>Command Execution</h6>
-                                <div class="mb-3">
-                                    <label for="command-input" class="form-label">Enter Command</label>
-                                    <textarea class="form-control" id="command-input" rows="3" placeholder="Enter PowerShell command..."></textarea>
-                                </div>
-                                <button class="btn btn-primary" id="send-command">Send Command</button>
-                            </div>
-                        </div>
-
-                        <!-- Terminal integrado com área de comando -->
-                        <div class="terminal-container mt-3">
-                            <div class="terminal-header">
-                                <div class="terminal-controls">
-                                    <span class="control-dot red"></span>
-                                    <span class="control-dot yellow"></span>
-                                    <span class="control-dot green"></span>
-                                </div>
-                                <div class="terminal-title">Terminal</div>
-                                <div class="terminal-nav">
-                                    <button class="btn-tab active" id="logs-btn" data-target="#logs-panel">Console</button>
-                                    <button class="btn-tab" id="errors-btn" data-target="#errors-panel">Errors</button>
-                                </div>
-                            </div>
-                            
-                            <div class="terminal-body">
-                                <div class="terminal-panel active" id="logs-panel">
-                                    <div id="logs-content" class="terminal-output">
-                                        <div class="text-muted">Nenhum comando executado ainda...</div>
+                            <div class="col-md-12">
+                                <!-- Terminal moderno -->
+                                <div class="terminal-container">
+                                    <div class="terminal-header">
+                                        <div class="terminal-controls">
+                                            <span class="control-dot red"></span>
+                                            <span class="control-dot yellow"></span>
+                                            <span class="control-dot green"></span>
+                                        </div>
+                                        <div class="terminal-title">Terminal</div>
+                                        <div class="terminal-nav">
+                                            <button class="btn-tab active" id="logs-btn" data-target="#logs-panel">Console</button>
+                                            <button class="btn-tab" id="errors-btn" data-target="#errors-panel">Errors</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="terminal-panel" id="errors-panel">
-                                    <div id="errors-content" class="terminal-output">
-                                        <div class="text-muted">Nenhum erro reportado.</div>
+                                    
+                                    <div class="terminal-body">
+                                        <div class="terminal-panel active" id="logs-panel">
+                                            <div id="logs-content" class="terminal-output">
+                                                <div class="dim-text">Nenhum comando executado ainda...</div>
+                                            </div>
+                                        </div>
+                                        <div class="terminal-panel" id="errors-panel">
+                                            <div id="errors-content" class="terminal-output">
+                                                <div class="dim-text">Nenhum erro reportado.</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="terminal-input-area">
+                                            <div class="prompt-wrapper">
+                                                <span class="prompt-symbol">$</span>
+                                                <input type="text" id="command-input" class="terminal-input-field" placeholder="Digite um comando PowerShell..." />
+                                            </div>
+                                            <button class="terminal-run-btn" id="send-command">
+                                                <i class="bi bi-play-fill"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                                
-                                <div class="terminal-input-area">
-                                    <div class="prompt-wrapper">
-                                        <span class="prompt-symbol">$</span>
-                                        <input type="text" id="command-input" class="terminal-input-field" placeholder="Digite um comando PowerShell..." />
-                                    </div>
-                                    <button class="terminal-run-btn" id="send-command">
-                                        <i class="bi bi-play-fill"></i>
-                                    </button>
                                 </div>
                             </div>
                         </div>
