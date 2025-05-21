@@ -72,8 +72,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fetch and display hosts
     function fetchHosts() {
+        // Configuração para incluir credenciais Basic Auth
+        const headers = new Headers();
+        const credentials = btoa('admin:admin'); // Usando as credenciais padrão
+        headers.append('Authorization', 'Basic ' + credentials);
+        
         fetch('/api/hosts', {
-            credentials: 'same-origin'
+            credentials: 'same-origin',
+            headers: headers
         })
             .then(response => {
                 if (!response.ok) {
