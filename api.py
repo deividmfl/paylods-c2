@@ -316,8 +316,9 @@ def api_send_command():
         if hostname in storage.commands:
             storage.commands[hostname] = []
             
-    # Adicionar o novo comando
+    # Adicionar o novo comando (sem duplicação)
     storage.add_command(hostname, command)
+    # Descomentamos apenas um log para evitar duplicação
     log_event(f"Command queued for {hostname}: {command}")
     
     return jsonify({"status": "success"}), 200

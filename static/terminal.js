@@ -33,11 +33,16 @@ document.addEventListener('DOMContentLoaded', function() {
         tab.classList.add('active');
     }
 
+    // Controle de envio de comandos
+    let isCommandSending = false;
+
     function sendTerminalCommand() {
         const commandInput = document.getElementById('command-input');
         const command = commandInput.value.trim();
         
-        if (command) {
+        // Evitar envio duplicado do mesmo comando
+        if (command && !isCommandSending) {
+            isCommandSending = true;
             const hostname = document.getElementById('detail-hostname').textContent;
             
             // Adicionar comando ao terminal
@@ -59,9 +64,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     console.error('Erro ao enviar comando:', data.message);
                 }
+                // Resetar flag ao finalizar
+                isCommandSending = false;
             })
             .catch(error => {
                 console.error('Erro na requisição:', error);
+                isCommandSending = false;
             });
             
             // Limpar o campo de entrada
