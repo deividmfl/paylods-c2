@@ -73,7 +73,7 @@ send_error() {
     
     JSON="{\"hostname\":\"$HOSTNAME\",\"error\":\"$ERROR_MESSAGE\",\"time\":$TIMESTAMP}"
     
-    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "http://${NGROK_HOST}:${NGROK_PORT}/error"
+    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "$API_URL/error"
     
     if [ $? -ne 0 ] && [ "$SILENT_MODE" = false ]; then
         echo "Falha ao enviar erro: $ERROR_MESSAGE"
@@ -90,7 +90,7 @@ send_command_output() {
 get_command() {
     HOSTNAME=$(hostname)
     
-    COMMAND=$(curl -s "http://${NGROK_HOST}:${NGROK_PORT}/command?hostname=$HOSTNAME")
+    COMMAND=$(curl -s "$API_URL/command?hostname=$HOSTNAME")
     
     echo "$COMMAND"
 }
@@ -138,7 +138,7 @@ execute_command() {
     echo "$JSON" > /tmp/command_output.json
     
     # Enviar diretamente para o endpoint de saída de comando (sem log adicional)
-    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "http://${NGROK_HOST}:${NGROK_PORT}/report/output"
+    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "$API_URL/report/output"
     
     # Registrar que o comando foi executado (evita mensagens duplicadas)
     echo "Comando $COMMAND executado com sucesso."
@@ -146,13 +146,20 @@ execute_command() {
 
 # Atualizar configuração
 update_config() {
-    CONFIG=$(curl -s "http://${NGROK_HOST}:${NGROK_PORT}/config")
+    CONFIG=$(curl -s "$API_URL/config")
     
     if [ $? -eq 0 ]; then
-        NGROK_HOST=$(echo "$CONFIG" | grep -o '"ngrok_host":"[^"]*"' | cut -d'"' -f4)
-        NGROK_PORT=$(echo "$CONFIG" | grep -o '"ngrok_port":[0-9]*' | cut -d':' -f2)
-        RETRY_INTERVAL=$(echo "$CONFIG" | grep -o '"retry_interval":[0-9]*' | cut -d':' -f2)
-        SILENT_MODE=$(echo "$CONFIG" | grep -o '"silent_mode":(true|false)' | cut -d':' -f2)
+        RETRY_INTERVAL_NEW=$(echo "$CONFIG" | grep -o '"retry_interval":[0-9]*' | cut -d':' -f2)
+        SILENT_MODE_NEW=$(echo "$CONFIG" | grep -o '"silent_mode":(true|false)' | cut -d':' -f2)
+        
+        # Atualizar apenas configurações válidas (não precisamos mais de host/port)
+        if [ ! -z "$RETRY_INTERVAL_NEW" ]; then
+            RETRY_INTERVAL=$RETRY_INTERVAL_NEW
+        fi
+        
+        if [ ! -z "$SILENT_MODE_NEW" ]; then
+            SILENT_MODE=$SILENT_MODE_NEW
+        fi
     elif [ "$SILENT_MODE" = false ]; then
         echo "Falha ao atualizar configuração"
     fi
