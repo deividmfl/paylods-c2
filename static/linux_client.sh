@@ -9,8 +9,7 @@ if [ "$(id -u)" -eq 0 ]; then
     IS_ROOT=true
 fi
 
-NGROK_HOST="127.0.0.1"
-NGROK_PORT=5000
+API_URL="https://7f3e0d9a-f5ab-4d9a-a7ad-04259223c4d9-00-3dsgchxw17fqz.janeway.replit.dev"
 RETRY_INTERVAL=2
 SILENT_MODE=false
 
@@ -29,7 +28,7 @@ get_host_info() {
 send_status_report() {
     HOST_INFO=$(get_host_info)
     
-    curl -s -X POST -H "Content-Type: application/json" -d "$HOST_INFO" "http://${NGROK_HOST}:${NGROK_PORT}/report/status"
+    curl -s -X POST -H "Content-Type: application/json" -d "$HOST_INFO" "$API_URL/report/status"
     
     if [ $? -ne 0 ] && [ "$SILENT_MODE" = false ]; then
         echo "Falha ao enviar relatório de status"
@@ -43,7 +42,7 @@ send_heartbeat() {
     
     JSON="{\"hostname\":\"$HOSTNAME\",\"time\":$TIMESTAMP}"
     
-    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "http://${NGROK_HOST}:${NGROK_PORT}/heartbeat"
+    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "$API_URL/heartbeat"
     
     if [ $? -ne 0 ] && [ "$SILENT_MODE" = false ]; then
         echo "Falha ao enviar heartbeat"
@@ -59,7 +58,7 @@ send_log() {
     
     JSON="{\"hostname\":\"$HOSTNAME\",\"log\":\"$LOG_MESSAGE\",\"time\":$TIMESTAMP,\"type\":\"$LOG_TYPE\"}"
     
-    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "http://${NGROK_HOST}:${NGROK_PORT}/report/logs"
+    curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "$API_URL/report/logs"
     
     if [ $? -ne 0 ] && [ "$SILENT_MODE" = false ]; then
         echo "Falha ao enviar log: $LOG_MESSAGE"
