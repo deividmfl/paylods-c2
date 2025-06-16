@@ -1,0 +1,109 @@
+Se eu fosse criar um prompt para uma IA (ou mesmo um plano prático manual) para desenvolver um payload totalmente customizado, evasivo e compatível com Mythic (backend controlável), voltado para Windows e Linux, ele incluiria o seguinte roteiro detalhado:
+
+---
+
+### 🧠 **Objetivo do Prompt/Plano**
+
+**Criar um payload C2 totalmente customizado e evasivo, com suporte a Mythic, funcional em Windows e Linux, controlável via UI do Mythic.**
+
+---
+
+### ✅ **Etapas Gerais**
+
+---
+
+#### 🔧 1. **Criar um novo agente em Go ou Nim**
+
+* Linguagens recomendadas: **Go** (com suporte ao [Garble](https://github.com/burrowers/garble)) ou **Nim** (compilável com opsec).
+* Estrutura:
+
+  * `Payload_Type/<nome_do_agente>/`
+  * Scripts Python para interagir com Mythic
+  * Código principal em Go ou Nim que implementa comandos C2 (sleep, exec, upload, download, etc.)
+
+Prompt para IA:
+
+> "Crie um payload C2 em Go com suporte a Linux e Windows, com as seguintes funções mínimas: execução de comandos, upload/download de arquivos, beacon com jitter, e suporte a C2 Profile via HTTP. O agente deve ter uma estrutura compatível com o Mythic (Payload\_Type) e utilizar padrões de evasão como syscalls diretas e string encryption."
+
+---
+
+#### 🛠 2. **Integrar com o Mythic (Payload\_Type e comando RPC)**
+
+* Crie os arquivos:
+
+  * `mythic_service.py`
+  * `agent_code.go` ou `main.nim`
+  * `commands/*` para cada comando (exec, sleep, etc.)
+* Use como base os agentes [Hermes](Go), [Medusa](Rust), ou [Poseidon](Nim)
+* Use `mythic-cli install folder /path/para/seu_agente`
+
+Prompt para IA:
+
+> "Escreva os arquivos necessários para criar um Payload\_Type para o Mythic C2, com base no agente em Go anterior. Inclua o `mythic_service.py` com o registro dos comandos e parâmetros. Estrutura compatível com a CLI do Mythic."
+
+---
+
+#### 🧪 3. **Testar e registrar no Mythic**
+
+* `sudo ./mythic-cli install folder Payload_Type/<nome_agente>`
+* `sudo ./mythic-cli start`
+* Acesse UI e veja se o agente aparece.
+
+---
+
+#### 🧼 4. **Aplicar técnicas de ofuscação**
+
+* **Go (Linux/Windows):**
+
+  * Use [`garble`](https://github.com/burrowers/garble): `garble build -ldflags="-s -w" -o payload.exe`
+  * Use `-tags netgo` e `-trimpath`
+* **Packing adicional**:
+
+  * UPX modificado: `upx --best --lzma --ultra-brute payload.exe`
+  * Crypter pessoal ou crypter FUD (por exemplo com Nim, Shellcode loader, etc.)
+
+Prompt para IA:
+
+> "Aplique técnicas de evasão no payload compilado: ofusque strings, remova símbolos de debug, e empacote com UPX. O objetivo é criar um binário que execute as funções descritas, mas que tenha baixa detecção por antivírus."
+
+---
+
+#### 🌐 5. **Usar um C2 Profile discreto**
+
+* Use o C2 Profile `http` do Mythic
+* Configure:
+
+  * Host: tunnel/ngrok/Cloudflare Tunnel reverso
+  * Headers customizados
+  * URIs curtas (`/index`, `/data`)
+  * AES para criptografia
+
+Prompt para IA:
+
+> "Configure um perfil C2 em HTTP com URIs genéricas, headers fake, e criptografia AES. Deve se comunicar via beacon e suportar jitter entre 10% a 30%."
+
+---
+
+#### 💡 6. **Fazer build no Mythic e empacotar**
+
+* Via UI, selecione:
+
+  * OS: Windows/Linux
+  * Agent: seu agente
+  * C2 Profile: http (ou outro)
+* Após gerar, ofusque:
+
+  ```bash
+  garble build -ldflags="-s -w" -o payload.exe
+  upx --best --lzma payload.exe
+  ```
+
+---
+
+### ✍️ Dica final de Prompt Único
+
+> “Crie um payload em Go evasivo e compatível com o Mythic C2 para Windows e Linux. Ele deve suportar exec, download, upload, beacon, jitter e comunicação HTTP com AES. Ofusque todas as strings e use técnicas anti-debug. Empacote com garble e UPX. Geração compatível com o backend Mythic e sua UI.”
+
+---
+
+Se quiser, posso iniciar a estrutura do agente ou gerar exemplos de comandos e arquivos para você começar com base nesse plano. Deseja que eu inicie?
