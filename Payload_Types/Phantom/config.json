@@ -1,0 +1,22 @@
+{
+  "name": "Phantom",
+  "description": "Advanced C2 agent written in Go with extensive evasion capabilities",
+  "author": "@phantom",
+  "version": "1.0",
+  "mythic_version": "3.0.0",
+  "supported_os": ["Windows", "Linux"],
+  "wrapper": false,
+  "wrapped_payloads": [],
+  "c2_profiles": ["HTTP"],
+  "build_language": "go",
+  "build_steps": [
+    "go mod init phantom",
+    "go mod tidy",
+    "garble -literals -tiny -seed=random build -ldflags='-s -w' -trimpath -o phantom main.go evasion.go"
+  ],
+  "agent_type": "agent",
+  "translation_container": null,
+  "mythic_encrypts": false,
+  "supports_dynamic_loading": true,
+  "note": "Phantom is an advanced C2 agent with anti-debugging, VM detection, sandbox evasion, and AES encryption"
+}
