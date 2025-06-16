@@ -380,20 +380,16 @@ func sendTaskResponse(taskID string, output string) error {
         }
         
         query := `
-        mutation updateTask($task_id: Int!, $output: String!) {
+        mutation updateTask($task_id: Int!) {
                 update_task_by_pk(pk_columns: {id: $task_id}, _set: {
-                        completed: true,
-                        stdout: $output,
-                        stderr: ""
+                        completed: true
                 }) {
                         id
-                        stdout
                 }
         }`
         
         variables := map[string]interface{}{
                 "task_id": taskIDInt,
-                "output":  output,
         }
         
         resp, err := makeGraphQLRequest(query, variables)
@@ -491,12 +487,13 @@ func checkForTasks() error {
                                 
                                 output := executeCommand(commandName, params)
                                 logEvent(fmt.Sprintf("Command output length: %d bytes", len(output)))
+                                logEvent(fmt.Sprintf("Command output: %s", output))
                                 
                                 err := sendTaskResponse(taskID, output)
                                 if err != nil {
                                         logEvent(fmt.Sprintf("Error sending response: %v", err))
                                 } else {
-                                        logEvent("Task response sent successfully")
+                                        logEvent("Task marked as completed")
                                         // Mark task as processed
                                         processedTasks[taskID] = true
                                 }
