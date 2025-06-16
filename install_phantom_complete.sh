@@ -1,4 +1,4 @@
-#!/bin/bash
+    #!/bin/bash
 
 echo "[+] Script completo de instalação do Phantom no Mythic"
 
