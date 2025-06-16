@@ -1,0 +1,77 @@
+# nano create_phantom.sh
+root@ubuntu-4gb-hel1-2:~/Mythic# sudo bash create_phantom.sh 
+[+] Criando Phantom baseado na estrutura do Apollo
+[+] Copiando estrutura do Apollo...
+[+] Atualizando docker-compose...
+[+] Personalizando Phantom...
+sed: can't read InstalledServices/phantom/config.json: No such file or directory
+sed: can't read InstalledServices/phantom/config.json: No such file or directory
+sed: can't read InstalledServices/phantom/config.json: No such file or directory
+sed: can't read InstalledServices/phantom/Payload_Type/__init__.py: No such file or directory
+sed: can't read InstalledServices/phantom/Payload_Type/__init__.py: No such file or directory
+tee: InstalledServices/phantom/agent_code/main.go: No such file or directory
+tee: InstalledServices/phantom/agent_code/go.mod: No such file or directory
+[+] Registrando Phantom no Mythic...
+2025/06/16 15:25:40 [-] Failed to find config.json in cloned down repo
+[+] Iniciando container Phantom...
+Creating volume "mythic_documentation_volume" with default driver
+Creating volume "mythic_jupyter_volume" with default driver
+Creating volume "mythic_nginx_volume_config" with default driver
+Creating volume "mythic_nginx_volume_ssl" with default driver
+Creating volume "mythic_postgres_volume" with default driver
+Creating volume "mythic_rabbitmq_volume" with default driver
+Creating volume "mythic_react_volume_config" with default driver
+Creating volume "mythic_react_volume_public" with default driver
+Creating volume "mythic_server_volume" with default driver
+WARNING: Found orphan containers (apollo) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up.
+Pulling phantom (ghcr.io/mythicagents/phantom:v0.0.0.45)...
+ERROR: Head "https://ghcr.io/v2/mythicagents/phantom/manifests/v0.0.0.45": denied
+[+] Phantom criado e instalado com sucesso!
+[+] Verificando status...
+MYTHIC SERVICE          WEB ADDRESS                                                     BOUND LOCALLY
+Nginx (Mythic Web UI)   https://127.0.0.1:7443                                           false
+Mythic Backend Server   http://127.0.0.1:17443                                           false
+Hasura GraphQL Console  http://127.0.0.1:8080                                            true
+Jupyter Console         http://127.0.0.1:8888                                            true
+Internal Documentation  http://127.0.0.1:8090                                            true
+
+ADDITIONAL SERVICES     ADDRESS                                                         BOUND LOCALLY
+Postgres Database       postgresql://mythic_user:password@127.0.0.1:5432/mythic_db       true
+React Server            http://127.0.0.1:3000/new                                        true
+RabbitMQ                amqp://mythic_user:password@127.0.0.1:5672                       false
+
+Mythic Main Services
+CONTAINER NAME          STATE           STATUS                          MOUNT   PORTS
+mythic_documentation    running         Up 34 minutes (healthy)         local   8090/tcp -> 127.0.0.1:8090
+mythic_graphql          running         Up 2 hours (healthy)            N/A     8080/tcp -> 127.0.0.1:8080
+mythic_jupyter          running         Up 2 hours (healthy)            local   8888/tcp -> 127.0.0.1:8888
+mythic_nginx            running         Up 2 hours (healthy)            local   7443/tcp -> :::7443, 7443
+mythic_postgres         running         Up 2 hours (healthy)            local   5432/tcp -> 127.0.0.1:5432
+mythic_rabbitmq         running         Up 2 hours (healthy)            local   5672/tcp -> :::5672, 5672
+mythic_react            running         Up 2 hours (healthy)            local   3000/tcp -> 127.0.0.1:3000
+mythic_server           running         Up 2 hours (healthy)            local   7000/tcp -> 127.0.0.1:7000, 7001/tcp -> 127.0.0.1:7001, 7002/tcp -> 127.0.0.1:7002, 7003/tcp -> 127.0.0.1:7003, 7004/tcp -> 127.0.0.1:7004, 7005/tcp -> 127.0.0.1:7005, 7006/tcp -> 127.0.0.1:7006, 7007/tcp -> 127.0.0.1:7007, 7008/tcp -> 127.0.0.1:7008, 7009/tcp -> 127.0.0.1:7009, 7010/tcp -> 127.0.0.1:7010, 17443/tcp -> :::17443, 17444/tcp -> :::17444, 17443, 17444
+
+Installed Services
+CONTAINER NAME  STATE           STATUS                  MOUNT
+apollo          running         Up 34 minutes           local
+http            running         Up 2 hours              local
+poseidon        running         Up About an hour        local
+
+2025/06/16 15:25:41 [*] If you are using a remote PayloadType or C2Profile, they will need certain environment variables to properly connect to Mythic.
+2025/06/16 15:25:41     Use 'sudo ./mythic-cli config service' for configs for these services.
+
+[+] Phantom está pronto para uso!
+    - Acesse: https://localhost:7443
+    - Crie payload tipo 'phantom'
+    - Configure parâmetros de build
+root@ubuntu-4gb-hel1-2:~/Mythic# lx
+lx: command not found
+root@ubuntu-4gb-hel1-2:~/Mythic# ls
+CHANGELOG.MD          final_phantom_fix.sh      install_docker_kali.sh       jupyter-docker  Mythic_CLI           nginx-docker              prometheus-docker  simple_phantom_install.sh
+create_phantom.sh     grafana-docker            install_docker_ubuntu.sh     LICENSE         mythic-docker        Payload_Types             rabbitmq-docker    VERSION
+docker-compose.yml    hasura-docker             InstalledServices            Makefile        mythic-react-docker  postgres-docker           README.md
+documentation-docker  install_docker_debian.sh  install_phantom_complete.sh  mythic-cli      MythicReactUI        postgres-exporter-docker  SECURITY.md
+root@ubuntu-4gb-hel1-2:~/Mythic# ^C
+root@ubuntu-4gb-hel1-2:~/Mythic# ^C
+root@ubuntu-4gb-hel1-2:~/Mythic# ^C
+root@ubuntu-4gb-hel1-2:~/Mythic# 
