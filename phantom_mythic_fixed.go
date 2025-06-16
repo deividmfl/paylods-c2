@@ -382,72 +382,36 @@ func sendTaskResponse(taskID string, output string) error {
                 return fmt.Errorf("Invalid task ID: %v", err)
         }
         
-        // Based on Mythic's standard schema, try the most common response fields
-        responseAttempts := []struct {
-                name string
-                query string
-        }{
-                {
-                        name: "user_output field",
-                        query: `mutation createResponse($task_id: Int!, $output: String!) {
-                                insert_response_one(object: {
-                                        task_id: $task_id,
-                                        user_output: $output
-                                }) {
-                                        id
-                                }
-                        }`,
-                },
-                {
-                        name: "response field", 
-                        query: `mutation createResponse($task_id: Int!, $output: String!) {
-                                insert_response_one(object: {
-                                        task_id: $task_id,
-                                        response: $output
-                                }) {
-                                        id
-                                }
-                        }`,
-                },
-                {
-                        name: "bulk insert with user_output",
-                        query: `mutation createResponse($task_id: Int!, $output: String!) {
-                                insert_response(objects: [{
-                                        task_id: $task_id,
-                                        user_output: $output
-                                }]) {
-                                        affected_rows
-                                }
-                        }`,
-                },
-        }
+        // Log the full output for debugging
+        logEvent(fmt.Sprintf("TASK %s OUTPUT: %s", taskID, output))
         
-        responseSuccess := false
-        for _, attempt := range responseAttempts {
-                responseVars := map[string]interface{}{
-                        "task_id": taskIDInt,
-                        "output": output,
+        // Try creating response with just task_id (minimal required fields)
+        responseQuery := `
+        mutation createResponse($task_id: Int!) {
+                insert_response_one(object: {
+                        task_id: $task_id
+                }) {
+                        id
                 }
-                
-                resp, err := makeGraphQLRequest(attempt.query, responseVars)
-                if err == nil && len(resp.Errors) == 0 {
-                        logEvent(fmt.Sprintf("Response created successfully using: %s", attempt.name))
-                        responseSuccess = true
-                        break
-                } else {
-                        logEvent(fmt.Sprintf("%s failed: %v", attempt.name, resp.Errors))
-                }
+        }`
+        
+        responseVars := map[string]interface{}{
+                "task_id": taskIDInt,
         }
         
-        if !responseSuccess {
-                logEvent("All response creation attempts failed")
+        resp, err := makeGraphQLRequest(responseQuery, responseVars)
+        if err == nil && len(resp.Errors) == 0 {
+                logEvent("Response entry created successfully")
+        } else {
+                logEvent(fmt.Sprintf("Response creation failed: %v", resp.Errors))
         }
         
-        // Always mark task as completed regardless of response creation
+        // Mark task as completed with status
         updateQuery := `
         mutation updateTask($task_id: Int!) {
                 update_task_by_pk(pk_columns: {id: $task_id}, _set: {
-                        completed: true
+                        completed: true,
+                        status: "success"
                 }) {
                         id
                         completed
@@ -461,7 +425,7 @@ func sendTaskResponse(taskID string, output string) error {
         updateResp, err := makeGraphQLRequest(updateQuery, updateVars)
         if err != nil {
                 logEvent(fmt.Sprintf("Failed to update task: %v", err))
-                return nil // Don't fail the entire operation
+                return nil
         }
         
         if len(updateResp.Errors) > 0 {
