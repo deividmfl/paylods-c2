@@ -37,9 +37,9 @@ import (
 )
 
 var (
-    mythicURL = "https://SERVER_IP_PLACEHOLDER:7443"
+    mythicURL = "https://37.27.249.191:7443"
     username  = "mythic_admin"
-    password  = "MYTHIC_PASSWORD_PLACEHOLDER"
+    password  = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
     uuid      = generateUUID()
 )
 
