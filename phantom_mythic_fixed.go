@@ -29,6 +29,7 @@ var (
         agentCallbackID string
         currentDir     string
         agentActive    = true
+        processedTasks = make(map[string]bool)
 )
 
 type GraphQLRequest struct {
@@ -381,8 +382,7 @@ func sendTaskResponse(taskID string, output string) error {
         query := `
         mutation updateTask($task_id: Int!, $output: String!) {
                 update_task_by_pk(pk_columns: {id: $task_id}, _set: {
-                        completed: true,
-                        timestamp: "` + time.Now().Format(time.RFC3339) + `"
+                        completed: true
                 }) {
                         id
                 }
@@ -464,9 +464,15 @@ func checkForTasks() error {
                                 taskID := fmt.Sprintf("%v", taskMap["id"])
                                 taskStatus := fmt.Sprintf("%v", taskMap["status"])
                                 
-                                // Only process submitted tasks
+                                // Only process submitted tasks that haven't been processed yet
                                 if taskStatus != "submitted" {
                                         logEvent(fmt.Sprintf("Skipping task %s with status: %s", taskID, taskStatus))
+                                        continue
+                                }
+                                
+                                // Check if task was already processed
+                                if processedTasks[taskID] {
+                                        logEvent(fmt.Sprintf("Task %s already processed, skipping", taskID))
                                         continue
                                 }
                                 
@@ -494,6 +500,8 @@ func checkForTasks() error {
                                         logEvent(fmt.Sprintf("Error sending response: %v", err))
                                 } else {
                                         logEvent("Task response sent successfully")
+                                        // Mark task as processed
+                                        processedTasks[taskID] = true
                                 }
                         }
                 }
