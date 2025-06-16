@@ -388,7 +388,7 @@ func sendTaskResponse(taskID string, output string) error {
                 }
                 insert_response_one(object: {
                         task_id: $task_id,
-                        response_text: $output
+                        response: $output
                 }) {
                         id
                 }
