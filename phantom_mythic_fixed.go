@@ -379,28 +379,102 @@ func sendTaskResponse(taskID string, output string) error {
                 return fmt.Errorf("Invalid task ID: %v", err)
         }
         
-        query := `
-        mutation updateTask($task_id: Int!) {
-                update_task_by_pk(pk_columns: {id: $task_id}, _set: {
-                        completed: true
-                }) {
-                        id
-                }
-        }`
+        // Create response with multiple schema attempts
+        responseQueries := []string{
+                `mutation createResponse($task_id: Int!, $output: String!) {
+                        insert_response(objects: [{
+                                task_id: $task_id,
+                                response: $output
+                        }]) {
+                                affected_rows
+                        }
+                }`,
+                `mutation createTaskOutput($task_id: Int!, $output: String!) {
+                        insert_taskresponse(objects: [{
+                                task_id: $task_id,
+                                response: $output
+                        }]) {
+                                affected_rows
+                        }
+                }`,
+                `mutation addOutput($task_id: Int!, $output: String!) {
+                        insert_output(objects: [{
+                                task_id: $task_id,
+                                output: $output
+                        }]) {
+                                affected_rows
+                        }
+                }`,
+        }
         
-        variables := map[string]interface{}{
+        responseVars := map[string]interface{}{
                 "task_id": taskIDInt,
+                "output":  output,
         }
         
-        resp, err := makeGraphQLRequest(query, variables)
-        if err != nil {
-                return err
+        responseSuccess := false
+        for i, query := range responseQueries {
+                resp, err := makeGraphQLRequest(query, responseVars)
+                if err == nil && len(resp.Errors) == 0 {
+                        logEvent(fmt.Sprintf("Response created successfully with schema %d", i+1))
+                        responseSuccess = true
+                        break
+                } else {
+                        logEvent(fmt.Sprintf("Schema %d failed: %v", i+1, resp.Errors))
+                }
         }
         
-        if len(resp.Errors) > 0 {
-                logEvent(fmt.Sprintf("Response send errors: %v", resp.Errors))
-        } else {
-                logEvent("Response sent successfully")
+        if !responseSuccess {
+                logEvent("All response schemas failed, trying direct task update with output")
+        }
+        
+        // Update task with output and completion status
+        updateQueries := []string{
+                `mutation updateTaskWithOutput($task_id: Int!, $output: String!) {
+                        update_task_by_pk(pk_columns: {id: $task_id}, _set: {
+                                completed: true,
+                                stdout: $output,
+                                stderr: ""
+                        }) {
+                                id
+                        }
+                }`,
+                `mutation updateTaskComplete($task_id: Int!, $output: String!) {
+                        update_task_by_pk(pk_columns: {id: $task_id}, _set: {
+                                completed: true,
+                                response: $output
+                        }) {
+                                id
+                        }
+                }`,
+                `mutation updateTask($task_id: Int!) {
+                        update_task_by_pk(pk_columns: {id: $task_id}, _set: {
+                                completed: true
+                        }) {
+                                id
+                        }
+                }`,
+        }
+        
+        updateVars := map[string]interface{}{
+                "task_id": taskIDInt,
+                "output":  output,
+        }
+        
+        updateSuccess := false
+        for i, query := range updateQueries {
+                resp, err := makeGraphQLRequest(query, updateVars)
+                if err == nil && len(resp.Errors) == 0 {
+                        logEvent(fmt.Sprintf("Task updated successfully with schema %d", i+1))
+                        updateSuccess = true
+                        break
+                } else {
+                        logEvent(fmt.Sprintf("Update schema %d failed: %v", i+1, resp.Errors))
+                }
+        }
+        
+        if !updateSuccess {
+                return fmt.Errorf("All update attempts failed")
         }
         
         return nil
