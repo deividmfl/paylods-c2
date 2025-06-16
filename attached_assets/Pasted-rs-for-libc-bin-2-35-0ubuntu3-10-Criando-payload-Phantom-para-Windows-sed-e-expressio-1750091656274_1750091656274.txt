@@ -1,0 +1,56 @@
+rs for libc-bin (2.35-0ubuntu3.10) ...
+[+] Criando payload Phantom para Windows...
+sed: -e expression #1, char 63: unterminated `s' command
+[+] Compilando payload para Windows...
+# command-line-arguments
+./phantom_windows.go:17:5: imported and not used: "unsafe"
+# command-line-arguments
+./phantom_windows.go:17:5: imported and not used: "unsafe"
+[+] Aplicando compressão UPX...
+                       Ultimate Packer for eXecutables
+                          Copyright (C) 1996 - 2020
+UPX 3.96        Markus Oberhumer, Laszlo Molnar & John Reiser   Jan 23rd 2020
+
+        File size         Ratio      Format      Name
+   --------------------   ------   -----------   -----------
+
+Packed 0 files.
+                       Ultimate Packer for eXecutables
+                          Copyright (C) 1996 - 2020
+UPX 3.96        Markus Oberhumer, Laszlo Molnar & John Reiser   Jan 23rd 2020
+
+        File size         Ratio      Format      Name
+   --------------------   ------   -----------   -----------
+
+Packed 0 files.
+[+] Payloads gerados com sucesso!
+
+Arquivos criados:
+ls: cannot access 'phantom_*.exe': No such file or directory
+
+Configuração:
+  Mythic URL: https://2a01:4f9:c012:a088::1:7443
+  Senha Mythic: [+] Getting configuration values:
+
+ Setting                Value
+ –––––––                –––––––
+ MYTHIC_ADMIN_PASSWORD  sIUA14frSnPzB4umKe8c0ZKhIDf4a6
+
+Recursos implementados:
+  ✓ Anti-debugging (IsDebuggerPresent)
+  ✓ VM Detection (WMIC)
+  ✓ Conexão HTTPS com Mythic
+  ✓ Compressão UPX
+  ✓ Símbolos removidos (-s -w)
+  ✓ Console oculto (-H windowsgui)
+
+Para usar:
+  1. Copie phantom_x64.exe ou phantom_x86.exe para o sistema Windows
+  2. Execute o arquivo
+  3. O agente aparecerá automaticamente no Mythic
+root@ubuntu-4gb-hel1-2:~/Mythic# ls
+apollo.sh          docker-compose.yml    hasura-docker             InstalledServices            Makefile       mythic-react-docker  postgres-docker           README.md
+CHANGELOG.MD       documentation-docker  install_docker_debian.sh  install_phantom_complete.sh  mythic-cli     MythicReactUI        postgres-exporter-docker  SECURITY.md
+compile.sh         final_phantom_fix.sh  install_docker_kali.sh    jupyter-docker               Mythic_CLI     nginx-docker         prometheus-docker         simple_phantom_install.sh
+create_phantom.sh  grafana-docker        install_docker_ubuntu.sh  LICENSE                      mythic-docker  Payload_Types        rabbitmq-docker           VERSION
+root@ubuntu-4gb-hel1-2:~/Mythic# 
