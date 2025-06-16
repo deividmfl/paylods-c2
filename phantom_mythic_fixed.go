@@ -199,8 +199,9 @@ func getCallbackID() error {
         
         if data, ok := resp.Data["callback"].([]interface{}); ok && len(data) > 0 {
                 if callback, ok := data[0].(map[string]interface{}); ok {
-                        if id, ok := callback["id"].(string); ok {
-                                callbackID = id
+                        // ID comes as float64 from JSON, convert to string
+                        if id, ok := callback["id"].(float64); ok {
+                                callbackID = fmt.Sprintf("%.0f", id)
                                 logEvent(fmt.Sprintf("Callback ID: %s", callbackID))
                         }
                         if agentID, ok := callback["agent_callback_id"].(string); ok {
