@@ -1,0 +1,109 @@
+root@ubuntu-4gb-hel1-2:~/Mythic# # Primeiro, vamos tentar com o script que usa Apollo como base
+sudo bash simple_phantom_install.sh
+[+] Instalação simplificada do Phantom via agente Apollo
+[+] Instalando Apollo como base...
+2025/06/16 14:47:57 [*] Creating temporary directory
+2025/06/16 14:47:57 [*] Cloning https://github.com/MythicAgents/Apollo
+Cloning into '/root/Mythic/tmp'...
+2025/06/16 14:47:58 [*] Parsing config.json
+2025/06/16 14:47:58 [*] Processing Payload Type apollo
+2025/06/16 14:47:58 [*] Copying new version of payload into place
+2025/06/16 14:47:58 [*] Adding service into docker-compose
+2025/06/16 14:47:58 [+] Added apollo to docker-compose
+2025/06/16 14:47:58 [*] Container not running: apollo
+[+] Running 20/1
+ ✔ apollo Pulled            190.4s .7MB / 658.7MB Pulling 190.3s 
+[+] Running 1/1
+ ✔ Container apollo  Started0.2s  
+2025/06/16 14:51:09 [+] Successfully installed service
+2025/06/16 14:51:09 [+] Successfully installed c2
+2025/06/16 14:51:09 [*] Processing Documentation for apollo
+2025/06/16 14:51:09 [*] Copying new documentation into place
+2025/06/16 14:51:09 [+] Successfully installed Payload documentation
+2025/06/16 14:51:09 [+] Successfully installed c2 documentation
+2025/06/16 14:51:09 [+] Successfully installed Wrapper documentation
+2025/06/16 14:51:09 [*] Restarting mythic_documentation container to pull in changes
+2025/06/16 14:51:09 [*] Stopping container: mythic_documentation...
+2025/06/16 14:51:09 [+] Stopped container: mythic_documentation
+2025/06/16 14:51:09 [*] Removing container: mythic_documentation...
+2025/06/16 14:51:09 [+] Removed container: mythic_documentation
+[+] Running 1/1
+ ✔ Container mythic_documentation  Started0.2s  
+2025/06/16 14:51:10 [+] Successfully installed service!
+MYTHIC SERVICE          WEB ADDRESS                                                     BOUND LOCALLY
+Nginx (Mythic Web UI)   https://127.0.0.1:7443                                           false
+Mythic Backend Server   http://127.0.0.1:17443                                           false
+Hasura GraphQL Console  http://127.0.0.1:8080                                            true
+Jupyter Console         http://127.0.0.1:8888                                            true
+Internal Documentation  http://127.0.0.1:8090                                            true
+
+ADDITIONAL SERVICES     ADDRESS                                                         BOUND LOCALLY
+Postgres Database       postgresql://mythic_user:password@127.0.0.1:5432/mythic_db       true
+React Server            http://127.0.0.1:3000/new                                        true
+RabbitMQ                amqp://mythic_user:password@127.0.0.1:5672                       false
+
+Mythic Main Services
+CONTAINER NAME          STATE           STATUS                  MOUNT   PORTS
+mythic_documentation    running         Up 5 seconds (healthy)  local   8090/tcp -> 127.0.0.1:8090
+mythic_graphql          running         Up 2 hours (healthy)    N/A     8080/tcp -> 127.0.0.1:8080
+mythic_jupyter          running         Up 2 hours (healthy)    local   8888/tcp -> 127.0.0.1:8888
+mythic_nginx            running         Up 2 hours (healthy)    local   7443/tcp -> :::7443, 7443
+mythic_postgres         running         Up 2 hours (healthy)    local   5432/tcp -> 127.0.0.1:5432
+mythic_rabbitmq         running         Up 2 hours (healthy)    local   5672/tcp -> :::5672, 5672
+mythic_react            running         Up 2 hours (healthy)    local   3000/tcp -> 127.0.0.1:3000
+mythic_server           running         Up 2 hours (healthy)    local   7000/tcp -> 127.0.0.1:7000, 7001/tcp -> 127.0.0.1:7001, 7002/tcp -> 127.0.0.1:7002, 7003/tcp -> 127.0.0.1:7003, 7004/tcp -> 127.0.0.1:7004, 7005/tcp -> 127.0.0.1:7005, 7006/tcp -> 127.0.0.1:7006, 7007/tcp -> 127.0.0.1:7007, 7008/tcp -> 127.0.0.1:7008, 7009/tcp -> 127.0.0.1:7009, 7010/tcp -> 127.0.0.1:7010, 17443/tcp -> :::17443, 17444/tcp -> :::17444, 17443, 17444
+
+Installed Services
+CONTAINER NAME  STATE           STATUS                  MOUNT
+apollo          running         Up 6 seconds            local
+http            running         Up About an hour        local
+poseidon        running         Up 42 minutes           local
+
+2025/06/16 14:51:15 [*] If you are using a remote PayloadType or C2Profile, they will need certain environment variables to properly connect to Mythic.
+2025/06/16 14:51:15     Use 'sudo ./mythic-cli config service' for configs for these services.
+[+] Apollo instalado. Agora criando Phantom customizado...
+cp: cannot stat 'Payload_Types/apollo/*': No such file or directory
+sed: can't read Payload_Types/phantom/Payload_Type/__init__.py: No such file or directory
+sed: can't read Payload_Types/phantom/Payload_Type/__init__.py: No such file or directory
+sed: can't read Payload_Types/phantom/config.json: No such file or directory
+sed: can't read Payload_Types/phantom/config.json: No such file or directory
+sed: can't read Payload_Types/phantom/config.json: No such file or directory
+[+] Instalando Phantom customizado...
+2025/06/16 14:51:16 [-] Failed to find config.json in cloned down repo
+MYTHIC SERVICE          WEB ADDRESS                                                     BOUND LOCALLY
+Nginx (Mythic Web UI)   https://127.0.0.1:7443                                           false
+Mythic Backend Server   http://127.0.0.1:17443                                           false
+Hasura GraphQL Console  http://127.0.0.1:8080                                            true
+Jupyter Console         http://127.0.0.1:8888                                            true
+Internal Documentation  http://127.0.0.1:8090                                            true
+
+ADDITIONAL SERVICES     ADDRESS                                                         BOUND LOCALLY
+Postgres Database       postgresql://mythic_user:password@127.0.0.1:5432/mythic_db       true
+React Server            http://127.0.0.1:3000/new                                        true
+RabbitMQ                amqp://mythic_user:password@127.0.0.1:5672                       false
+
+Mythic Main Services
+CONTAINER NAME          STATE           STATUS                  MOUNT   PORTS
+mythic_documentation    running         Up 5 seconds (healthy)  local   8090/tcp -> 127.0.0.1:8090
+mythic_graphql          running         Up 2 hours (healthy)    N/A     8080/tcp -> 127.0.0.1:8080
+mythic_jupyter          running         Up 2 hours (healthy)    local   8888/tcp -> 127.0.0.1:8888
+mythic_nginx            running         Up 2 hours (healthy)    local   7443/tcp -> :::7443, 7443
+mythic_postgres         running         Up 2 hours (healthy)    local   5432/tcp -> 127.0.0.1:5432
+mythic_rabbitmq         running         Up 2 hours (healthy)    local   5672/tcp -> :::5672, 5672
+mythic_react            running         Up 2 hours (healthy)    local   3000/tcp -> 127.0.0.1:3000
+mythic_server           running         Up 2 hours (healthy)    local   7000/tcp -> 127.0.0.1:7000, 7001/tcp -> 127.0.0.1:7001, 7002/tcp -> 127.0.0.1:7002, 7003/tcp -> 127.0.0.1:7003, 7004/tcp -> 127.0.0.1:7004, 7005/tcp -> 127.0.0.1:7005, 7006/tcp -> 127.0.0.1:7006, 7007/tcp -> 127.0.0.1:7007, 7008/tcp -> 127.0.0.1:7008, 7009/tcp -> 127.0.0.1:7009, 7010/tcp -> 127.0.0.1:7010, 17443/tcp -> :::17443, 17444/tcp -> :::17444, 17443, 17444
+
+Installed Services
+CONTAINER NAME  STATE           STATUS                  MOUNT
+apollo          running         Up 6 seconds            local
+http            running         Up About an hour        local
+poseidon        running         Up 42 minutes           local
+
+2025/06/16 14:51:16 [*] If you are using a remote PayloadType or C2Profile, they will need certain environment variables to properly connect to Mythic.
+2025/06/16 14:51:16     Use 'sudo ./mythic-cli config service' for configs for these services.
+[+] Instalação concluída!
+[+] Para usar:
+    1. sudo ./mythic-cli start
+    2. Acesse https://localhost:7443
+    3. Crie payload 'phantom'
+root@ubuntu-4gb-hel1-2:~/Mythic# 
