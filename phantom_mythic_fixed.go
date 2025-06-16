@@ -382,15 +382,12 @@ func sendTaskResponse(taskID string, output string) error {
         query := `
         mutation updateTask($task_id: Int!, $output: String!) {
                 update_task_by_pk(pk_columns: {id: $task_id}, _set: {
-                        completed: true
+                        completed: true,
+                        stdout: $output,
+                        stderr: ""
                 }) {
                         id
-                }
-                insert_response_one(object: {
-                        task_id: $task_id,
-                        response: $output
-                }) {
-                        id
+                        stdout
                 }
         }`
         
