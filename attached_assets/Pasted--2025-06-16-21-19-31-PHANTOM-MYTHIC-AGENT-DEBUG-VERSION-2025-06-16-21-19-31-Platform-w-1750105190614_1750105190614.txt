@@ -1,0 +1,153 @@
+[2025-06-16 21:19:31] === PHANTOM MYTHIC AGENT - DEBUG VERSION ===
+[2025-06-16 21:19:31] Platform: windows 386
+[2025-06-16 21:19:31] PID: 22620
+[2025-06-16 21:19:31] Mythic URL: https://37.27.249.191:7443/graphql/
+[2025-06-16 21:19:31] Registering callback with Mythic...
+[2025-06-16 21:19:31] ✓ SUCCESSFULLY REGISTERED WITH MYTHIC!
+[2025-06-16 21:19:32] Callback ID: 15
+[2025-06-16 21:19:32] Agent ID: 870a6a20-4e99-44e3-bf4e-6666817cccdf
+[2025-06-16 21:19:32] Agent ready - commands will be processed
+[2025-06-16 21:19:32] Registration successful - Callback ID: 15
+[2025-06-16 21:19:32] Starting main task processing loop...
+[2025-06-16 21:19:32] Checking for new tasks...
+[2025-06-16 21:19:32] Querying tasks for callback ID: 15
+[2025-06-16 21:19:32] No new tasks found
+[2025-06-16 21:19:32] Sleeping for 3 seconds...
+[2025-06-16 21:19:35] Checking for new tasks...
+[2025-06-16 21:19:35] Querying tasks for callback ID: 15
+[2025-06-16 21:19:35] No new tasks found
+[2025-06-16 21:19:35] Sleeping for 3 seconds...
+[2025-06-16 21:19:38] Checking for new tasks...
+[2025-06-16 21:19:38] Querying tasks for callback ID: 15
+[2025-06-16 21:19:38] Found 1 task(s)
+[2025-06-16 21:19:38] Processing task 36: shell with params: dir
+[2025-06-16 21:19:38] Executing command: shell with params: dir
+[2025-06-16 21:19:38] Command output length: 3528 bytes
+[2025-06-16 21:19:38] Command output:  Volume in drive C has no label.
+ Volume Serial Number is 9ABB-4AD8
+
+ Directory of C:\Users\micka\Downloads
+
+06/16/2025  09:19 PM    <DIR>          .
+06/16/2025  09:19 PM    <DIR>          ..
+01/15/2025  11:21 PM         6,312,616 Alienware-Command-Center-Application_WXY88_WIN_5.9.2.0_A00.exe
+01/15/2025  11:22 PM     1,176,047,872 Alienware-Command-Center-Full-Installer_880VH_WIN_5.9.2.0_A00.EXE
+01/15/2025  11:21 PM        10,224,488 Alienware_x15_x17_R1_1.26.0.exe
+01/15/2025  11:48 PM         4,925,568 Battle.net-Setup.exe
+01/15/2025  11:21 PM        33,312,840 Dell-Alienware-Update-Windows-Universal-Application_6F25R_WIN_5.4.0_A00.EXE
+01/15/2025  11:21 PM        23,568,160 Dell-Update-Alienware-Update-Application_3T5JX_WIN_4.6.0_A00_02.EXE
+01/16/2025  02:05 AM       203,468,800 EpicInstaller-17.2.0-a325d1cef00d4f1da589bf3735a79aab.msi
+01/15/2025  11:36 PM           373,280 Firefox Installer.exe
+06/12/2025  05:07 PM    <DIR>          FirefoxPortable
+06/12/2025  05:03 PM       153,271,296 FirefoxPortable_139.0.4_English.exe.exe
+06/12/2025  05:04 PM       153,271,296 FirefoxPortable_139.0.4_English.paf(1).exe
+01/21/2025  08:58 PM       215,353,816 genymotion-3.8.0-vbox.exe
+01/15/2025  11:21 PM        15,822,328 Intel-Chipset-Device-Software_1XR6H_WIN64_10.1.19949.8616_A00.EXE
+01/15/2025  11:21 PM        12,728,768 Intel-HID-Event-Filter-Driver_78FNP_WIN64_2.2.2.9_A21.EXE
+01/15/2025  11:21 PM        15,474,360 Intel-Integrated-Sensor-Solution-Driver_887T5_WIN64_3.1.0.4477_A01_02.EXE
+01/15/2025  11:21 PM       120,202,888 Intel-Killer-Wireless-1750-1690-1675-1650-Wi-Fi-Driver_KYYTJ_WIN_36.24.1064_A38.EXE
+01/15/2025  11:22 PM       903,647,336 Intel-Management-Engine-Interface-Driver_13HHV_WIN64_2435.6.36.0_A07.EXE
+01/15/2025  11:21 PM        31,747,528 Intel-Rapid-Storage-Technology-Driver_88DM9_WIN64_18.7.6.1010_A00_01.EXE
+01/15/2025  11:21 PM        12,562,560 Intel-Serial-IO-Driver_55PHH_WIN_30.100.2104.1_A01_05.EXE
+01/15/2025  11:22 PM     1,061,962,904 Intel-UHD-Iris-Xe-Graphics-Driver_PDW9X_WIN64_32.0.101.6078_A08.EXE
+06/03/2025  06:06 PM     4,439,457,792 kali-linux-2025.1c-installer-amd64.iso
+01/21/2025  10:35 PM               146 link(1).txt
+01/21/2025  10:35 PM               146 link(2).txt
+01/21/2025  10:35 PM               146 link(3).txt
+01/21/2025  10:35 PM               146 link(4).txt
+01/21/2025  10:34 PM               146 link.txt
+01/15/2025  11:21 PM        15,693,640 Micron-2450-Solid-State-Drive-Firmware-Update_TWN48_WIN64_2450.0007_A00.EXE
+06/08/2025  05:13 PM       219,211,160 MullvadVPN-2025.5.exe
+01/15/2025  11:22 PM     1,115,610,064 NVIDIA-GeForce-RTX-3050-Ti-3060-3070-3080-Graphics_K7N12_WIN_32.0.15.6103_A13.EXE
+06/16/2025  09:19 PM             1,289 phantom_fixed.log
+06/16/2025  09:19 PM         5,193,728 phantom_response_fixed_x64.exe
+06/16/2025  06:49 PM         5,256,704 phantom_ssl_bypass_x64.exe
+06/12/2025  05:09 PM         1,492,480 putty.exe
+01/18/2025  02:23 PM         7,591,312 RobloxStudioInstaller.exe
+06/03/2025  06:01 PM         1,687,344 rufus-4.7.exe
+06/12/2025  05:13 PM    <DIR>          shellter
+06/12/2025  04:56 PM           333,534 shellter.zip
+05/09/2025  10:10 AM         2,380,800 SteamSetup.exe
+01/15/2025  11:11 PM         1,237,288 SupportAssistLauncher.exe
+01/21/2025  10:38 PM         6,435,896 winrar-x64-701br.exe
+06/03/2025  07:09 PM        14,050,752 XboxInstaller.exe
+              39 File(s)  9,989,913,217 bytes
+               4 Dir(s)  212,114,558,976 bytes free
+
+[2025-06-16 21:19:38] Sending response for task 36
+[2025-06-16 21:19:39] Schema 1 failed: [{field 'response' not found in type: 'response_insert_input'}]
+[2025-06-16 21:19:39] Schema 2 failed: [{field 'insert_taskresponse' not found in type: 'mutation_root'}]
+[2025-06-16 21:19:39] Schema 3 failed: [{field 'insert_output' not found in type: 'mutation_root'}]
+[2025-06-16 21:19:39] All response schemas failed, trying direct task update with output
+[2025-06-16 21:19:39] Update schema 1 failed: [{field 'stdout' not found in type: 'task_set_input'}]
+[2025-06-16 21:19:40] Update schema 2 failed: [{field 'response' not found in type: 'task_set_input'}]
+[2025-06-16 21:19:40] Update schema 3 failed: [{unexpected variables in variableValues: output}]
+[2025-06-16 21:19:40] Error sending response: All update attempts failed
+[2025-06-16 21:19:40] Sleeping for 3 seconds...
+[2025-06-16 21:19:43] Checking for new tasks...
+[2025-06-16 21:19:43] Querying tasks for callback ID: 15
+[2025-06-16 21:19:43] Found 1 task(s)
+[2025-06-16 21:19:43] Processing task 36: shell with params: dir
+[2025-06-16 21:19:43] Executing command: shell with params: dir
+[2025-06-16 21:19:43] Command output length: 3528 bytes
+[2025-06-16 21:19:43] Command output:  Volume in drive C has no label.
+ Volume Serial Number is 9ABB-4AD8
+
+ Directory of C:\Users\micka\Downloads
+
+06/16/2025  09:19 PM    <DIR>          .
+06/16/2025  09:19 PM    <DIR>          ..
+01/15/2025  11:21 PM         6,312,616 Alienware-Command-Center-Application_WXY88_WIN_5.9.2.0_A00.exe
+01/15/2025  11:22 PM     1,176,047,872 Alienware-Command-Center-Full-Installer_880VH_WIN_5.9.2.0_A00.EXE
+01/15/2025  11:21 PM        10,224,488 Alienware_x15_x17_R1_1.26.0.exe
+01/15/2025  11:48 PM         4,925,568 Battle.net-Setup.exe
+01/15/2025  11:21 PM        33,312,840 Dell-Alienware-Update-Windows-Universal-Application_6F25R_WIN_5.4.0_A00.EXE
+01/15/2025  11:21 PM        23,568,160 Dell-Update-Alienware-Update-Application_3T5JX_WIN_4.6.0_A00_02.EXE
+01/16/2025  02:05 AM       203,468,800 EpicInstaller-17.2.0-a325d1cef00d4f1da589bf3735a79aab.msi
+01/15/2025  11:36 PM           373,280 Firefox Installer.exe
+06/12/2025  05:07 PM    <DIR>          FirefoxPortable
+06/12/2025  05:03 PM       153,271,296 FirefoxPortable_139.0.4_English.exe.exe
+06/12/2025  05:04 PM       153,271,296 FirefoxPortable_139.0.4_English.paf(1).exe
+01/21/2025  08:58 PM       215,353,816 genymotion-3.8.0-vbox.exe
+01/15/2025  11:21 PM        15,822,328 Intel-Chipset-Device-Software_1XR6H_WIN64_10.1.19949.8616_A00.EXE
+01/15/2025  11:21 PM        12,728,768 Intel-HID-Event-Filter-Driver_78FNP_WIN64_2.2.2.9_A21.EXE
+01/15/2025  11:21 PM        15,474,360 Intel-Integrated-Sensor-Solution-Driver_887T5_WIN64_3.1.0.4477_A01_02.EXE
+01/15/2025  11:21 PM       120,202,888 Intel-Killer-Wireless-1750-1690-1675-1650-Wi-Fi-Driver_KYYTJ_WIN_36.24.1064_A38.EXE
+01/15/2025  11:22 PM       903,647,336 Intel-Management-Engine-Interface-Driver_13HHV_WIN64_2435.6.36.0_A07.EXE
+01/15/2025  11:21 PM        31,747,528 Intel-Rapid-Storage-Technology-Driver_88DM9_WIN64_18.7.6.1010_A00_01.EXE
+01/15/2025  11:21 PM        12,562,560 Intel-Serial-IO-Driver_55PHH_WIN_30.100.2104.1_A01_05.EXE
+01/15/2025  11:22 PM     1,061,962,904 Intel-UHD-Iris-Xe-Graphics-Driver_PDW9X_WIN64_32.0.101.6078_A08.EXE
+06/03/2025  06:06 PM     4,439,457,792 kali-linux-2025.1c-installer-amd64.iso
+01/21/2025  10:35 PM               146 link(1).txt
+01/21/2025  10:35 PM               146 link(2).txt
+01/21/2025  10:35 PM               146 link(3).txt
+01/21/2025  10:35 PM               146 link(4).txt
+01/21/2025  10:34 PM               146 link.txt
+01/15/2025  11:21 PM        15,693,640 Micron-2450-Solid-State-Drive-Firmware-Update_TWN48_WIN64_2450.0007_A00.EXE
+06/08/2025  05:13 PM       219,211,160 MullvadVPN-2025.5.exe
+01/15/2025  11:22 PM     1,115,610,064 NVIDIA-GeForce-RTX-3050-Ti-3060-3070-3080-Graphics_K7N12_WIN_32.0.15.6103_A13.EXE
+06/16/2025  09:19 PM             6,055 phantom_fixed.log
+06/16/2025  09:19 PM         5,193,728 phantom_response_fixed_x64.exe
+06/16/2025  06:49 PM         5,256,704 phantom_ssl_bypass_x64.exe
+06/12/2025  05:09 PM         1,492,480 putty.exe
+01/18/2025  02:23 PM         7,591,312 RobloxStudioInstaller.exe
+06/03/2025  06:01 PM         1,687,344 rufus-4.7.exe
+06/12/2025  05:13 PM    <DIR>          shellter
+06/12/2025  04:56 PM           333,534 shellter.zip
+05/09/2025  10:10 AM         2,380,800 SteamSetup.exe
+01/15/2025  11:11 PM         1,237,288 SupportAssistLauncher.exe
+01/21/2025  10:38 PM         6,435,896 winrar-x64-701br.exe
+06/03/2025  07:09 PM        14,050,752 XboxInstaller.exe
+              39 File(s)  9,989,917,983 bytes
+               4 Dir(s)  212,114,325,504 bytes free
+
+[2025-06-16 21:19:43] Sending response for task 36
+[2025-06-16 21:19:43] Schema 1 failed: [{field 'response' not found in type: 'response_insert_input'}]
+[2025-06-16 21:19:43] Schema 2 failed: [{field 'insert_taskresponse' not found in type: 'mutation_root'}]
+[2025-06-16 21:19:45] Schema 3 failed: [{field 'insert_output' not found in type: 'mutation_root'}]
+[2025-06-16 21:19:45] All response schemas failed, trying direct task update with output
+[2025-06-16 21:19:45] Update schema 1 failed: [{field 'stdout' not found in type: 'task_set_input'}]
+[2025-06-16 21:19:45] Update schema 2 failed: [{field 'response' not found in type: 'task_set_input'}]
+[2025-06-16 21:19:46] Update schema 3 failed: [{unexpected variables in variableValues: output}]
+[2025-06-16 21:19:46] Error sending response: All update attempts failed
+[2025-06-16 21:19:46] Sleeping for 3 seconds...
