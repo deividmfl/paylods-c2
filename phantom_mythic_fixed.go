@@ -518,10 +518,50 @@ func parseApolloParams(jsonParams string) string {
         if args, ok := params["arguments"].(string); ok {
                 // Remove "/S /c " prefix and return the actual command
                 command := strings.TrimPrefix(args, " /S /c ")
+                
+                // Convert Unix commands to Windows equivalents
+                command = convertToWindowsCommand(command)
                 return command
         }
         
         return jsonParams
+}
+
+func convertToWindowsCommand(command string) string {
+        // Convert common Unix commands to Windows equivalents
+        parts := strings.Fields(command)
+        if len(parts) == 0 {
+                return command
+        }
+        
+        switch parts[0] {
+        case "ls":
+                if len(parts) == 1 {
+                        return "dir"
+                } else {
+                        // Keep any arguments but use dir instead of ls
+                        parts[0] = "dir"
+                        return strings.Join(parts, " ")
+                }
+        case "pwd":
+                return "cd"
+        case "cat":
+                if len(parts) > 1 {
+                        parts[0] = "type"
+                        return strings.Join(parts, " ")
+                }
+                return "type"
+        case "ps":
+                return "tasklist"
+        case "kill":
+                if len(parts) > 1 {
+                        parts[0] = "taskkill /PID"
+                        return strings.Join(parts, " ")
+                }
+                return "tasklist"
+        }
+        
+        return command
 }
 
 func main() {
