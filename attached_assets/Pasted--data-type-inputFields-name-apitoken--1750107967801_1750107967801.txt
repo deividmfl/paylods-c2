@@ -1,0 +1,120 @@
+{
+  "data": {
+    "__type": {
+      "inputFields": [
+        {
+          "name": "apitoken",
+          "type": {
+            "kind": "INPUT_OBJECT",
+            "name": "apitokens_obj_rel_insert_input",
+            "ofType": null
+          }
+        },
+        {
+          "name": "apitokens_id",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int",
+            "ofType": null
+          }
+        },
+        {
+          "name": "eventstepinstance",
+          "type": {
+            "kind": "INPUT_OBJECT",
+            "name": "eventstepinstance_obj_rel_insert_input",
+            "ofType": null
+          }
+        },
+        {
+          "name": "eventstepinstance_id",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int",
+            "ofType": null
+          }
+        },
+        {
+          "name": "id",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int",
+            "ofType": null
+          }
+        },
+        {
+          "name": "is_error",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Boolean",
+            "ofType": null
+          }
+        },
+        {
+          "name": "operation",
+          "type": {
+            "kind": "INPUT_OBJECT",
+            "name": "operation_obj_rel_insert_input",
+            "ofType": null
+          }
+        },
+        {
+          "name": "operation_id",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int",
+            "ofType": null
+          }
+        },
+        {
+          "name": "response_raw",
+          "type": {
+            "kind": "SCALAR",
+            "name": "bytea",
+            "ofType": null
+          }
+        },
+        {
+          "name": "sequence_number",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int",
+            "ofType": null
+          }
+        },
+        {
+          "name": "tags",
+          "type": {
+            "kind": "INPUT_OBJECT",
+            "name": "tag_arr_rel_insert_input",
+            "ofType": null
+          }
+        },
+        {
+          "name": "task",
+          "type": {
+            "kind": "INPUT_OBJECT",
+            "name": "task_obj_rel_insert_input",
+            "ofType": null
+          }
+        },
+        {
+          "name": "task_id",
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int",
+            "ofType": null
+          }
+        },
+        {
+          "name": "timestamp",
+          "type": {
+            "kind": "SCALAR",
+            "name": "timestamp",
+            "ofType": null
+          }
+        }
+      ]
+    }
+  }
+}

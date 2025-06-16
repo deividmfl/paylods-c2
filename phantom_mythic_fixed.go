@@ -382,14 +382,12 @@ func sendTaskResponse(taskID string, output string) error {
                 return fmt.Errorf("Invalid task ID: %v", err)
         }
         
-        // Log the full output for debugging
-        logEvent(fmt.Sprintf("TASK %s OUTPUT: %s", taskID, output))
-        
-        // Try creating response with just task_id (minimal required fields)
+        // Create response using the correct response_raw field (bytea type)
         responseQuery := `
-        mutation createResponse($task_id: Int!) {
+        mutation createResponse($task_id: Int!, $response_raw: bytea!) {
                 insert_response_one(object: {
-                        task_id: $task_id
+                        task_id: $task_id,
+                        response_raw: $response_raw
                 }) {
                         id
                 }
@@ -397,21 +395,35 @@ func sendTaskResponse(taskID string, output string) error {
         
         responseVars := map[string]interface{}{
                 "task_id": taskIDInt,
+                "response_raw": output,
         }
         
         resp, err := makeGraphQLRequest(responseQuery, responseVars)
         if err == nil && len(resp.Errors) == 0 {
-                logEvent("Response entry created successfully")
+                logEvent("Response created successfully using response_raw field")
         } else {
-                logEvent(fmt.Sprintf("Response creation failed: %v", resp.Errors))
+                logEvent(fmt.Sprintf("Response creation with response_raw failed: %v", resp.Errors))
+                
+                // Fallback: try with base64 encoded data
+                encodedOutput := base64.StdEncoding.EncodeToString([]byte(output))
+                fallbackVars := map[string]interface{}{
+                        "task_id": taskIDInt,
+                        "response_raw": encodedOutput,
+                }
+                
+                resp, err = makeGraphQLRequest(responseQuery, fallbackVars)
+                if err == nil && len(resp.Errors) == 0 {
+                        logEvent("Response created successfully using base64 encoded response_raw")
+                } else {
+                        logEvent(fmt.Sprintf("Base64 fallback also failed: %v", resp.Errors))
+                }
         }
         
-        // Mark task as completed with status
+        // Mark task as completed
         updateQuery := `
         mutation updateTask($task_id: Int!) {
                 update_task_by_pk(pk_columns: {id: $task_id}, _set: {
-                        completed: true,
-                        status: "success"
+                        completed: true
                 }) {
                         id
                         completed
