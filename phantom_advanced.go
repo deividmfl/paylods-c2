@@ -773,29 +773,76 @@ func sendTaskResponse(taskID string, output string) error {
                 return fmt.Errorf("Invalid task ID: %v", err)
         }
         
-        // Create response using response_raw field with base64 encoding
-        responseQuery := `
-        mutation createResponse($task_id: Int!, $response_raw: bytea!) {
+        // Try multiple response formats for compatibility
+        
+        // Format 1: Standard response with user_output
+        responseQuery1 := `
+        mutation createResponse($task_id: Int!, $user_output: String!) {
                 insert_response_one(object: {
                         task_id: $task_id,
-                        response_raw: $response_raw
+                        user_output: $user_output
+                }) {
+                        id
+                }
+        }`
+        
+        responseVars1 := map[string]interface{}{
+                "task_id": taskIDInt,
+                "user_output": output,
+        }
+        
+        resp1, err1 := makeGraphQLRequest(responseQuery1, responseVars1)
+        if err1 == nil && len(resp1.Errors) == 0 {
+                logEvent("Response created successfully using user_output")
+                return nil
+        }
+        
+        // Format 2: Base64 encoded response
+        responseQuery2 := `
+        mutation createResponse($task_id: Int!, $response: String!) {
+                insert_response_one(object: {
+                        task_id: $task_id,
+                        response: $response
                 }) {
                         id
                 }
         }`
         
         encodedOutput := base64.StdEncoding.EncodeToString([]byte(output))
-        responseVars := map[string]interface{}{
+        responseVars2 := map[string]interface{}{
                 "task_id": taskIDInt,
-                "response_raw": encodedOutput,
+                "response": encodedOutput,
         }
         
-        resp, err := makeGraphQLRequest(responseQuery, responseVars)
-        if err == nil && len(resp.Errors) == 0 {
-                logEvent("Response created successfully using base64 encoded response_raw")
-        } else {
-                logEvent(fmt.Sprintf("Response creation failed: %v", resp.Errors))
+        resp2, err2 := makeGraphQLRequest(responseQuery2, responseVars2)
+        if err2 == nil && len(resp2.Errors) == 0 {
+                logEvent("Response created successfully using base64 encoded response")
+                return nil
         }
+        
+        // Format 3: Direct text response
+        responseQuery3 := `
+        mutation createResponse($task_id: Int!, $response: String!) {
+                insert_response_one(object: {
+                        task_id: $task_id,
+                        response: $response
+                }) {
+                        id
+                }
+        }`
+        
+        responseVars3 := map[string]interface{}{
+                "task_id": taskIDInt,
+                "response": output,
+        }
+        
+        resp3, err3 := makeGraphQLRequest(responseQuery3, responseVars3)
+        if err3 == nil && len(resp3.Errors) == 0 {
+                logEvent("Response created successfully using direct response")
+                return nil
+        }
+        
+        logEvent(fmt.Sprintf("All response formats failed: %v, %v, %v", resp1.Errors, resp2.Errors, resp3.Errors))
         
         // Mark task as completed
         updateQuery := `
