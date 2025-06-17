@@ -1,212 +1,172 @@
-# Phantom Apollo - Advanced C2 Payload for Mythic
+# Phantom Apollo - Advanced Mythic C2 Agent
 
 ## Overview
 
-Phantom Apollo is a fully integrated C2 payload designed for the Mythic framework, combining Apollo's proven command compatibility with advanced evasion capabilities and enhanced post-exploitation features. This payload provides seamless integration with your Mythic server at `37.27.249.191:7443`.
+Phantom Apollo is a sophisticated Command and Control (C2) agent specifically designed for the Mythic framework. Built with Go for optimal performance and stealth, it provides comprehensive post-exploitation capabilities while maintaining full compatibility with Apollo command structures.
 
-## Features
+## Key Features
 
-### Core Capabilities
-- **Full Apollo Compatibility**: All standard Apollo commands are supported
-- **Advanced Evasion**: Built-in techniques to bypass modern EDR/AV solutions
-- **Cross-Platform Support**: Primary focus on Windows with extensible architecture
-- **Mythic Integration**: Complete GraphQL communication and JWT authentication
-- **Secure Communication**: TLS-encrypted callbacks with configurable intervals
+### 🔒 Security & Stealth
+- **Hidden Console Execution**: Automatically conceals console windows during operation
+- **Dynamic Callback Intervals**: Configurable timing with jitter support for evasion
+- **TLS Encryption**: Secure HTTPS communications with your Mythic server
+- **Custom User Agents**: Environment-appropriate browser identification strings
 
-### Supported Commands
+### 🚀 Advanced Capabilities
+- **Full Apollo Compatibility**: Drop-in replacement with enhanced features
+- **GraphQL Integration**: Native Mythic 3.x protocol support with JWT authentication
+- **Cross-Platform Building**: Automated x32/x64 Windows executable generation
+- **Real-time Task Processing**: Immediate command execution and response handling
 
-| Command | Description | MITRE ATT&CK |
-|---------|-------------|--------------|
-| `ls` | List files and directories | T1083 |
-| `cd` | Change working directory | T1083 |
-| `pwd` | Print current directory | T1083 |
-| `ps` | List running processes | T1057 |
-| `whoami` | Get current user context | T1033 |
-| `hostname` | Get system hostname | T1082 |
-| `shell` | Execute shell commands | T1059.003 |
-| `powershell` | Execute PowerShell commands | T1059.001 |
-| `download` | Download files from target | T1005 |
-| `upload` | Upload files to target | T1105 |
-| `sleep` | Modify callback interval | - |
-| `exit` | Terminate agent | - |
+### 📋 Command Portfolio
+- **File Operations**: Directory listing, navigation, file upload/download
+- **System Information**: Process enumeration, user identification, hostname discovery
+- **Command Execution**: Native CMD and PowerShell support with full output capture
+- **Agent Management**: Sleep interval modification, graceful termination
 
-## Architecture
+## Technical Architecture
 
-### Payload Structure
+### Build System
+- **Language**: Go 1.21+ for optimal performance and portability
+- **Compilation**: Docker-based cross-compilation for Windows targets
+- **Template System**: Dynamic configuration injection during build process
+- **Output**: Self-contained Windows executables (x32/x64)
+
+### Communication Protocol
+- **Transport**: HTTPS with TLS 1.2+ encryption
+- **Authentication**: JWT token-based GraphQL authentication
+- **Format**: Standard Mythic GraphQL mutations and queries
+- **Resilience**: Automatic reconnection with exponential backoff
+
+### Server Integration
+- **Framework**: Mythic 3.x compatible
+- **Deployment**: Docker containerized payload type
+- **Management**: Web-based payload generation and configuration
+- **Monitoring**: Real-time agent status and command history
+
+## Project Structure
+
 ```
 Payload_Types/phantom_apollo/
-├── agent_functions/           # Command implementations
-│   ├── __init__.py           # Command registry
-│   ├── cd.py                 # Directory navigation
-│   ├── download.py           # File download
-│   ├── exit.py              # Agent termination
-│   ├── hostname.py          # System information
-│   ├── ls.py                # File listing
-│   ├── powershell.py        # PowerShell execution
-│   ├── ps.py                # Process enumeration
-│   ├── pwd.py               # Current directory
-│   ├── shell.py             # Shell execution
-│   ├── sleep.py             # Callback timing
-│   ├── upload.py            # File upload
-│   ├── whoami.py            # User context
-│   └── mythic_agent_icon.svg # Payload icon
-├── mythic_service.py         # Main payload service
-├── Dockerfile               # Container configuration
-├── requirements.txt         # Python dependencies
-├── config.json             # Payload metadata
-└── README.md               # This documentation
+├── agent_code/
+│   ├── phantom_agent.go     # Main agent source code
+│   └── go.mod              # Go module dependencies
+├── agent_functions/        # Command implementations
+│   ├── __init__.py
+│   ├── cd.py              # Directory navigation
+│   ├── download.py        # File download
+│   ├── exit.py            # Agent termination
+│   ├── hostname.py        # System hostname
+│   ├── ls.py              # Directory listing
+│   ├── powershell.py      # PowerShell execution
+│   ├── ps.py              # Process enumeration
+│   ├── pwd.py             # Current directory
+│   ├── shell.py           # Command execution
+│   ├── sleep.py           # Callback intervals
+│   ├── upload.py          # File upload
+│   └── whoami.py          # User identification
+├── mythic_service.py      # Payload type definition
+├── Dockerfile            # Container build configuration
+├── config.json           # Agent configuration
+├── requirements.txt      # Python dependencies
+├── DEPLOYMENT.md         # Deployment instructions
+└── README.md            # This documentation
 ```
 
-### Build Parameters
+## Quick Start
 
-The payload supports the following build-time configuration:
+### 1. Server Deployment
+```bash
+# Upload to your Mythic server
+scp -r phantom_apollo/ user@37.27.249.191:/opt/mythic/Payload_Types/
 
-- **callback_host**: Target Mythic server (default: 37.27.249.191)
-- **callback_port**: Server port (default: 7443)
-- **callback_interval**: Check-in frequency in seconds (default: 10)
-- **callback_jitter**: Timing randomization percentage (default: 10)
-- **use_ssl**: Enable HTTPS communication (default: true)
-- **user_agent**: HTTP user agent string
-- **aes_psk**: Encryption pre-shared key
-- **debug**: Enable debug logging (default: true)
+# Build container
+cd /opt/mythic/Payload_Types/phantom_apollo
+docker build -t phantom_apollo .
 
-## Deployment Instructions
+# Register with Mythic
+./mythic-cli restart
+```
 
-### 1. Mythic Server Setup
-
-Ensure your Mythic server is accessible at `https://37.27.249.191:7443` with:
-- GraphQL endpoint active
-- JWT authentication configured
-- HTTP C2 profile enabled
-
-### 2. Payload Installation
-
-1. Copy the entire `phantom_apollo` directory to your Mythic server's `Payload_Types/` folder
-2. Build the Docker container:
-   ```bash
-   cd Payload_Types/phantom_apollo
-   docker build -t phantom_apollo .
-   ```
-
-### 3. Payload Generation
-
-1. Access your Mythic web interface
+### 2. Payload Generation
+1. Access Mythic interface: `https://37.27.249.191:7443`
 2. Navigate to Payload Generation
-3. Select "phantom_apollo" as the payload type
-4. Configure build parameters as needed
-5. Generate the payload
+3. Select "phantom_apollo" payload type
+4. Configure parameters:
+   - **Host**: 37.27.249.191 (pre-configured)
+   - **Port**: 7443 (pre-configured)
+   - **SSL**: Enabled
+   - **Interval**: 10 seconds
+5. Generate and download executable
 
-### 4. Execution
+### 3. Target Deployment
+Execute the generated .exe on Windows targets for immediate callback registration.
 
-Deploy the generated executable to target systems. The agent will:
-- Establish encrypted connection to your Mythic server
-- Register with unique callback ID
-- Begin polling for commands at specified intervals
+## Command Reference
 
-## Command Usage Examples
+| Command | Parameters | Example Usage |
+|---------|------------|---------------|
+| `ls` | `path` (optional) | `ls {"path": "C:\\Users"}` |
+| `cd` | `path` | `cd {"path": "C:\\Windows\\System32"}` |
+| `pwd` | None | `pwd` |
+| `ps` | None | `ps` |
+| `whoami` | None | `whoami` |
+| `hostname` | None | `hostname` |
+| `shell` | `command` | `shell {"command": "ipconfig /all"}` |
+| `powershell` | `command` | `powershell {"command": "Get-WmiObject Win32_ComputerSystem"}` |
+| `download` | `path` | `download {"path": "C:\\temp\\data.txt"}` |
+| `upload` | `file`, `remote_path` | `upload {"file": "base64data", "remote_path": "C:\\temp\\uploaded.exe"}` |
+| `sleep` | `seconds` | `sleep {"seconds": "30"}` |
+| `exit` | None | `exit` |
 
-### Basic Reconnaissance
-```
-hostname                    # Get system name
-whoami                     # Check user context
-ps                         # List processes
-ls C:\Users\               # Browse directories
-```
+## Operational Guidelines
 
-### File Operations
-```
-download C:\temp\file.txt  # Download file
-upload /path/to/local/file C:\temp\\uploaded.txt
-```
+### Best Practices
+- **Callback Timing**: Use appropriate intervals for target environment (10-60 seconds typical)
+- **Jitter Configuration**: Enable 10-20% jitter to avoid detection patterns
+- **Command Validation**: Verify permissions before executing privileged operations
+- **Cleanup Protocol**: Use `exit` command for graceful termination
 
-### Command Execution
-```
-shell dir                  # Execute cmd commands
-powershell Get-Process     # Execute PowerShell
-```
-
-### Agent Management
-```
-sleep 30                   # Change callback to 30 seconds
-exit                       # Terminate agent
-```
-
-## Security Considerations
-
-### Operational Security
-- Use appropriate callback intervals to avoid detection
-- Leverage jitter to randomize communication patterns
-- Monitor for defensive responses and adjust tactics accordingly
-
-### Evasion Features
-- Dynamic API resolution to avoid static analysis
-- String obfuscation for sensitive operations
-- Process hollowing and injection capabilities
-- Anti-debugging and anti-analysis techniques
-
-### Communication Security
-- All traffic encrypted with TLS
-- JWT token-based authentication
-- Configurable user agent strings
-- Domain fronting support (when configured)
-
-## Integration with Mythic
-
-### GraphQL Communication
-The payload uses Mythic's GraphQL API for:
-- Initial callback registration
-- Task polling and response submission
-- File upload/download operations
-- Agent status reporting
-
-### Task Processing
-Commands are processed through Mythic's task system:
-1. Operator issues command through web interface
-2. Task queued in Mythic database
-3. Agent polls for new tasks
-4. Command executed on target system
-5. Results returned to Mythic server
-
-## Troubleshooting
-
-### Connection Issues
-- Verify Mythic server accessibility
-- Check firewall rules and network connectivity
-- Confirm SSL certificate validity
-- Review JWT token configuration
-
-### Command Failures
-- Check target system permissions
-- Verify command syntax and parameters
-- Review agent logs for error details
-- Confirm required system capabilities
-
-### Performance Optimization
-- Adjust callback intervals based on environment
-- Implement appropriate jitter values
-- Monitor network bandwidth usage
-- Consider operational tempo requirements
+### Security Considerations
+- All communications encrypted with TLS 1.2+
+- JWT tokens automatically managed and renewed
+- No persistent artifacts created on target systems
+- Console output completely suppressed during execution
 
 ## Development Notes
 
-### Extending Functionality
-To add new commands:
-1. Create new Python file in `agent_functions/`
-2. Implement `TaskArguments` and `CommandBase` classes
-3. Add import to `__init__.py`
-4. Update Go source template in `mythic_service.py`
+### Build Process
+The payload uses a template-based build system where Go source code contains placeholder variables (`{{.variable}}`) that are replaced with actual configuration values during compilation. This ensures each generated payload is uniquely configured for your specific Mythic server.
 
-### Testing
-- Use Mythic's built-in testing framework
-- Verify command execution in lab environment
-- Test against target defensive solutions
-- Validate operational security measures
+### Extension Points
+The modular command structure allows for easy extension. New commands can be added by:
+1. Creating corresponding Python files in `agent_functions/`
+2. Implementing Go handlers in `phantom_agent.go`
+3. Following the established command/response patterns
 
-## Author & Support
+### Server Compatibility
+Designed specifically for Mythic 3.x framework with GraphQL communication protocol. Fully compatible with standard Mythic features including:
+- Operator multi-tenancy
+- Campaign management
+- Real-time collaboration
+- Comprehensive logging and auditing
 
-- **Author**: @phantom
-- **Version**: 1.0.0
-- **Framework**: Mythic C2
-- **Server**: https://37.27.249.191:7443
+## Support
 
-For operational support and advanced configurations, refer to the Mythic documentation and community resources
+### Troubleshooting
+- **Build Failures**: Verify Go 1.21+ availability in Docker environment
+- **Connection Issues**: Confirm server accessibility and TLS configuration
+- **Command Errors**: Check target system permissions and execution policies
+
+### Server Status
+- **Primary Server**: https://37.27.249.191:7443
+- **Status**: Operational and ready for payload deployment
+- **Authentication**: GraphQL with automated JWT token management
+
+---
+
+**Author**: @phantom  
+**Version**: 1.0  
+**Framework**: Mythic 3.x  
+**Target Platform**: Windows (x32/x64)  
+**License**: Educational and authorized security testing only
