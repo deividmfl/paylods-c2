@@ -90,62 +90,104 @@ class PhantomApollo(PayloadType):
         protocol = "https" if use_ssl else "http"
         callback_url = f"{protocol}://{callback_host}:{callback_port}"
         
-        # Read the Go agent template
-        with open("agent_code/phantom_agent.go", "r") as f:
-            go_template = f.read()
+        # Create Config.cs with build parameters
+        config_template = f"""using System.Collections.Generic;
+using PhantomInterop.Classes.Core;
+
+namespace Phantom
+{{
+    public class Settings
+    {{
+        public static string AgentIdentifier = "{self.uuid}";
         
-        # Replace template variables with build parameters
-        go_source = go_template.replace("{{.callback_host}}", callback_host)
-        go_source = go_source.replace("{{.callback_port}}", str(callback_port))
-        go_source = go_source.replace("{{.callback_interval}}", str(callback_interval))
-        go_source = go_source.replace("{{.callback_jitter}}", str(callback_jitter))
-        go_source = go_source.replace("{{.use_ssl}}", "true" if use_ssl else "false")
-        go_source = go_source.replace("{{.user_agent}}", user_agent)
-        go_source = go_source.replace("{{.aes_psk}}", aes_psk)
-        go_source = go_source.replace("{{.debug}}", "true" if debug else "false")
+        public static Dictionary<string, C2ProfileInfo> CommProfiles = new Dictionary<string, C2ProfileInfo>()
+        {{
+            ["http"] = new C2ProfileInfo()
+            {{
+                Name = "http",
+                Parameters = new Dictionary<string, object>()
+                {{
+                    ["callback_host"] = "{callback_host}",
+                    ["callback_port"] = "{callback_port}",
+                    ["callback_interval"] = {callback_interval},
+                    ["callback_jitter"] = {callback_jitter},
+                    ["encrypted_exchange_check"] = "{use_ssl}",
+                    ["domain_front"] = "",
+                    ["USER_AGENT"] = "{user_agent}",
+                    ["headers"] = new Dictionary<string, string>()
+                }},
+                TCryptography = typeof(PSKCrypto.PSKCryptography),
+                TSerializer = typeof(PhantomInterop.Serializers.JsonHandler),
+                TC2Profile = typeof(HttpProfile.HttpProfile)
+            }}
+        }};
         
-        # Write the customized source code
-        with open("phantom_agent_build.go", "w") as f:
-            f.write(go_source)
+        public static string CryptoKey = "{aes_psk}";
+        
+        public static bool DebugMode = {str(debug).lower()};
+    }}
+}}"""
+        
+        with open("agent_code/Phantom/Settings.cs", "w") as f:
+            f.write(config_template)
         
         try:
             # Determine target architecture
-            target_arch = "amd64"  # Default to 64-bit
-            if "x32" in self.uuid or "386" in self.uuid:
-                target_arch = "386"
+            target_arch = "x64" if "x64" in self.uuid or "amd64" in self.uuid else "x86"
             
-            # Build the Go executable
+            # Build the C# project using MSBuild/dotnet
             build_cmd = [
-                "go", "build",
-                "-ldflags", "-s -w",
-                "-o", f"phantom_apollo_{target_arch}.exe",
-                "phantom_agent_build.go"
+                "dotnet", "build", 
+                "agent_code/Phantom.sln",
+                "-c", "Release",
+                "-p:Platform=x64" if target_arch == "x64" else "-p:Platform=x86",
+                "-o", "build_output"
             ]
             
-            # Set environment variables for cross-compilation
-            env = os.environ.copy()
-            env["GOOS"] = "windows"
-            env["GOARCH"] = target_arch
-            env["CGO_ENABLED"] = "0"
-            
             # Execute build command
-            result = subprocess.run(build_cmd, env=env, capture_output=True, text=True)
+            result = subprocess.run(build_cmd, capture_output=True, text=True, cwd=".")
             
             if result.returncode != 0:
-                resp.build_stderr = f"Build failed: {result.stderr}"
+                # Try with msbuild if dotnet fails
+                build_cmd = [
+                    "msbuild", 
+                    "agent_code/Phantom.sln",
+                    "/p:Configuration=Release",
+                    f"/p:Platform={target_arch}",
+                    "/p:OutputPath=../build_output/"
+                ]
+                
+                result = subprocess.run(build_cmd, capture_output=True, text=True, cwd=".")
+                
+                if result.returncode != 0:
+                    resp.build_stderr = f"Build failed: {result.stderr}"
+                    resp.status = BuildStatus.Error
+                    return resp
+            
+            # Find the built executable
+            exe_path = None
+            for file in os.listdir("build_output"):
+                if file.endswith(".exe") and "Phantom" in file:
+                    exe_path = os.path.join("build_output", file)
+                    break
+            
+            if not exe_path or not os.path.exists(exe_path):
+                resp.build_stderr = "Could not find built executable"
                 resp.status = BuildStatus.Error
                 return resp
             
             # Read the compiled executable
-            exe_path = f"phantom_apollo_{target_arch}.exe"
             with open(exe_path, "rb") as f:
                 resp.payload = base64.b64encode(f.read()).decode()
             
             resp.build_message = f"Successfully built Phantom Apollo for Windows {target_arch}"
             
-            # Clean up temporary files
-            os.remove("phantom_agent_build.go")
-            os.remove(exe_path)
+            # Clean up build artifacts
+            import shutil
+            if os.path.exists("build_output"):
+                shutil.rmtree("build_output")
+            if os.path.exists("agent_code/Phantom/Settings.cs"):
+                os.remove("agent_code/Phantom/Settings.cs")
             
         except Exception as e:
             resp.build_stderr = f"Build error: {str(e)}"
