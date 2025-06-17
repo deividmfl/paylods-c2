@@ -22,7 +22,7 @@ import (
 
 const (
         MYTHIC_URL = "https://37.27.249.191:7443/graphql/"
-        LOGIN_URL  = "https://37.27.249.191:7443/api/v1.4/login"
+        LOGIN_URL  = "https://37.27.249.191:7443/login"
         USERNAME   = "admin"
         PASSWORD   = "admin"
 )
@@ -55,11 +55,63 @@ func logEvent(message string) {
 }
 
 // Token renewal functions
+func discoverLoginEndpoint() string {
+        // Common Mythic login endpoints to try
+        endpoints := []string{
+                "https://37.27.249.191:7443/login",
+                "https://37.27.249.191:7443/api/v1.4/login",
+                "https://37.27.249.191:7443/api/v1.3/login", 
+                "https://37.27.249.191:7443/auth/login",
+                "https://37.27.249.191:7443/api/login",
+        }
+        
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 10 * time.Second,
+        }
+        
+        testData := map[string]string{
+                "username": USERNAME,
+                "password": PASSWORD,
+        }
+        
+        jsonData, _ := json.Marshal(testData)
+        
+        for _, endpoint := range endpoints {
+                req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(jsonData))
+                if err != nil {
+                        continue
+                }
+                
+                req.Header.Set("Content-Type", "application/json")
+                
+                resp, err := client.Do(req)
+                if err != nil {
+                        continue
+                }
+                resp.Body.Close()
+                
+                // If we get anything other than 404, this endpoint exists
+                if resp.StatusCode != 404 {
+                        logEvent(fmt.Sprintf("Found login endpoint: %s (status: %d)", endpoint, resp.StatusCode))
+                        return endpoint
+                }
+        }
+        
+        logEvent("No valid login endpoint found, using default")
+        return LOGIN_URL
+}
+
 func renewJWTToken() error {
         tokenMutex.Lock()
         defer tokenMutex.Unlock()
         
         logEvent("Renewing JWT token...")
+        
+        // Discover the correct login endpoint
+        loginURL := discoverLoginEndpoint()
         
         loginData := map[string]string{
                 "username": USERNAME,
@@ -78,7 +130,7 @@ func renewJWTToken() error {
                 Timeout: 30 * time.Second,
         }
         
-        req, err := http.NewRequest("POST", LOGIN_URL, bytes.NewBuffer(jsonData))
+        req, err := http.NewRequest("POST", loginURL, bytes.NewBuffer(jsonData))
         if err != nil {
                 return fmt.Errorf("error creating login request: %v", err)
         }
@@ -92,17 +144,27 @@ func renewJWTToken() error {
         }
         defer resp.Body.Close()
         
-        if resp.StatusCode != 200 {
-                return fmt.Errorf("login failed with status: %d", resp.StatusCode)
-        }
-        
         body, err := ioutil.ReadAll(resp.Body)
         if err != nil {
                 return fmt.Errorf("error reading login response: %v", err)
         }
         
+        logEvent(fmt.Sprintf("Login response status: %d", resp.StatusCode))
+        
+        if resp.StatusCode != 200 {
+                // Try to extract error message
+                var errorResp map[string]interface{}
+                if json.Unmarshal(body, &errorResp) == nil {
+                        logEvent(fmt.Sprintf("Login error response: %v", errorResp))
+                }
+                return fmt.Errorf("login failed with status: %d", resp.StatusCode)
+        }
+        
+        // Try multiple response formats
         var loginResp struct {
                 AccessToken string `json:"access_token"`
+                Token       string `json:"token"`
+                JWT         string `json:"jwt"`
                 TokenType   string `json:"token_type"`
         }
         
@@ -110,11 +172,22 @@ func renewJWTToken() error {
                 return fmt.Errorf("error parsing login response: %v", err)
         }
         
-        if loginResp.AccessToken == "" {
-                return fmt.Errorf("no access token in response")
+        // Check different token field names
+        newToken := ""
+        if loginResp.AccessToken != "" {
+                newToken = loginResp.AccessToken
+        } else if loginResp.Token != "" {
+                newToken = loginResp.Token
+        } else if loginResp.JWT != "" {
+                newToken = loginResp.JWT
         }
         
-        currentJWTToken = loginResp.AccessToken
+        if newToken == "" {
+                logEvent(fmt.Sprintf("Login response body: %s", string(body)))
+                return fmt.Errorf("no access token found in response")
+        }
+        
+        currentJWTToken = newToken
         logEvent("JWT token renewed successfully")
         return nil
 }
