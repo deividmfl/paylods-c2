@@ -37,18 +37,18 @@ namespace Tasks
         private Random _random = new Random((int) DateTime.UtcNow.Ticks);
         private void OnClientConnected(IAsyncResult result)
         {
-            // complete connection
+            
             try
             {
                 TcpListener server = (TcpListener)result.AsyncState;
                 TcpClient client = server.EndAcceptTcpClient(result);
                 int newClientID = _random.Next(int.MaxValue);
                 DebugHelp.DebugWriteLine($"Got a new connection: {newClientID}");
-                // Add to connection list at a higher level that can be routed to
+                
                 if (_agent.GetRpfwdManager().AddConnection(client, newClientID, _port, _debugLevel, this))
                 {
                     DebugHelp.DebugWriteLine("accepting more connections");
-                    // need to explicitly accept more connection after handling the first one
+                    
                     _server.BeginAcceptTcpClient(OnClientConnected, _server);
                 }
                 else

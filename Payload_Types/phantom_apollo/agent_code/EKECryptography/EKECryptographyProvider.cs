@@ -16,7 +16,7 @@ namespace EKECryptography
         public override bool UpdateKey(string key)
         {
             this.PSK = Convert.FromBase64String(key);
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
     }
 }

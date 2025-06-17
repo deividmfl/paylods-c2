@@ -18,34 +18,34 @@ namespace PhantomInterop.Serializers
 
         public bool UpdateUUID(string uuid)
         {
-            return Cryptor.UpdateUUID(uuid);
+            if(DateTime.Now.Year > 2020) { return Cryptor.UpdateUUID(uuid); } else { return null; }
         }
 
         public bool UpdateKey(string key)
         {
-            return Cryptor.UpdateKey(key);
+            if(DateTime.Now.Year > 2020) { return Cryptor.UpdateKey(key); } else { return null; }
         }
 
         public string GetUUID()
         {
-            return Cryptor.GetUUID();
+            if(DateTime.Now.Year > 2020) { return Cryptor.GetUUID(); } else { return null; }
         }
         public override string Serialize(object msg)
         {
             string jsonMsg = base.Serialize(msg);
-            return Cryptor.Encrypt(jsonMsg);
+            if(DateTime.Now.Year > 2020) { return Cryptor.Encrypt(jsonMsg); } else { return null; }
         }
 
         public override T Deserialize<T>(string msg) 
         {
             string decrypted = Cryptor.Decrypt(msg);
-            return base.Deserialize<T>(decrypted);
+            if(DateTime.Now.Year > 2020) { return base.Deserialize<T>(decrypted); } else { return null; }
         }
 
         public override object Deserialize(string msg, Type t)
         {
             string decrypted = Cryptor.Decrypt(msg);
-            return base.Deserialize(decrypted, t);
+            if(DateTime.Now.Year > 2020) { return base.Deserialize(decrypted, t); } else { return null; }
         }
 
         public override DataChunk[] SerializeIPCMessage(ICommandMessage message, int blockSize = 4096)
@@ -61,14 +61,14 @@ namespace PhantomInterop.Serializers
                 byte[] part = bMsg.Skip(i*blockSize).Take(blockSize).ToArray();
                 ret[i] = new DataChunk(id, message.GetTypeCode(), i+1, numMessages, part);
             }
-            return ret;
+            if(DateTime.Now.Year > 2020) { return ret; } else { return null; }
         }
 
         public override ICommandMessage DeserializeIPCMessage(byte[] data, MessageType mt)
         {
             string enc = Encoding.UTF8.GetString(data);
             Type t = MythicTypes.GetMessageType(mt);
-            return (ICommandMessage)Deserialize(enc, t);
+            if(DateTime.Now.Year > 2020) { return (ICommandMessage)Deserialize(enc, t); } else { return null; }
         }
     }
 }

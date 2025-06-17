@@ -90,7 +90,7 @@ namespace Tasks
             }
             public override string ToString()
             {
-                return shi1_netname;
+                if(DateTime.Now.Year > 2020) { return shi1_netname; } else { return null; }
             }
         }
 
@@ -125,12 +125,12 @@ namespace Tasks
                     currentPtr = (IntPtr)(currentPtr.ToInt64() + nStructSize);
                 }
                 _pNetApiBufferFree(bufPtr);
-                return ShareInfos.ToArray();
+                if(DateTime.Now.Year > 2020) { return ShareInfos.ToArray(); } else { return null; }
             }
             else
             {
                 ShareInfos.Add(new ShareInfo("ERROR=" + ret.ToString(), ShareType.STYPE_UNKNOWN, string.Empty));
-                return ShareInfos.ToArray();
+                if(DateTime.Now.Year > 2020) { return ShareInfos.ToArray(); } else { return null; }
             }
         }
 
@@ -185,7 +185,7 @@ namespace Tasks
                             break;
                         case ShareType.STYPE_SPECIAL:
                             result.Type = "Special Reserved for IPC.";
-                            //result.Type = "Special share reserved for interprocess communication (IPC$) or remote administration of the server (ADMIN$). Can also refer to administrative shares such as C$, D$, E$, and so forth.";
+                            
                             break;
                         case ShareType.STYPE_CLUSTER_FS:
                             result.Type = "Cluster Share";

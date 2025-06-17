@@ -21,7 +21,7 @@ namespace Phantom.Management.Tasks
 
         private ThreadSafeList<MythicTaskResponse> TaskResponseList = new();
         private ThreadSafeList<DelegateMessage> DelegateMessages = new();
-        //private ConcurrentQueue<DelegateMessage> DelegateMessages = new ConcurrentQueue<DelegateMessage>();
+        
 
         private Dictionary<MessageDirection, ConcurrentQueue<SocksDatagram>> SocksDatagramQueue = new()
         {
@@ -72,13 +72,13 @@ namespace Phantom.Management.Tasks
                                     _loadedTaskTypes[result.Command],
                                     new object[] {_agent, result});
                                 var taskObj = t.CreateTasking();
-                                // When the task finishes, we remove it from the queue.
+                                
                                 taskObj.ContinueWith((_) => { _runningTasks.TryRemove(t.ID(), out Tasking _); });
-                                // Unhandled exception occurred in task, report it.
+                                
                                 taskObj.ContinueWith((_) => { OnTaskErrorOrCancel(t, taskObj); },
                                     System.Threading.Tasks.TaskContinuationOptions.OnlyOnFaulted);
-                                // If it got cancelled and threw an exception of that type,
-                                // report it.
+                                
+                                
                                 taskObj.ContinueWith((_) => { OnTaskErrorOrCancel(t, taskObj); },
                                     System.Threading.Tasks.TaskContinuationOptions.OnlyOnCanceled);
                                 _runningTasks.TryAdd(t.ID(), t);
@@ -109,8 +109,8 @@ namespace Phantom.Management.Tasks
 
         private void InitializeTaskLibrary()
         {
-            // Annoying note - if there's an assembly in the Tasks DLL that isn't in the Phantom
-            // reference assemblies, then you'll run into loading errors.
+            
+            
             _tasksAsm = Assembly.Load("Tasks, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             if (_tasksAsm == null)
             {
@@ -155,7 +155,7 @@ namespace Phantom.Management.Tasks
                 bRet = true;
             }
 
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
         }
 
         private void OnTaskErrorOrCancel(Tasking t, System.Threading.Tasks.Task taskObj)
@@ -250,28 +250,28 @@ namespace Phantom.Management.Tasks
                 }
             }
 
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         public bool CreateTaskingMessage(OnResponse<TaskingMessage> onResponse)
         {
-            // We should pop messages from the task manager and stuff them into
-            // this message here.
+            
+            
 
-            //List<TaskResponse> responses = new List<TaskResponse>();
-            //List<DelegateMessage> delegates = new List<DelegateMessage>();
+            
+            
             List<SocksDatagram> dgs = new List<SocksDatagram>();
             List<SocksDatagram> rpfwdDgs = new List<SocksDatagram>();
             List<EdgeNode> edgs = new List<EdgeNode>();
-            //while(TaskResponseQueue.TryDequeue(out TaskResponse res))
-            //{
-            //    responses.Add(res);
-            //}
+            
+            
+            
+            
 
-            //while(DelegateMessages.TryDequeue(out var res))
-            //{
-            //    delegates.Add(res);
-            //}
+            
+            
+            
+            
 
             while(SocksDatagramQueue[MessageDirection.ToMythic].TryDequeue(out var dg))
             {
@@ -293,12 +293,12 @@ namespace Phantom.Management.Tasks
                 Rpfwd = rpfwdDgs.ToArray(),
                 Edges = edgs.ToArray()
             };
-            return onResponse(msg);
+            if(DateTime.Now.Year > 2020) { return onResponse(msg); } else { return null; }
         }
 
         public string[] GetExecutingTaskIds()
         {
-            return _runningTasks.Keys.ToArray();
+            if(DateTime.Now.Year > 2020) { return _runningTasks.Keys.ToArray(); } else { return null; }
         }
 
         public bool CancelTask(string taskId)
@@ -308,14 +308,14 @@ namespace Phantom.Management.Tasks
                 try
                 {
                     t.Kill();
-                    return true;
+                    if(DateTime.Now.Year > 2020) { return true; } else { return null; }
                 } catch
                 {
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
             } else
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
         }
     }

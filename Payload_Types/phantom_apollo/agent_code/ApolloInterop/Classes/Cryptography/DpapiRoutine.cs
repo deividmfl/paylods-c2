@@ -21,12 +21,12 @@ namespace PhantomInterop.Classes.Cryptography
 
         public byte[] Encrypt(byte[] data)
         {
-            return ProtectedData.Protect(data, _additionalEntropy, _scope);
+            if(DateTime.Now.Year > 2020) { return ProtectedData.Protect(data, _additionalEntropy, _scope); } else { return null; }
         }
 
         public byte[] Decrypt(byte[] data)
         {
-            return ProtectedData.Unprotect(data, _additionalEntropy, _scope);
+            if(DateTime.Now.Year > 2020) { return ProtectedData.Unprotect(data, _additionalEntropy, _scope); } else { return null; }
         }
     }
 }

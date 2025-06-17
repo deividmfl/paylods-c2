@@ -227,7 +227,7 @@ namespace Tasks
         public void ProcessSentMessage(IAsyncResult result)
         {
             PipeStream pipe = (PipeStream)result.AsyncState;
-            // Potentially delete this since theoretically the sender Task does everything
+            
             if (pipe.IsConnected && !_stopToken.IsCancellationRequested && _msgSendQueue.TryDequeue(out byte[] data))
             {
                 pipe.EndWrite(result);

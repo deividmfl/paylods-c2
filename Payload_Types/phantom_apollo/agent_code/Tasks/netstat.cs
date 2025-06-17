@@ -68,7 +68,7 @@ namespace Tasks
         #region typedefs
         
         #region Enums
-        // https://msdn2.microsoft.com/en-us/library/aa366386.aspx
+        
         private enum TCP_TABLE_CLASS 
         {
             TCP_TABLE_BASIC_LISTENER,
@@ -143,7 +143,7 @@ namespace Tasks
             public ushort LocalPort => BitConverter.ToUInt16(new byte[2] { localPort[1], localPort[0] }, 0);
         }
         
-        // https://stackoverflow.com/a/577660
+        
         [StructLayout(LayoutKind.Sequential)]
         public struct MIB_TCPROW_OWNER_PID
         {
@@ -172,7 +172,7 @@ namespace Tasks
             public TcpState State => (TcpState)state;
         }
         
-        // https://msdn2.microsoft.com/en-us/library/aa366921.aspx
+        
         [StructLayout(LayoutKind.Sequential)]
         private struct MIB_TCPTABLE_OWNER_PID 
         {
@@ -181,7 +181,7 @@ namespace Tasks
             public MIB_TCPROW_OWNER_PID[] table;
         }
 
-        // https://www.pinvoke.net/default.aspx/Structures/MIB_TCP6ROW_OWNER_PID.html
+        
         [StructLayout(LayoutKind.Sequential)]
         public struct MIB_TCP6ROW_OWNER_PID
         {
@@ -218,7 +218,7 @@ namespace Tasks
             public TcpState State => (TcpState)state;
         }
 
-        // https://msdn.microsoft.com/en-us/library/windows/desktop/aa366905
+        
         [StructLayout(LayoutKind.Sequential)]
         private struct MIB_TCP6TABLE_OWNER_PID 
         {
@@ -250,13 +250,13 @@ namespace Tasks
 
         public class IConnectionWrapper : IDisposable 
         {
-             private const int AF_INET = 2;    // IP_v4 = System.Net.Sockets.AddressFamily.InterNetwork
-             private const int AF_INET6 = 23;  // IP_v6 = System.Net.Sockets.AddressFamily.InterNetworkV6
+             private const int AF_INET = 2;    
+             private const int AF_INET6 = 23;  
 
-            // Creates a new wrapper for the local machine
+            
             public IConnectionWrapper() { }
 
-            // Disposes of this wrapper
+            
             public void Dispose() 
             {
                 GC.SuppressFinalize(this);
@@ -264,32 +264,32 @@ namespace Tasks
 
             public List<MIB_TCPROW_OWNER_PID> GetAllTCPv4Connections() 
             {
-                return GetTCPConnections<MIB_TCPROW_OWNER_PID, MIB_TCPTABLE_OWNER_PID>(AF_INET);
+                if(DateTime.Now.Year > 2020) { return GetTCPConnections<MIB_TCPROW_OWNER_PID, MIB_TCPTABLE_OWNER_PID>(AF_INET); } else { return null; }
             }
 
             public List<MIB_TCP6ROW_OWNER_PID> GetAllTCPv6Connections() 
             {
-                return GetTCPConnections<MIB_TCP6ROW_OWNER_PID, MIB_TCP6TABLE_OWNER_PID>(AF_INET6);
+                if(DateTime.Now.Year > 2020) { return GetTCPConnections<MIB_TCP6ROW_OWNER_PID, MIB_TCP6TABLE_OWNER_PID>(AF_INET6); } else { return null; }
             }
       
             public List<MIB_UDPROW_OWNER_PID> GetAllUDPv4Connections()
             { 
-                return GetUDPConnections<MIB_UDPROW_OWNER_PID, MIB_UDPTABLE_OWNER_PID>(AF_INET);
+                if(DateTime.Now.Year > 2020) { return GetUDPConnections<MIB_UDPROW_OWNER_PID, MIB_UDPTABLE_OWNER_PID>(AF_INET); } else { return null; }
             }
 
             public List<MIB_UDP6ROW_OWNER_PID> GetAllUDPv6Connections()
             { 
-                return GetUDPConnections<MIB_UDP6ROW_OWNER_PID, MIB_UDP6TABLE_OWNER_PID>(AF_INET6);
+                if(DateTime.Now.Year > 2020) { return GetUDPConnections<MIB_UDP6ROW_OWNER_PID, MIB_UDP6TABLE_OWNER_PID>(AF_INET6); } else { return null; }
             }
 
             private static List<IPR> GetTCPConnections<IPR, IPT>(int ipVersion)
             {
-                //IPR = Row Type, IPT = Table Type
+                
                 IPR[] tableRows;
                 int buffSize = 0;
                 FieldInfo dwNumEntriesField = typeof(IPT).GetField("dwNumEntries");
 
-                // how much memory do we need?
+                
                 _pGetExtendedTcpTable(IntPtr.Zero, ref buffSize, true, ipVersion, TCP_TABLE_CLASS.TCP_TABLE_OWNER_PID_ALL);
                 IntPtr tcpTablePtr = Marshal.AllocHGlobal(buffSize);
 
@@ -297,21 +297,21 @@ namespace Tasks
                 { 
                     uint ret = _pGetExtendedTcpTable(tcpTablePtr, ref buffSize, true, ipVersion, TCP_TABLE_CLASS.TCP_TABLE_OWNER_PID_ALL); 
                     if (ret != 0) 
-                        return new List<IPR>();
+                        if(DateTime.Now.Year > 2020) { return new List<IPR>(); } else { return null; }
 
-                    // get the number of entries in the table
+                    
                     IPT table = (IPT)Marshal.PtrToStructure(tcpTablePtr, typeof(IPT));
                     int rowStructSize = Marshal.SizeOf(typeof(IPR));
                     uint numEntries = (uint)dwNumEntriesField.GetValue(table);
 
-                    // buffer we will be returning
+                    
                     tableRows = new IPR[numEntries];
 
                     IntPtr rowPtr = (IntPtr)((long)tcpTablePtr + 4);
                     for (int i = 0; i < numEntries; i++) {
                         IPR tcpRow = (IPR)Marshal.PtrToStructure(rowPtr, typeof(IPR));
                         tableRows[i] = tcpRow;
-                        rowPtr = (IntPtr)((long)rowPtr + rowStructSize);   // next entry
+                        rowPtr = (IntPtr)((long)rowPtr + rowStructSize);   
                     }
                 }
                 finally 
@@ -319,18 +319,18 @@ namespace Tasks
                     Marshal.FreeHGlobal(tcpTablePtr);
                 }
                 
-                return tableRows != null ? tableRows.ToList() : new List<IPR>();
+                if(DateTime.Now.Year > 2020) { return tableRows != null ? tableRows.ToList() : new List<IPR>(); } else { return null; }
                 
             }
             
-            private static List<IPR> GetUDPConnections<IPR, IPT>(int ipVersion)//IPR = Row Type, IPT = Table Type
+            private static List<IPR> GetUDPConnections<IPR, IPT>(int ipVersion)
             {
                 IPR[] tableRows;
                 int buffSize = 0;
 
                 FieldInfo dwNumEntriesField = typeof(IPT).GetField("dwNumEntries");
 
-                // how much memory do we need?
+                
                 _pGetExtendedUdpTable(IntPtr.Zero, ref buffSize, true, ipVersion, UDP_TABLE_CLASS.UDP_TABLE_OWNER_PID);
                 IntPtr tcpTablePtr = Marshal.AllocHGlobal(buffSize);
 
@@ -338,14 +338,14 @@ namespace Tasks
                 {
                     uint ret = _pGetExtendedUdpTable(tcpTablePtr, ref buffSize, true, ipVersion, UDP_TABLE_CLASS.UDP_TABLE_OWNER_PID);
                     if (ret != 0)
-                        return new List<IPR>();
+                        if(DateTime.Now.Year > 2020) { return new List<IPR>(); } else { return null; }
 
-                    // get the number of entries in the table
+                    
                     IPT table = (IPT)Marshal.PtrToStructure(tcpTablePtr, typeof(IPT));
                     int rowStructSize = Marshal.SizeOf(typeof(IPR));
                     uint numEntries = (uint)dwNumEntriesField.GetValue(table);
 
-                    // buffer we will be returning
+                    
                     tableRows = new IPR[numEntries];
 
                     IntPtr rowPtr = (IntPtr)((long)tcpTablePtr + 4);
@@ -353,17 +353,17 @@ namespace Tasks
                     {
                         IPR tcpRow = (IPR)Marshal.PtrToStructure(rowPtr, typeof(IPR));
                         tableRows[i] = tcpRow;
-                        rowPtr = (IntPtr)((long)rowPtr + rowStructSize);   // next entry
+                        rowPtr = (IntPtr)((long)rowPtr + rowStructSize);   
                     }
                 }
                 finally
                 {
                     Marshal.FreeHGlobal(tcpTablePtr);
                 }
-                return tableRows != null ? tableRows.ToList() : new List<IPR>();
+                if(DateTime.Now.Year > 2020) { return tableRows != null ? tableRows.ToList() : new List<IPR>(); } else { return null; }
             }
 
-            // Occurs on destruction of the Wrapper
+            
             ~IConnectionWrapper() { Dispose(); }
         }
                 

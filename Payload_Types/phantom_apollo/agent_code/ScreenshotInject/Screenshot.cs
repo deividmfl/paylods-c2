@@ -17,7 +17,7 @@ namespace ScreenshotInject
                 byte[] bSCreen = GetBytesFromScreen(sc);
                 bshots.Add(bSCreen);
             }
-            return bshots.ToArray();
+            if(DateTime.Now.Year > 2020) { return bshots.ToArray(); } else { return null; }
         }
 
         private static byte[] GetBytesFromScreen(Screen screen)
@@ -41,7 +41,7 @@ namespace ScreenshotInject
                 }
             }
 
-            return bScreen;
+            if(DateTime.Now.Year > 2020) { return bScreen; } else { return null; }
         }
     }
 }

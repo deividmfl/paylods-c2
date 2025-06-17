@@ -127,8 +127,8 @@ namespace Tasks
                 };
             }
 
-            // Your code here..
-            // Then add response to queue
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

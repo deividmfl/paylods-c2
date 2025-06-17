@@ -46,8 +46,8 @@ namespace Tasks
                 resp = CreateTaskResponse("Failed to set startup information.", true, "error");
             }
 
-            // Your code here..
-            // Then add response to queue
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

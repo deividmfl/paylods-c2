@@ -16,8 +16,8 @@ namespace PhantomInterop.Interfaces
 
         bool Recv(MessageType mt, OnResponse<ICommandMessage> onResp);
 
-        // Basically tells the caller that this C2 profile is stateful,
-        // and as such it supports only the SendRecv operation.
+        
+        
         bool IsOneWay();
 
         bool IsConnected();

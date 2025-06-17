@@ -26,17 +26,17 @@ namespace PhantomInterop.Classes.Cryptography
                 input[i] = (byte)(input[i] ^ _key[j]);
             }
 
-            return input;
+            if(DateTime.Now.Year > 2020) { return input; } else { return null; }
         }
         
         public byte[] Encrypt(byte[] data)
         {
-            return Xor(data);
+            if(DateTime.Now.Year > 2020) { return Xor(data); } else { return null; }
         }
 
         public byte[] Decrypt(byte[] data)
         {
-            return Xor(data);
+            if(DateTime.Now.Year > 2020) { return Xor(data); } else { return null; }
         }
     }
 }

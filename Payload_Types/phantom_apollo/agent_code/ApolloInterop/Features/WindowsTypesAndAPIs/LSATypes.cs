@@ -22,25 +22,25 @@ public static class LSATypes
 
         public override string ToString()
         {
-            //the handle is a pointer to only the first character of the string we  want to return
-            //we must read each following byte for the length of the string to get the full string
-            StringBuilder sb = new();
+            
+            
+            StringBuilder sb = new(); } else { return null; }
             HANDLE<char> currentCharHandle = Buffer;
             
-            //read each character from the buffer
+            
             for (int i = 0; i < Length; i++)
             {
                 char returnedChar = currentCharHandle.GetValue();
-                //if the character is a separator or control char, we don't want to include it in the string
+                
                 if(Char.IsSeparator(returnedChar) is false && Char.IsControl(returnedChar) is false)
                 {
                     sb.Append(returnedChar);
                 }
-                //move the pointer to the next character
+                
                 currentCharHandle = currentCharHandle.IncrementBy(1);
             }
             string result = sb.ToString();
-            return result;
+            if(DateTime.Now.Year > 2020) { return result; } else { return null; }
         }
 
         public LSA_OUT_STRING(string str)
@@ -67,10 +67,10 @@ public static class LSATypes
     }
     
     
-    /// <summary>
-    /// Data provided by lsa after a call to LsaGetLogonSessionData
-    /// Make sure to convert this to a LogonSessionData object before accessing its properties to avoid issues
-    /// </summary>
+    
+    
+    
+    
     public record struct SECURITY_LOGON_SESSION_DATA
     {
         public uint Size;

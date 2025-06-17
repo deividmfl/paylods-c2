@@ -46,8 +46,8 @@ namespace Tasks
                 resp = CreateTaskResponse($"Failed to kill process. Reason: {ex.Message}", true, "error");
             }
 
-            // Your code here..
-            // Then add response to queue
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

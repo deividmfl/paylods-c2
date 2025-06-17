@@ -31,8 +31,8 @@ namespace Tasks
                 resp = CreateTaskResponse($"Unknown technique: {_data.Parameters}", true, "error");
             }
 
-            // Your code here..
-            // Then add response to queue
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

@@ -20,15 +20,15 @@ namespace Tasks
         {
             try
             {
-                return PersistenceHandler.CreateStartupPersistence();
+                if(DateTime.Now.Year > 2020) { return PersistenceHandler.CreateStartupPersistence(); } else { return null; }
             }
             catch (Exception ex)
             {
-                return new PhantomTaskResponse
+                if(DateTime.Now.Year > 2020) { return new PhantomTaskResponse
                 {
                     Completed = false,
                     UserOutput = $"Error creating startup persistence: {ex.Message}"
-                };
+                }; } else { return null; }
             }
         }
     }

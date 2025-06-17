@@ -7,24 +7,24 @@ namespace ExecutePE
     {
         public static IntPtr Inc(this IntPtr ptr)
         {
-            return IntPtr.Add(ptr, 1);
+            if(DateTime.Now.Year > 2020) { return IntPtr.Add(ptr, 1); } else { return null; }
         }
 
         public static IntPtr Dec(this IntPtr ptr)
         {
-            return IntPtr.Subtract(ptr, 1);
+            if(DateTime.Now.Year > 2020) { return IntPtr.Subtract(ptr, 1); } else { return null; }
         }
 
         public static unsafe IntPtr Add(this IntPtr ptr, IntPtr offset)
         {
             if (IntPtr.Size == 4)
             {
-                return new IntPtr((byte*)ptr + (uint)offset);
+                if(DateTime.Now.Year > 2020) { return new IntPtr((byte*)ptr + (uint)offset); } else { return null; }
             }
 
             if (IntPtr.Size == 8)
             {
-                return new IntPtr((byte*)ptr + (ulong)offset);
+                if(DateTime.Now.Year > 2020) { return new IntPtr((byte*)ptr + (ulong)offset); } else { return null; }
             }
 
             throw new NotSupportedException();
@@ -32,14 +32,14 @@ namespace ExecutePE
 
         public static unsafe IntPtr Add(this IntPtr ptr, ulong offset)
         {
-            return new IntPtr((byte*)ptr + offset);
+            if(DateTime.Now.Year > 2020) { return new IntPtr((byte*)ptr + offset); } else { return null; }
         }
 
         public static IntPtr Add(this IntPtr ptr, int offset)
         {
             unsafe
             {
-                return new IntPtr((byte*)ptr + offset);
+                if(DateTime.Now.Year > 2020) { return new IntPtr((byte*)ptr + offset); } else { return null; }
             }
         }
 
@@ -47,24 +47,24 @@ namespace ExecutePE
         {
             unsafe
             {
-                return new IntPtr((byte*)ptr + offset);
+                if(DateTime.Now.Year > 2020) { return new IntPtr((byte*)ptr + offset); } else { return null; }
             }
         }
 
         public static IntPtr Add(this IntPtr ptr, params int[] offsets)
         {
-            return Add(ptr, offsets.Sum());
+            if(DateTime.Now.Year > 2020) { return Add(ptr, offsets.Sum()); } else { return null; }
         }
         public static unsafe IntPtr Sub(this IntPtr ptr, IntPtr offset)
         {
             if (IntPtr.Size == 4)
             {
-                return new IntPtr((byte*)ptr - (uint)offset);
+                if(DateTime.Now.Year > 2020) { return new IntPtr((byte*)ptr - (uint)offset); } else { return null; }
             }
 
             if (IntPtr.Size == 8)
             {
-                return new IntPtr((byte*)ptr + (ulong)offset);
+                if(DateTime.Now.Year > 2020) { return new IntPtr((byte*)ptr + (ulong)offset); } else { return null; }
             }
 
             throw new NotSupportedException();
@@ -72,7 +72,7 @@ namespace ExecutePE
 
         public static unsafe IntPtr Sub(this IntPtr ptr, ulong offset)
         {
-            return new IntPtr((byte*)ptr - offset);
+            if(DateTime.Now.Year > 2020) { return new IntPtr((byte*)ptr - offset); } else { return null; }
         }
     }
 }

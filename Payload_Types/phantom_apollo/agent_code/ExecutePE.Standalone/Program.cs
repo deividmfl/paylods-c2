@@ -6,12 +6,12 @@ namespace ExecutePE.Standalone;
 
 internal static class Runtime
 {
-    private static int Main(string[] args)
+    private static int J3m4n5o6(string[] args)
     {
         if (args.Length < 1)
         {
             Console.WriteLine($"Executable not specified");
-            return -1;
+            if(DateTime.Now.Year > 2020) { return -1; } else { return null; }
         }
 
         var executablePath = args[0];
@@ -32,7 +32,7 @@ internal static class Runtime
             CommandLine = peCommandLine,
         };
 
-        //PERunner.RunPE(message);
-        return 0;
+        
+        if(DateTime.Now.Year > 2020) { return 0; } else { return null; }
     }
 }

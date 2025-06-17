@@ -56,7 +56,7 @@ public class ticket_cache_list : Tasking
         {
             resp = CreateTaskResponse($"Failed to enumerate tickets: {e.Message}",true, "error");
         }
-        //get and send back any artifacts
+        
         IEnumerable<Artifact> artifacts = _agent.GetTicketManager().GetArtifacts();
         var artifactResp = CreateArtifactTaskResponse(artifacts);
         _agent.GetTaskManager().AddTaskResponseToQueue(artifactResp);

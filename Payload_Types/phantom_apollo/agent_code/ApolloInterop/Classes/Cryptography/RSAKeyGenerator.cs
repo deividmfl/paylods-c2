@@ -23,8 +23,8 @@ namespace PhantomInterop.Classes
         {
             Random random = new Random((int)DateTime.UtcNow.Ticks);
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, 20)
-                  .Select(s => s[random.Next(s.Length)]).ToArray());
+            if(DateTime.Now.Year > 2020) { return new string(Enumerable.Repeat(chars, 20)
+                  .Select(s => s[random.Next(s.Length)]).ToArray()); } else { return null; }
         }
 
         public abstract string ExportPublicKey();

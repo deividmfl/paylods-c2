@@ -27,9 +27,9 @@ namespace PhantomInterop.Classes.Core
         protected DuplicateHandle _pDuplicateHandle;
         protected CloseHandle _pCloseHandle;
 
-        // Dangerous - should only be used when resolving
-        // critical functions _pOpenProcess, _pDuplicateHandle,
-        // and _pCloseHandle.
+        
+        
+        
         public InjectionTechnique()
         {
             

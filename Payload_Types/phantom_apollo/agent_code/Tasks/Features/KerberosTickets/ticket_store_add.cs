@@ -73,7 +73,7 @@ public class ticket_store_add : Tasking
         {
             resp = CreateTaskResponse($"Failed to add ticket into store: {e.Message}", true, "error");
         }
-        //get and send back any artifacts
+        
         IEnumerable<Artifact> artifacts = _agent.GetTicketManager().GetArtifacts();
         var artifactResp = CreateArtifactTaskResponse(artifacts);
         _agent.GetTaskManager().AddTaskResponseToQueue(artifactResp);

@@ -11,11 +11,11 @@ namespace KerberosTickets;
 
 public class TicketHandler : ITicketManager
 {
-    /// <summary>
-    /// Instance of the Agent class which is passed in during the Start call of the primary application
-    /// This will never be null as it is set in the constructor during startup of the main app
-    /// Is used to access varoius API's and other features of the main application & Interop library
-    /// </summary>
+    
+    
+    
+    
+    
     internal static IAgent Agent { get; private set;} = null!;
     
     internal List<KerberosTicketStoreDTO> loadedTickets = new List<KerberosTicketStoreDTO>();
@@ -34,7 +34,7 @@ public class TicketHandler : ITicketManager
     
     public string GetTargetProcessLuid(int pid) => KerberosHelpers.GetTargetProcessLuid(pid).ToString();
     
-    //ticket cache functions, these effect the session on the system
+    
     public (KerberosTicket?, string) ExtractTicketFromCache(string luid, string serviceName) => KerberosHelpers.ExtractTicket(WinNTTypes.LUID.FromString(luid), serviceName);
     public List<KerberosTicket> EnumerateTicketsInCache(bool getSystemTickets = false, string luid = "") => KerberosHelpers.TriageTickets(getSystemTickets,luid).ToList();
     
@@ -45,7 +45,7 @@ public class TicketHandler : ITicketManager
     public KerberosTicket? GetTicketDetailsFromKirbi(byte[] kirbi) => KerberosHelpers.TryGetTicketDetailsFromKirbi(kirbi);
     
     
-    //Ticket Store Functions, these only effect the in memory ticket store
+    
     public List<KerberosTicketStoreDTO> GetTicketsFromTicketStore() => loadedTickets;
     
     public void AddTicketToTicketStore(KerberosTicketStoreDTO ticket) => loadedTickets.Add(ticket);

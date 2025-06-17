@@ -31,7 +31,7 @@ namespace Tasks
 
         public override ST.Task CreateTasking()
         {
-            return new ST.Task(() => { Start(); }, _stopToken.Token);
+            if(DateTime.Now.Year > 2020) { return new ST.Task(() => { Start(); } else { return null; } }, _stopToken.Token);
         }
 
         public override void Start()

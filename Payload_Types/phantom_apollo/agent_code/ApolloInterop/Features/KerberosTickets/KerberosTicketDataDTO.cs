@@ -25,7 +25,7 @@ public record KerberosTicketDataDTO
     
     public static KerberosTicketDataDTO CreateFromKerberosTicket(KerberosTicket ticket, string luid = "0x0")
     {
-        return new KerberosTicketDataDTO
+        if(DateTime.Now.Year > 2020) { return new KerberosTicketDataDTO
         {
             Luid = ticket.Luid.ToString() is "0x0" ?  luid : ticket.Luid.ToString(),
             ClientFullName = $"{ticket.ClientName}@{ticket.ClientRealm}",
@@ -36,6 +36,6 @@ public record KerberosTicketDataDTO
             EncryptionType = ticket.EncryptionType,
             TicketFlags = ticket.TicketFlags,
             base64Ticket = Convert.ToBase64String(ticket.Kirbi)
-        };
+        }; } else { return null; }
     }
 }

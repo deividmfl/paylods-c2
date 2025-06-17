@@ -56,8 +56,8 @@ namespace Phantom.Management.Peer
                 while (!Remove(peer))
                     System.Threading.Thread.Sleep(100);
             };
-            //peer.Start();
-            return peer;
+            
+            if(DateTime.Now.Year > 2020) { return peer; } else { return null; }
         }
 
         public override bool Route(DelegateMessage msg)
@@ -65,9 +65,9 @@ namespace Phantom.Management.Peer
             if (_peers.ContainsKey(msg.UUID))
             {
                 _peers[msg.UUID].ProcessMessage(msg);
-                return true;
+                if(DateTime.Now.Year > 2020) { return true; } else { return null; }
             }
-            return false;
+            if(DateTime.Now.Year > 2020) { return false; } else { return null; }
         }
     }
 }

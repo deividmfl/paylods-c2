@@ -13,26 +13,26 @@ namespace ExecutePE.Patchers
 
         private const int
             IDT_SINGLE_ENTRY_LENGTH =
-                20; // Each Import Directory Table entry is 20 bytes long https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#import-directory-table
+                20; 
 
-        private const int IDT_IAT_OFFSET = 16; // Offset in IDT to Relative Virtual Address to the Import Address Table for this DLL
+        private const int IDT_IAT_OFFSET = 16; 
 
-        private const int IDT_DLL_NAME_OFFSET = 12; // Offset in IDT to DLL name for this DLL
-        private const int ILT_HINT_LENGTH = 2; // Length of the 'hint' prefix to the function name in the ILT/IAT
+        private const int IDT_DLL_NAME_OFFSET = 12; 
+        private const int ILT_HINT_LENGTH = 2; 
 
         private readonly List<string> _originalModules = new List<string>();
         private readonly IATHooks _iatHooks = new();
 
         public void ResolveImports(PELoader pe, long currentBase)
         {
-            // Save the current loaded modules so can unload new ones afterwards
+            
             var currentProcess = Process.GetCurrentProcess();
             foreach (ProcessModule module in currentProcess.Modules)
             {
                 _originalModules.Add(module.ModuleName);
             }
 
-            // Resolve Imports
+            
             var pIDT = (IntPtr)(currentBase + pe.OptionalHeader64.ImportTable.VirtualAddress);
             var dllIterator = 0;
             while (true)
@@ -55,12 +55,12 @@ namespace ExecutePE.Patchers
                 var pCurrentIATEntry = pIAT;
                 while (true)
                 {
-                    // For each DLL iterate over its functions in the IAT and patch the IAT with the real address https://tech-zealots.com/malware-analysis/journey-towards-import-address-table-of-an-executable-file/
+                    
                     try
                     {
                         var pDLLFuncName =
                             (IntPtr)(currentBase + Marshal.ReadInt32(pCurrentIATEntry) +
-                                      ILT_HINT_LENGTH); // Skip two byte 'hint' http://sandsprite.com/CodeStuff/Understanding_imports.html
+                                      ILT_HINT_LENGTH); 
                         var dllFuncName = Marshal.PtrToStringAnsi(pDLLFuncName);
 
                         if (string.IsNullOrEmpty(dllFuncName))
@@ -82,7 +82,7 @@ namespace ExecutePE.Patchers
 
                         pCurrentIATEntry =
                             (IntPtr)(pCurrentIATEntry.ToInt64() +
-                                      IntPtr.Size); // Shift the current entry to point to the next entry along, as each entry is just a pointer this is one IntPtr.Size
+                                      IntPtr.Size); 
                     }
                     catch (Exception)
                     {

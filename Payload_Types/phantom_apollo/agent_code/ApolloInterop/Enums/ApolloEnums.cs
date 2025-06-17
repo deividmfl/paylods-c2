@@ -30,7 +30,7 @@
         public enum Socks5AuthType
         {
             NoAuth = 0,
-            Version = 1, //????
+            Version = 1, 
             UsernamePassword = 2,
         }
 

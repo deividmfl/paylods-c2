@@ -39,15 +39,15 @@ public class ticket_store_purge : Tasking
             string? serviceFullName = parameters.serviceName ?? "";
             bool all = parameters.all;
             bool ticketRemoved = _agent.GetTicketManager().RemoveTicketFromTicketStore(serviceFullName, all);
-            //if true return without error if false return with error
+            
             resp = ticketRemoved ? CreateTaskResponse($"Purged Ticket from Store", true) 
-                : CreateTaskResponse($"Failed to purge ticket from Store", true, "error");
+                : CreateTaskResponse($"Failed to purge ticket from Store", true, "error"); } else { return null; }
         }
         catch (Exception e)
         {
             resp = CreateTaskResponse($"Failed to inject ticket into session: {e.Message}", true, "error");
         }
-        //get and send back any artifacts
+        
         IEnumerable<Artifact> artifacts = _agent.GetTicketManager().GetArtifacts();
         var artifactResp = CreateArtifactTaskResponse(artifacts);
         _agent.GetTaskManager().AddTaskResponseToQueue(artifactResp);

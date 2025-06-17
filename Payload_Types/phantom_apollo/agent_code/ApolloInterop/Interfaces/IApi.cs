@@ -14,7 +14,7 @@ namespace PhantomInterop.Interfaces
 
         RSAKeyGenerator NewRSAKeyPair(int szKey);
 
-        // Maybe other formats in the future?
+        
         ICryptographySerializer NewEncryptedJsonSerializer(string uuid, Type cryptoType, string key = "");
         
     }

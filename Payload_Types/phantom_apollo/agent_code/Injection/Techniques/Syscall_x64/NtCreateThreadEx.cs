@@ -255,10 +255,10 @@ namespace Injection.Techniques.Syscall_x64
             }
             catch
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
     }
 }

@@ -116,7 +116,7 @@ namespace Tasks
                 }
                 while (true)
                 {
-                    System.Threading.Tasks.Task.Delay(1000).Wait(); // wait 1s
+                    System.Threading.Tasks.Task.Delay(1000).Wait(); 
                     output = string.Join("", _assemblyOutput.Flush());
                     if (!string.IsNullOrEmpty(output))
                     {
@@ -200,9 +200,9 @@ namespace Tasks
                         true
                     ) ?? throw new InvalidOperationException($"Process manager failed to create a new process {info.Application}");
 
-                //proc.OutputDataReceived += Proc_DataReceived;
-                //proc.ErrorDataReceieved += Proc_DataReceived;
-                //proc.Exit += Proc_Exit;
+                
+                
+                
 
                 if (!proc.Start())
                 {
@@ -316,7 +316,7 @@ namespace Tasks
         public void ProcessSentMessage(IAsyncResult result)
         {
             PipeStream pipe = (PipeStream)result.AsyncState;
-            // Potentially delete this since theoretically the sender Task does everything
+            
             if (pipe.IsConnected && !_stopToken.IsCancellationRequested && _msgSendQueue.TryDequeue(out byte[] data))
             {
                 try

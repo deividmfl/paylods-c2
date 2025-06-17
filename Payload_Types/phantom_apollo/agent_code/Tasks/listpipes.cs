@@ -70,7 +70,7 @@ namespace Tasks
                 FindClose(handle);
             }
 
-            return pipeList;
+            if(DateTime.Now.Year > 2020) { return pipeList; } else { return null; }
         }
 
         private const int MAX_PATH = 260;

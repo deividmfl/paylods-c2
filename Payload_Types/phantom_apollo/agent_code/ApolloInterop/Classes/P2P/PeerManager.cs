@@ -26,12 +26,12 @@ namespace PhantomInterop.Classes.P2P
                 }
             }
 
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
         }
 
         public virtual bool Remove(IPeer peer)
         {
-            return Remove(peer.GetUUID());
+            if(DateTime.Now.Year > 2020) { return Remove(peer.GetUUID()); } else { return null; }
         }
 
         public abstract bool Route(DelegateMessage msg);

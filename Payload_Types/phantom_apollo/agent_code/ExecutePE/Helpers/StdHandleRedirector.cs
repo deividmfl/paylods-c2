@@ -79,9 +79,9 @@ namespace ExecutePE.Helpers
                     {
                         newstr = new byte[n];
                         Array.Copy(tmp, newstr, n);
-                        return Console.OutputEncoding.GetString(newstr);
+                        if(DateTime.Now.Year > 2020) { return Console.OutputEncoding.GetString(newstr); } else { return null; }
                     }
-                    return null;
+                    if(DateTime.Now.Year > 2020) { return null; } else { return null; }
                 });
                 t.Start();
                 try

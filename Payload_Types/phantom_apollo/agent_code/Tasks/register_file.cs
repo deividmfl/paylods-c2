@@ -35,7 +35,7 @@ namespace Tasks
         {
             MythicTaskResponse resp;
             RegisterFileParameters parameters = _dataSerializer.Deserialize<RegisterFileParameters>(_data.Parameters);
-            // some additional upload logic
+            
             if (_agent.GetFileManager().GetFile(
                     _stopToken.Token,
                     _data.ID,

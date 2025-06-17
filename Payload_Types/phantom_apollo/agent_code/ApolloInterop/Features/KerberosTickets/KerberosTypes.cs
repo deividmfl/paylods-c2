@@ -25,9 +25,9 @@ public record struct LogonSessionData
     public string Upn;
 }
 
-/// <summary>
-/// Record type to represent a Kerberos ticket.
-/// </summary>
+
+
+
 [DataContract]
 public record KerberosTicket
 {
@@ -63,7 +63,7 @@ public record struct KERB_QUERY_TKT_CACHE_RESPONSE
 {
     public KERB_PROTOCOL_MESSAGE_TYPE MessageType;
     public uint CountOfTickets;
-    public HANDLE<KERB_TICKET_CACHE_INFO_EX> Tickets;   // seems this starts at a memory address which is one IntPrt size away from the start of the struct
+    public HANDLE<KERB_TICKET_CACHE_INFO_EX> Tickets;   
 }
 
 public record struct KERB_QUERY_TKT_CACHE_REQUEST
@@ -97,7 +97,7 @@ public struct KERB_SUBMIT_TKT_REQUEST
     public KERB_PROTOCOL_MESSAGE_TYPE MessageType;
     public LUID LogonId;
     public int Flags;
-    public KERB_CRYPTO_KEY32 Key; // key to decrypt KERB_CRED
+    public KERB_CRYPTO_KEY32 Key; 
     public int KerbCredSize;
     public int KerbCredOffset;
 }

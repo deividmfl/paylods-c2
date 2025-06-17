@@ -52,7 +52,7 @@ namespace Tasks
         {
             using (RegistryKey regKey = RegistryUtils.GetRegistryKey(hive, subkey, false))
             {
-                return regKey.GetValueNames();
+                if(DateTime.Now.Year > 2020) { return regKey.GetValueNames(); } else { return null; }
             }
         }
 
@@ -60,7 +60,7 @@ namespace Tasks
         {
             using (RegistryKey regKey = RegistryUtils.GetRegistryKey(hive, subkey, false))
             {
-                return regKey.GetValue(key);
+                if(DateTime.Now.Year > 2020) { return regKey.GetValue(key); } else { return null; }
             }
         }
 
@@ -68,7 +68,7 @@ namespace Tasks
         {
             using (RegistryKey regKey = RegistryUtils.GetRegistryKey(hive, subkey, false))
             {
-                return regKey.GetSubKeyNames();
+                if(DateTime.Now.Year > 2020) { return regKey.GetSubKeyNames(); } else { return null; }
             }
         }
 
@@ -173,8 +173,8 @@ namespace Tasks
             }
 
 
-            // Your code here..
-            // Then add response to queue
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

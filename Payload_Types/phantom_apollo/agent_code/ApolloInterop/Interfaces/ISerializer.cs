@@ -11,7 +11,7 @@ namespace PhantomInterop.Interfaces
 
         DataChunk[] SerializeDelegateMessage(string message, MessageType mt, int block_size = IPC.SEND_SIZE / 2);
 
-        // This is so we can serialize/deserialize things across named pipes, but technically
+        
         DataChunk[] SerializeIPCMessage(ICommandMessage message, int block_size = IPC.SEND_SIZE);
         ICommandMessage DeserializeIPCMessage(byte[] data, MessageType mt);
     }

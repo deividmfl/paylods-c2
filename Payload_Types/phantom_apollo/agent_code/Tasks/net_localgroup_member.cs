@@ -57,10 +57,7 @@ namespace Tasks
 
         private delegate bool ConvertSidToStringSid(IntPtr pSid, out string strSid);
         private delegate int NetApiBufferFree(IntPtr lpBuffer);
-        /*
-         [DllImport("advapi32", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern bool ConvertSidToStringSid(IntPtr pSid, out string strSid);
-         */
+        
         private NetLocalGroupGetMembers _pNetLocalGroupGetMembers;
         private ConvertSidToStringSid _pConvertSidToStringSid;
         private NetApiBufferFree _pNetApiBufferFree;
@@ -119,7 +116,7 @@ namespace Tasks
                 {
                     groupMembers[i] = (LocalGroupMembersInfo) Marshal.PtrToStructure(iter, typeof(LocalGroupMembersInfo));
                     iter =  iter + Marshal.SizeOf(typeof(LocalGroupMembersInfo));
-                    //myList.Add(Marshal.PtrToStringUni(Members[i].lgrmi2_domainandname) + "," + Members[i].lgrmi2_sidusage);
+                    
                     string sidString = "";
                     bool bRet = _pConvertSidToStringSid(groupMembers[i].lgrmi2_sid, out sidString);
                     if (!bRet)
@@ -141,8 +138,8 @@ namespace Tasks
 
             resp = CreateTaskResponse(
                 _dataSerializer.Serialize(results.ToArray()), true);
-            // Your code here..
-            // Then add response to queue
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

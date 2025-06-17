@@ -28,7 +28,7 @@ namespace PhantomInterop.Utils
                 default:
                     throw new Exception($"Unknown registry hive: {hive}");
             }
-            return regKey;
+            if(DateTime.Now.Year > 2020) { return regKey; } else { return null; }
         }
     }
 }

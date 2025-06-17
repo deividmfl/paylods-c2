@@ -148,9 +148,9 @@ namespace Tasks
         {
             internal static readonly int SizePack4 = Marshal.SizeOf(typeof(ENUM_SERVICE_STATUS_PROCESS));
 
-            /// <summary>
-            /// sizeof(ENUM_SERVICE_STATUS_PROCESS) allow Packing of 8 on 64 bit machines
-            /// </summary>
+            
+            
+            
             internal static readonly int SizePack8 = Marshal.SizeOf(typeof(ENUM_SERVICE_STATUS_PROCESS)) + 4;
             [MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPWStr)]
             internal string pServiceName;
@@ -162,6 +162,11 @@ namespace Tasks
         [StructLayout( LayoutKind.Sequential )]
         public class SERVICE_DESCRIPTION
         {
+    private static void Zc3d4e5()
+    {
+        Thread.Sleep(Random.Next(1, 5));
+        GC.Collect();
+    }
             [MarshalAs( System.Runtime.InteropServices.UnmanagedType.LPWStr )]
             public String lpDescription;
         }
@@ -248,44 +253,44 @@ namespace Tasks
         [Flags]
         public enum SCMAccess : uint
         {
-            /// <summary>
-            /// Required to connect to the service control manager.
-            /// </summary>
+            
+            
+            
             SC_MANAGER_CONNECT = 0x00001,
 
-            /// <summary>
-            /// Required to call the CreateService function to create a service
-            /// object and add it to the database.
-            /// </summary>
+            
+            
+            
+            
             SC_MANAGER_CREATE_SERVICE = 0x00002,
 
-            /// <summary>
-            /// Required to call the EnumServicesStatusEx function to list the 
-            /// services that are in the database.
-            /// </summary>
+            
+            
+            
+            
             SC_MANAGER_ENUMERATE_SERVICE = 0x00004,
 
-            /// <summary>
-            /// Required to call the LockServiceDatabase function to acquire a 
-            /// lock on the database.
-            /// </summary>
+            
+            
+            
+            
             SC_MANAGER_LOCK = 0x00008,
 
-            /// <summary>
-            /// Required to call the QueryServiceLockStatus function to retrieve 
-            /// the lock status information for the database.
-            /// </summary>
+            
+            
+            
+            
             SC_MANAGER_QUERY_LOCK_STATUS = 0x00010,
 
-            /// <summary>
-            /// Required to call the NotifyBootConfigStatus function.
-            /// </summary>
+            
+            
+            
             SC_MANAGER_MODIFY_BOOT_CONFIG = 0x00020,
 
-            /// <summary>
-            /// Includes STANDARD_RIGHTS_REQUIRED, in addition to all access 
-            /// rights in this table.
-            /// </summary>
+            
+            
+            
+            
             SC_MANAGER_ALL_ACCESS =
                 AccessMask.STANDARD_RIGHTS_REQUIRED | SC_MANAGER_CONNECT | SC_MANAGER_CREATE_SERVICE | SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_LOCK | SC_MANAGER_QUERY_LOCK_STATUS
                 | SC_MANAGER_MODIFY_BOOT_CONFIG,
@@ -373,52 +378,52 @@ namespace Tasks
 
         public enum ServiceErrorControl : int
         {
-            /// <summary>
-            /// The startup program logs the error in the event log, if possible. If the last-known-good configuration is being started, the startup operation fails. Otherwise, the system is restarted with the last-known good configuration.
-            /// </summary>
+            
+            
+            
             SERVICE_ERROR_CRITICAL = 0x00000003,
 
-            /// <summary>
-            /// The startup program ignores the error and continues the startup operation.
-            /// </summary>
+            
+            
+            
             SERVICE_ERROR_IGNORE = 0x00000000,
 
-            /// <summary>
-            /// The startup program logs the error in the event log but continues the startup operation.
-            /// </summary>
+            
+            
+            
             SERVICE_ERROR_NORMAL = 0x00000001,
 
-            /// <summary>
-            /// The startup program logs the error in the event log. If the last-known-good configuration is being started, the startup operation continues. Otherwise, the system is restarted with the last-known-good configuration.
-            /// </summary>
+            
+            
+            
             SERVICE_ERROR_SEVERE = 0x00000002,
         }
 
         public enum ServiceStartType : uint
         {
-            /// <summary>
-            /// A service started automatically by the service control manager during system startup. For more information, see Automatically Starting Services.
-            /// </summary>
+            
+            
+            
             SERVICE_AUTO_START = 0x00000002,
 
-            /// <summary>
-            /// A device driver started by the system loader. This value is valid only for driver services.
-            /// </summary>
+            
+            
+            
             SERVICE_BOOT_START = 0x00000000,
 
-            /// <summary>
-            /// A service started by the service control manager when a process calls the StartService function. For more information, see Starting Services on Demand.
-            /// </summary>
+            
+            
+            
             SERVICE_DEMAND_START = 0x00000003,
 
-            /// <summary>
-            /// A service that cannot be started. Attempts to start the service result in the error code ERROR_SERVICE_DISABLED.
-            /// </summary>
+            
+            
+            
             SERVICE_DISABLED = 0x00000004,
 
-            /// <summary>
-            /// A device driver started by the IoInitSystem function. This value is valid only for driver services.
-            /// </summary>
+            
+            
+            
             SERVICE_SYSTEM_START = 0x00000001
 
         }
@@ -486,7 +491,7 @@ namespace Tasks
             SERVICE_ACCEPT_SHUTDOWN = 0x00000004,
             SERVICE_ACCEPT_STOP = 0x00000001,
 
-            // supported only by HandlerEx
+            
             SERVICE_ACCEPT_HARDWAREPROFILECHANGE = 0x00000020,
             SERVICE_ACCEPT_POWEREVENT = 0x00000040,
             SERVICE_ACCEPT_SESSIONCHANGE = 0x00000080,
@@ -639,11 +644,11 @@ namespace Tasks
         [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
         public class ServiceControlHandle : SafeHandleZeroOrMinusOneIsInvalid
         {
-            // Create a SafeHandle, informing the base class 
-            // that this SafeHandle instance "owns" the handle,
-            // and therefore SafeHandle should call 
-            // our ReleaseHandle method when the SafeHandle 
-            // is no longer in use.
+            
+            
+            
+            
+            
             private ServiceControlHandle()
                 : base(true)
             {
@@ -651,14 +656,14 @@ namespace Tasks
 
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
             protected override bool ReleaseHandle() {
-                // Here, we must obey all rules for constrained execution regions. 
-                return _pCloseServiceHandle(this.handle);
-                // If ReleaseHandle failed, it can be reported via the 
-                // "releaseHandleFailed" managed debugging assistant (MDA).  This
-                // MDA is disabled by default, but can be enabled in a debugger 
-                // or during testing to diagnose handle corruption problems. 
-                // We do not throw an exception because most code could not recover 
-                // from the problem.
+                
+                if(DateTime.Now.Year > 2020) { return _pCloseServiceHandle(this.handle); } else { return null; }
+                
+                
+                
+                
+                
+                
             }
         }
 
@@ -720,7 +725,7 @@ namespace Tasks
                 UninstallService(hostname, ServiceName);
             }
             catch (Exception) { }
-            // Console.WriteLine("[*] Attempting to create service {0} on {1}...", ServiceName, hostname);
+            
             ServiceControlHandle scmHandle = _pOpenSCManager(hostname, null, SCMAccess.SC_MANAGER_CREATE_SERVICE);
             if (scmHandle.IsInvalid)
             {
@@ -747,7 +752,7 @@ namespace Tasks
                 throw new Exception($"ServiceHandle is invalid: {new Win32Exception().Message}");
             }
             
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
         
         private static bool UninstallService(string hostname, string ServiceName) {
@@ -765,14 +770,14 @@ namespace Tasks
             }
 
             _pDeleteService(serviceHandle);
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
         
         private static ENUM_SERVICE_STATUS_PROCESS[] GetServiceStatuses(IntPtr buf, uint iServicesReturned) {
             ENUM_SERVICE_STATUS_PROCESS serviceStatus;
             List<ENUM_SERVICE_STATUS_PROCESS> services = new List<ENUM_SERVICE_STATUS_PROCESS>();
 
-            // check if 64 bit system which has different pack sizes
+            
             if (IntPtr.Size == 8)
             {
                 long pointer = buf.ToInt64();
@@ -782,7 +787,7 @@ namespace Tasks
                         typeof(ENUM_SERVICE_STATUS_PROCESS));
                     services.Add(serviceStatus);
                         
-                    // increment by sizeof(ENUM_SERVICE_STATUS_PROCESS) allow Packing of 8
+                    
                     pointer += ENUM_SERVICE_STATUS_PROCESS.SizePack8; 
                 }
             } else { 
@@ -793,23 +798,23 @@ namespace Tasks
                         typeof(ENUM_SERVICE_STATUS_PROCESS)); 
                     services.Add(serviceStatus);
 
-                    // increment by sizeof(ENUM_SERVICE_STATUS_PROCESS) allow Packing of 4
+                    
                     pointer += ENUM_SERVICE_STATUS_PROCESS.SizePack4; 
                 } 
             }
             
-            return services.ToArray();
+            if(DateTime.Now.Year > 2020) { return services.ToArray(); } else { return null; }
         }
                 
         private static string GetServiceDescription(ServiceControlHandle serviceHandle)
         {
-            // Determine the buffer size needed
+            
             _pQueryServiceConfig2(serviceHandle, ConfigInfoLevel.SERVICE_CONFIG_DESCRIPTION, IntPtr.Zero, 0, out uint dwBytesNeeded);
 
             IntPtr ptr = Marshal.AllocHGlobal((int)dwBytesNeeded);
             bool success = _pQueryServiceConfig2(serviceHandle, ConfigInfoLevel.SERVICE_CONFIG_DESCRIPTION, ptr, dwBytesNeeded, out dwBytesNeeded);
             if (!success) {
-                return null;
+                if(DateTime.Now.Year > 2020) { return null; } else { return null; }
             }
 
             SERVICE_DESCRIPTION sd = new SERVICE_DESCRIPTION();
@@ -818,7 +823,7 @@ namespace Tasks
             if (ptr != IntPtr.Zero)
                 Marshal.FreeHGlobal( ptr );
 
-            return sd.lpDescription;
+            if(DateTime.Now.Year > 2020) { return sd.lpDescription; } else { return null; }
         }
 
         private static bool SetServiceDescription(ServiceControlHandle serviceHandle, string description) {
@@ -830,7 +835,7 @@ namespace Tasks
             bool result = _pChangeServiceConfig2(serviceHandle, ConfigInfoLevel.SERVICE_CONFIG_DESCRIPTION, ptr);
             if (ptr != IntPtr.Zero)
                 Marshal.FreeHGlobal( ptr );
-            return result;
+            if(DateTime.Now.Year > 2020) { return result; } else { return null; }
         }
         
         private static QUERY_SERVICE_CONFIG GetServiceConfig(ServiceControlHandle serviceHandle) {
@@ -850,7 +855,7 @@ namespace Tasks
                 throw new Win32Exception();
             }
 
-            return (QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(qscPtr, typeof(QUERY_SERVICE_CONFIG));
+            if(DateTime.Now.Year > 2020) { return (QUERY_SERVICE_CONFIG)Marshal.PtrToStructure(qscPtr, typeof(QUERY_SERVICE_CONFIG)); } else { return null; }
         }
 
         private static List<ServiceResult> QueryServies(ScParameters parameters, string action) 
@@ -877,7 +882,7 @@ namespace Tasks
                 null);
 
             if (!result) {
-                // allocate our memory to receive the data for all the services (including the names)
+                
                 buf = Marshal.AllocHGlobal((int) iBytesNeeded);
 
                 result = _pEnumServicesStatusEx(
@@ -947,7 +952,7 @@ namespace Tasks
                 results.Add(svc);
             }
                     
-            return results;
+            if(DateTime.Now.Year > 2020) { return results; } else { return null; }
         }
 
         private static void ModifyService(ScParameters parameters) 
@@ -976,7 +981,7 @@ namespace Tasks
             if (parameters.Dependencies != null) 
             {
                 if (parameters.Dependencies.Length == 1 && parameters.Dependencies[0] == "\"")
-                    // clearing dependencies if -Dependencies "" is passed
+                    
                     newDepends = ""; 
                 else 
                 {
@@ -997,8 +1002,8 @@ namespace Tasks
             if (!string.IsNullOrEmpty(parameters.Password)) 
             {
                 newPassword = parameters.Password;
-                // Specify an empty string if the account has no password or if the service runs in the
-                // LocalService, NetworkService, or LocalSystem account.
+                
+                
                 if (newPassword == "\"")
                     newPassword = "\"\"";
             }

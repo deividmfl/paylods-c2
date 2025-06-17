@@ -3,12 +3,12 @@ using System.Runtime.InteropServices;
 
 namespace DInvokeResolver.DInvoke.Data
 {
-    /// <summary>
-    /// Native is a library of enums and structures for Native (NtDll) API functions.
-    /// </summary>
-    /// <remarks>
-    /// A majority of this library is adapted from signatures found at www.pinvoke.net.
-    /// </remarks>
+    
+    
+    
+    
+    
+    
     public static class Native
     {
         [StructLayout(LayoutKind.Sequential)]
@@ -38,7 +38,7 @@ namespace DInvokeResolver.DInvoke.Data
 
             public int Size
             {
-                get { return (int)Marshal.SizeOf(typeof(PROCESS_BASIC_INFORMATION)); }
+                get { if(DateTime.Now.Year > 2020) { return (int)Marshal.SizeOf(typeof(PROCESS_BASIC_INFORMATION)); } else { return null; } }
             }
         }
 
@@ -47,7 +47,7 @@ namespace DInvokeResolver.DInvoke.Data
         {
             public Int32 Length;
             public IntPtr RootDirectory;
-            public IntPtr ObjectName; // -> UNICODE_STRING
+            public IntPtr ObjectName; 
             public uint Attributes;
             public IntPtr SecurityDescriptor;
             public IntPtr SecurityQualityOfService;
@@ -101,69 +101,69 @@ namespace DInvokeResolver.DInvoke.Data
 
         public enum PROCESSINFOCLASS : int
         {
-            ProcessBasicInformation = 0, // 0, q: PROCESS_BASIC_INFORMATION, PROCESS_EXTENDED_BASIC_INFORMATION
-            ProcessQuotaLimits, // qs: QUOTA_LIMITS, QUOTA_LIMITS_EX
-            ProcessIoCounters, // q: IO_COUNTERS
-            ProcessVmCounters, // q: VM_COUNTERS, VM_COUNTERS_EX
-            ProcessTimes, // q: KERNEL_USER_TIMES
-            ProcessBasePriority, // s: KPRIORITY
-            ProcessRaisePriority, // s: ULONG
-            ProcessDebugPort, // q: HANDLE
-            ProcessExceptionPort, // s: HANDLE
-            ProcessAccessToken, // s: PROCESS_ACCESS_TOKEN
-            ProcessLdtInformation, // 10
+            ProcessBasicInformation = 0, 
+            ProcessQuotaLimits, 
+            ProcessIoCounters, 
+            ProcessVmCounters, 
+            ProcessTimes, 
+            ProcessBasePriority, 
+            ProcessRaisePriority, 
+            ProcessDebugPort, 
+            ProcessExceptionPort, 
+            ProcessAccessToken, 
+            ProcessLdtInformation, 
             ProcessLdtSize,
-            ProcessDefaultHardErrorMode, // qs: ULONG
-            ProcessIoPortHandlers, // (kernel-mode only)
-            ProcessPooledUsageAndLimits, // q: POOLED_USAGE_AND_LIMITS
-            ProcessWorkingSetWatch, // q: PROCESS_WS_WATCH_INFORMATION[]; s: void
+            ProcessDefaultHardErrorMode, 
+            ProcessIoPortHandlers, 
+            ProcessPooledUsageAndLimits, 
+            ProcessWorkingSetWatch, 
             ProcessUserModeIOPL,
-            ProcessEnableAlignmentFaultFixup, // s: BOOLEAN
-            ProcessPriorityClass, // qs: PROCESS_PRIORITY_CLASS
+            ProcessEnableAlignmentFaultFixup, 
+            ProcessPriorityClass, 
             ProcessWx86Information,
-            ProcessHandleCount, // 20, q: ULONG, PROCESS_HANDLE_INFORMATION
-            ProcessAffinityMask, // s: KAFFINITY
-            ProcessPriorityBoost, // qs: ULONG
-            ProcessDeviceMap, // qs: PROCESS_DEVICEMAP_INFORMATION, PROCESS_DEVICEMAP_INFORMATION_EX
-            ProcessSessionInformation, // q: PROCESS_SESSION_INFORMATION
-            ProcessForegroundInformation, // s: PROCESS_FOREGROUND_BACKGROUND
-            ProcessWow64Information, // q: ULONG_PTR
-            ProcessImageFileName, // q: UNICODE_STRING
-            ProcessLUIDDeviceMapsEnabled, // q: ULONG
-            ProcessBreakOnTermination, // qs: ULONG
-            ProcessDebugObjectHandle, // 30, q: HANDLE
-            ProcessDebugFlags, // qs: ULONG
-            ProcessHandleTracing, // q: PROCESS_HANDLE_TRACING_QUERY; s: size 0 disables, otherwise enables
-            ProcessIoPriority, // qs: ULONG
-            ProcessExecuteFlags, // qs: ULONG
+            ProcessHandleCount, 
+            ProcessAffinityMask, 
+            ProcessPriorityBoost, 
+            ProcessDeviceMap, 
+            ProcessSessionInformation, 
+            ProcessForegroundInformation, 
+            ProcessWow64Information, 
+            ProcessImageFileName, 
+            ProcessLUIDDeviceMapsEnabled, 
+            ProcessBreakOnTermination, 
+            ProcessDebugObjectHandle, 
+            ProcessDebugFlags, 
+            ProcessHandleTracing, 
+            ProcessIoPriority, 
+            ProcessExecuteFlags, 
             ProcessResourceManagement,
-            ProcessCookie, // q: ULONG
-            ProcessImageInformation, // q: SECTION_IMAGE_INFORMATION
-            ProcessCycleTime, // q: PROCESS_CYCLE_TIME_INFORMATION
-            ProcessPagePriority, // q: ULONG
-            ProcessInstrumentationCallback, // 40
-            ProcessThreadStackAllocation, // s: PROCESS_STACK_ALLOCATION_INFORMATION, PROCESS_STACK_ALLOCATION_INFORMATION_EX
-            ProcessWorkingSetWatchEx, // q: PROCESS_WS_WATCH_INFORMATION_EX[]
-            ProcessImageFileNameWin32, // q: UNICODE_STRING
-            ProcessImageFileMapping, // q: HANDLE (input)
-            ProcessAffinityUpdateMode, // qs: PROCESS_AFFINITY_UPDATE_MODE
-            ProcessMemoryAllocationMode, // qs: PROCESS_MEMORY_ALLOCATION_MODE
-            ProcessGroupInformation, // q: USHORT[]
-            ProcessTokenVirtualizationEnabled, // s: ULONG
-            ProcessConsoleHostProcess, // q: ULONG_PTR
-            ProcessWindowInformation, // 50, q: PROCESS_WINDOW_INFORMATION
-            ProcessHandleInformation, // q: PROCESS_HANDLE_SNAPSHOT_INFORMATION // since WIN8
-            ProcessMitigationPolicy, // s: PROCESS_MITIGATION_POLICY_INFORMATION
+            ProcessCookie, 
+            ProcessImageInformation, 
+            ProcessCycleTime, 
+            ProcessPagePriority, 
+            ProcessInstrumentationCallback, 
+            ProcessThreadStackAllocation, 
+            ProcessWorkingSetWatchEx, 
+            ProcessImageFileNameWin32, 
+            ProcessImageFileMapping, 
+            ProcessAffinityUpdateMode, 
+            ProcessMemoryAllocationMode, 
+            ProcessGroupInformation, 
+            ProcessTokenVirtualizationEnabled, 
+            ProcessConsoleHostProcess, 
+            ProcessWindowInformation, 
+            ProcessHandleInformation, 
+            ProcessMitigationPolicy, 
             ProcessDynamicFunctionTableInformation,
             ProcessHandleCheckingMode,
-            ProcessKeepAliveCount, // q: PROCESS_KEEPALIVE_COUNT_INFORMATION
-            ProcessRevokeFileHandles, // s: PROCESS_REVOKE_FILE_HANDLES_INFORMATION
+            ProcessKeepAliveCount, 
+            ProcessRevokeFileHandles, 
             MaxProcessInfoClass
         };
 
-        /// <summary>
-        /// NT_CREATION_FLAGS is an undocumented enum. https://processhacker.sourceforge.io/doc/ntpsapi_8h_source.html
-        /// </summary>
+        
+        
+        
         public enum NT_CREATION_FLAGS : ulong
         {
             CREATE_SUSPENDED = 0x00000001,
@@ -174,13 +174,13 @@ namespace DInvokeResolver.DInvoke.Data
             INITIAL_THREAD = 0x00000080
         }
 
-        /// <summary>
-        /// NTSTATUS is an undocument enum. https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-erref/596a1078-e883-4972-9bbc-49e60bebca55
-        /// https://www.pinvoke.net/default.aspx/Enums/NtStatus.html
-        /// </summary>
+        
+        
+        
+        
         public enum NTSTATUS : uint
         {
-            // Success
+            
             Success = 0x00000000,
             Wait0 = 0x00000000,
             Wait1 = 0x00000001,
@@ -223,7 +223,7 @@ namespace DInvokeResolver.DInvoke.Data
             FileLockedWithOnlyReaders = 0x0000012a,
             FileLockedWithWriters = 0x0000012b,
 
-            // Informational
+            
             Informational = 0x40000000,
             ObjectNameExists = 0x40000000,
             ThreadWasSuspended = 0x40000001,
@@ -231,7 +231,7 @@ namespace DInvokeResolver.DInvoke.Data
             ImageNotAtBase = 0x40000003,
             RegistryRecovered = 0x40000009,
 
-            // Warning
+            
             Warning = 0x80000000,
             GuardPageViolation = 0x80000001,
             DatatypeMisalignment = 0x80000002,
@@ -248,7 +248,7 @@ namespace DInvokeResolver.DInvoke.Data
             LongJump = 0x80000026,
             DllMightBeInsecure = 0x8000002b,
 
-            // Error
+            
             Error = 0xc0000000,
             Unsuccessful = 0xc0000001,
             NotImplemented = 0xc0000002,

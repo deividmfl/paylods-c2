@@ -21,12 +21,12 @@ namespace ExecutePE.Patchers
             int relocTableFileOffset = 0;
             int relocTableFileSize = 0;
 
-            // Copy Sections
+            
             for (var i = 0; i < _pe.FileHeader.NumberOfSections; i++)
             {
-                // The relocation table is typically marked as 'SCN_MEM_DISCARDABLE' so it will be discarded.
-                // Check if this section refers to the relocation table and save the file offset.
-                // The relocations are parsed from the file and not the virtual address.
+                
+                
+                
                 if (_pe.OptionalHeader64.BaseRelocationTable.VirtualAddress == _pe.ImageSectionHeaders[i].VirtualAddress)
                 {
                     try
@@ -54,7 +54,7 @@ namespace ExecutePE.Patchers
                     }
                 }
 
-                // Discard sections marked as discardable
+                
                 if (_pe.ImageSectionHeaders[i].Characteristics.HasFlag(PELoader.SectionFlags.IMAGE_SCN_MEM_DISCARDABLE))
                 {
                     continue;
@@ -75,7 +75,7 @@ namespace ExecutePE.Patchers
                     throw new Exception($"Could not allocate memory for the '{sectionName}' section: {exc.Message}");
                 }
 
-                // Copy the section data if the section has initialized data or code
+                
                 if (_pe.ImageSectionHeaders[i].Characteristics.HasFlag(PELoader.SectionFlags.IMAGE_SCN_CNT_INITIALIZED_DATA)
                     || _pe.ImageSectionHeaders[i].Characteristics.HasFlag(PELoader.SectionFlags.IMAGE_SCN_CNT_CODE))
                 {
@@ -83,11 +83,11 @@ namespace ExecutePE.Patchers
                 }
             }
 
-            // Calculate the delta for relocations
+            
             var delta = currentBase - (long)_pe.OptionalHeader64.ImageBase;
 
-            // Get the start of the relocation table from the file offset. Assume that a non-existent
-            // relocation table means that the PE is malformed.
+            
+            
             if (relocTableFileOffset == 0)
             {
                 throw new InvalidOperationException("Relocation table not found. PE may be malformed.");
@@ -99,7 +99,7 @@ namespace ExecutePE.Patchers
             var baseRelocationEntry = NativeDeclarations.IMAGE_BASE_RELOCATION.Parse(relocationTable[relocationIndex..].ToArray());
             var baseRelocationBlockSize = 8;
 
-            // Iterate over each entry in the relocation table and apply relocations
+            
             while (baseRelocationEntry.SizeOfBlock != 0)
             {
                 IntPtr relocationBaseAddress = (IntPtr)(currentBase + baseRelocationEntry.VirtualAddress);
@@ -166,7 +166,7 @@ namespace ExecutePE.Patchers
         {
             for (var i = 0; i < _pe?.FileHeader.NumberOfSections; i++)
             {
-                // Skip over discarded sections since they are not mapped in
+                
                 if (_pe.ImageSectionHeaders[i].Characteristics.HasFlag(PELoader.SectionFlags.IMAGE_SCN_MEM_DISCARDABLE))
                 {
                     continue;

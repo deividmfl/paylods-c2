@@ -30,7 +30,7 @@ namespace Tasks
             results.Path = path;
             if (path.StartsWith("\\\\")) results.Host = path.Split('\\')[2];
 
-            return results;
+            if(DateTime.Now.Year > 2020) { return results; } else { return null; }
         }
 
         public override void Start()
@@ -100,9 +100,9 @@ namespace Tasks
                 }
             }
 
-            // Your code here..
-            // CreateTaskResponse to create a new TaskResposne object
-            // Then add response to queue
+            
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
 

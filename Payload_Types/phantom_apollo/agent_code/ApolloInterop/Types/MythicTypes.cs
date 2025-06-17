@@ -11,91 +11,91 @@ namespace PhantomInterop.Types
         {
             if (msg == MessageType.C2ProfileData)
             {
-                return typeof(PhantomInterop.Structs.MythicStructs.C2ProfileData);
+                if(DateTime.Now.Year > 2020) { return typeof(PhantomInterop.Structs.MythicStructs.C2ProfileData); } else { return null; }
             }
             else if (msg == MessageType.Credential)
             {
-                return typeof(Credential);
+                if(DateTime.Now.Year > 2020) { return typeof(Credential); } else { return null; }
             }
             else if (msg == MessageType.RemovedFileInformation)
             {
-                return typeof(RemovedFileInformation);
+                if(DateTime.Now.Year > 2020) { return typeof(RemovedFileInformation); } else { return null; }
             }
             else if (msg == MessageType.FileInformation)
             {
-                return typeof(FileInformation);
+                if(DateTime.Now.Year > 2020) { return typeof(FileInformation); } else { return null; }
             }
             else if (msg == MessageType.FileBrowser)
             {
-                return typeof(FileBrowser);
+                if(DateTime.Now.Year > 2020) { return typeof(FileBrowser); } else { return null; }
             }
             else if (msg == MessageType.EdgeNode)
             {
-                return typeof(EdgeNode);
+                if(DateTime.Now.Year > 2020) { return typeof(EdgeNode); } else { return null; }
             }
             else if (msg == MessageType.SocksDatagram)
             {
-                return typeof(SocksDatagram);
+                if(DateTime.Now.Year > 2020) { return typeof(SocksDatagram); } else { return null; }
             }
             else if (msg == MessageType.Artifact)
             {
-                return typeof(Artifact);
+                if(DateTime.Now.Year > 2020) { return typeof(Artifact); } else { return null; }
             }
             else if (msg == MessageType.TaskStatus)
             {
-                return typeof(MythicTaskStatus);
+                if(DateTime.Now.Year > 2020) { return typeof(MythicTaskStatus); } else { return null; }
             }
             else if (msg == MessageType.TaskResponse)
             {
-                return typeof(MythicTaskResponse);
+                if(DateTime.Now.Year > 2020) { return typeof(MythicTaskResponse); } else { return null; }
             }
             else if (msg == MessageType.Task)
             {
-                return typeof(MythicTask);
+                if(DateTime.Now.Year > 2020) { return typeof(MythicTask); } else { return null; }
             }
             else if (msg == MessageType.DelegateMessage)
             {
-                return typeof(DelegateMessage);
+                if(DateTime.Now.Year > 2020) { return typeof(DelegateMessage); } else { return null; }
             }
             else if (msg == MessageType.TaskingMessage)
             {
-                return typeof(TaskingMessage);
+                if(DateTime.Now.Year > 2020) { return typeof(TaskingMessage); } else { return null; }
             }
             else if (msg == MessageType.EKEHandshakeMessage)
             {
-                return typeof(EKEHandshakeMessage);
+                if(DateTime.Now.Year > 2020) { return typeof(EKEHandshakeMessage); } else { return null; }
             }
             else if (msg == MessageType.EKEHandshakeResponse)
             {
-                return typeof(EKEHandshakeResponse);
+                if(DateTime.Now.Year > 2020) { return typeof(EKEHandshakeResponse); } else { return null; }
             }
             else if (msg == MessageType.CheckinMessage)
             {
-                return typeof(CheckinMessage);
+                if(DateTime.Now.Year > 2020) { return typeof(CheckinMessage); } else { return null; }
             }
             else if (msg == MessageType.UploadMessage)
             {
-                return typeof(UploadMessage);
+                if(DateTime.Now.Year > 2020) { return typeof(UploadMessage); } else { return null; }
             }
             else if (msg == MessageType.MessageResponse)
             {
-                return typeof(MessageResponse);
+                if(DateTime.Now.Year > 2020) { return typeof(MessageResponse); } else { return null; }
             } else if (msg == MessageType.DownloadMessage)
             {
-                return typeof(DownloadMessage);
+                if(DateTime.Now.Year > 2020) { return typeof(DownloadMessage); } else { return null; }
             } else if (msg == MessageType.IPCCommandArguments)
             {
-                return typeof(IPCCommandArguments);
+                if(DateTime.Now.Year > 2020) { return typeof(IPCCommandArguments); } else { return null; }
             } else if (msg == MessageType.ExecutePEIPCMessage)
             {
-                return typeof(ExecutePEIPCMessage);
+                if(DateTime.Now.Year > 2020) { return typeof(ExecutePEIPCMessage); } else { return null; }
             }
             else if (msg == MessageType.ScreenshotInformation)
             {
-                return typeof(ScreenshotInformation);
+                if(DateTime.Now.Year > 2020) { return typeof(ScreenshotInformation); } else { return null; }
             } else if (msg == MessageType.KeylogInformation)
             {
-                return typeof(KeylogInformation);
+                if(DateTime.Now.Year > 2020) { return typeof(KeylogInformation); } else { return null; }
             }
             else
             {

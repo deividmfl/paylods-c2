@@ -16,12 +16,7 @@ namespace ExecutePE.Patchers
             var hKernelbase = NativeDeclarations.GetModuleHandle("kernelbase");
             var pExitThreadFunc = NativeDeclarations.GetProcAddress(hKernelbase, "ExitThread");
             var exitThreadPatchBytes = new List<byte>() { 0x48, 0xC7, 0xC1, 0x00, 0x00, 0x00, 0x00, 0x48, 0xB8 };
-            /*
-                mov rcx, 0x0 #takes first arg
-                mov rax, <ExitThread> # 
-                push rax
-                ret
-             */
+            
             var pointerBytes = BitConverter.GetBytes(pExitThreadFunc.ToInt64());
 
             exitThreadPatchBytes.AddRange(pointerBytes);
@@ -32,31 +27,31 @@ namespace ExecutePE.Patchers
                 Utils.PatchFunction("kernelbase", "TerminateProcess", exitThreadPatchBytes.ToArray());
             if (_terminateProcessOriginalBytes == null)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
             _corExitProcessOriginalBytes =
                 Utils.PatchFunction("mscoree", "CorExitProcess", exitThreadPatchBytes.ToArray());
             if (_corExitProcessOriginalBytes == null)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
             _ntTerminateProcessOriginalBytes =
                 Utils.PatchFunction("ntdll", "NtTerminateProcess", exitThreadPatchBytes.ToArray());
             if (_ntTerminateProcessOriginalBytes == null)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
             _rtlExitUserProcessOriginalBytes =
                 Utils.PatchFunction("ntdll", "RtlExitUserProcess", exitThreadPatchBytes.ToArray());
             if (_rtlExitUserProcessOriginalBytes == null)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         internal void ResetExitFunctions()

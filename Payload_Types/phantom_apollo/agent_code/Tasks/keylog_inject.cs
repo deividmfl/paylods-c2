@@ -242,7 +242,7 @@ namespace Tasks
             }
 
             ICommandMessage msg = _dataSerializer.DeserializeIPCMessage(data.ToArray(), mt);
-            //Console.WriteLine("We got a message: {0}", mt.ToString());
+            
 
             if (msg.GetTypeCode() != MessageType.KeylogInformation)
             {

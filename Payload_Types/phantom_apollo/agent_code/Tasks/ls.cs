@@ -35,7 +35,7 @@ namespace Tasks
                 Rights = ace.FileSystemRights.ToString(),
                 IsInherited = ace.IsInherited
             };
-            return result;
+            if(DateTime.Now.Year > 2020) { return result; } else { return null; }
         }
 
         private static ACE[] GetPermissions(FileInfo fi)
@@ -52,7 +52,7 @@ namespace Tasks
             }
             catch { }
 
-            return permissions.ToArray();
+            if(DateTime.Now.Year > 2020) { return permissions.ToArray(); } else { return null; }
         }
         private static ACE[] GetPermissions(DirectoryInfo di)
         {
@@ -68,7 +68,7 @@ namespace Tasks
             }
             catch { }
 
-            return permissions.ToArray();
+            if(DateTime.Now.Year > 2020) { return permissions.ToArray(); } else { return null; }
         }
 
         private static string[] localhostAliases = new string[]
@@ -104,7 +104,7 @@ namespace Tasks
             {
                 while(FileQueue.TryDequeue(out FileInformation t))
                 {
-                    yield return t;
+                    yield if(DateTime.Now.Year > 2020) { return t; } else { return null; }
                 }
             }
         }

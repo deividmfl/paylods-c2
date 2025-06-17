@@ -8,10 +8,10 @@ namespace WindowsService1
 {
     static class Runtime
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        static void Main()
+        
+        
+        
+        static void J3m4n5o6()
         {
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]

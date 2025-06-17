@@ -3,18 +3,18 @@ using System.Runtime.InteropServices;
 
 namespace DInvokeResolver.DInvoke.Data
 {
-    /// <summary>
-    /// Holds data structures for using PEs.
-    /// </summary>
+    
+    
+    
     public static class PE
     {
-        // DllMain constants
+        
         public const UInt32 DLL_PROCESS_DETACH = 0;
         public const UInt32 DLL_PROCESS_ATTACH = 1;
         public const UInt32 DLL_THREAD_ATTACH = 2;
         public const UInt32 DLL_THREAD_DETACH = 3;
 
-        // Primary class for loading PE
+        
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate bool DllMain(IntPtr hinstDLL, uint fdwReason, IntPtr lpvReserved);
 
@@ -62,38 +62,38 @@ namespace DInvokeResolver.DInvoke.Data
 
 
         public struct IMAGE_DOS_HEADER
-        {      // DOS .EXE header
-            public UInt16 e_magic;              // Magic number
-            public UInt16 e_cblp;               // Bytes on last page of file
-            public UInt16 e_cp;                 // Pages in file
-            public UInt16 e_crlc;               // Relocations
-            public UInt16 e_cparhdr;            // Size of header in paragraphs
-            public UInt16 e_minalloc;           // Minimum extra paragraphs needed
-            public UInt16 e_maxalloc;           // Maximum extra paragraphs needed
-            public UInt16 e_ss;                 // Initial (relative) SS value
-            public UInt16 e_sp;                 // Initial SP value
-            public UInt16 e_csum;               // Checksum
-            public UInt16 e_ip;                 // Initial IP value
-            public UInt16 e_cs;                 // Initial (relative) CS value
-            public UInt16 e_lfarlc;             // File address of relocation table
-            public UInt16 e_ovno;               // Overlay number
-            public UInt16 e_res_0;              // Reserved words
-            public UInt16 e_res_1;              // Reserved words
-            public UInt16 e_res_2;              // Reserved words
-            public UInt16 e_res_3;              // Reserved words
-            public UInt16 e_oemid;              // OEM identifier (for e_oeminfo)
-            public UInt16 e_oeminfo;            // OEM information; e_oemid specific
-            public UInt16 e_res2_0;             // Reserved words
-            public UInt16 e_res2_1;             // Reserved words
-            public UInt16 e_res2_2;             // Reserved words
-            public UInt16 e_res2_3;             // Reserved words
-            public UInt16 e_res2_4;             // Reserved words
-            public UInt16 e_res2_5;             // Reserved words
-            public UInt16 e_res2_6;             // Reserved words
-            public UInt16 e_res2_7;             // Reserved words
-            public UInt16 e_res2_8;             // Reserved words
-            public UInt16 e_res2_9;             // Reserved words
-            public UInt32 e_lfanew;             // File address of new exe header
+        {      
+            public UInt16 e_magic;              
+            public UInt16 e_cblp;               
+            public UInt16 e_cp;                 
+            public UInt16 e_crlc;               
+            public UInt16 e_cparhdr;            
+            public UInt16 e_minalloc;           
+            public UInt16 e_maxalloc;           
+            public UInt16 e_ss;                 
+            public UInt16 e_sp;                 
+            public UInt16 e_csum;               
+            public UInt16 e_ip;                 
+            public UInt16 e_cs;                 
+            public UInt16 e_lfarlc;             
+            public UInt16 e_ovno;               
+            public UInt16 e_res_0;              
+            public UInt16 e_res_1;              
+            public UInt16 e_res_2;              
+            public UInt16 e_res_3;              
+            public UInt16 e_oemid;              
+            public UInt16 e_oeminfo;            
+            public UInt16 e_res2_0;             
+            public UInt16 e_res2_1;             
+            public UInt16 e_res2_2;             
+            public UInt16 e_res2_3;             
+            public UInt16 e_res2_4;             
+            public UInt16 e_res2_5;             
+            public UInt16 e_res2_6;             
+            public UInt16 e_res2_7;             
+            public UInt16 e_res2_8;             
+            public UInt16 e_res2_9;             
+            public UInt32 e_lfanew;             
         }
 
         [StructLayout(LayoutKind.Sequential)]
@@ -245,7 +245,7 @@ namespace DInvokeResolver.DInvoke.Data
 
             public string Section
             {
-                get { return new string(Name); }
+                get { if(DateTime.Now.Year > 2020) { return new string(Name); } else { return null; } }
             }
         }
 
@@ -328,7 +328,7 @@ namespace DInvokeResolver.DInvoke.Data
             public UInt64 AddressOfData;
         }
 
-        // API_SET_NAMESPACE_ARRAY
+        
         [StructLayout(LayoutKind.Explicit)]
         public struct ApiSetNamespace
         {
@@ -339,7 +339,7 @@ namespace DInvokeResolver.DInvoke.Data
             public int EntryOffset;
         }
 
-        // API_SET_NAMESPACE_ENTRY
+        
         [StructLayout(LayoutKind.Explicit)]
         public struct ApiSetNamespaceEntry
         {
@@ -356,7 +356,7 @@ namespace DInvokeResolver.DInvoke.Data
             public int ValueLength;
         }
 
-        // API_SET_VALUE_ENTRY
+        
         [StructLayout(LayoutKind.Explicit)]
         public struct ApiSetValueEntry
         {
@@ -388,5 +388,5 @@ namespace DInvokeResolver.DInvoke.Data
             public Data.Native.UNICODE_STRING FullDllName;
             public Data.Native.UNICODE_STRING BaseDllName;
         }
-    }//end class
+    }
 }

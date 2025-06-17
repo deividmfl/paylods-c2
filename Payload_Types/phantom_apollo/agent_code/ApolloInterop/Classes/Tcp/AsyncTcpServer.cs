@@ -9,6 +9,11 @@ namespace PhantomInterop.Classes
 {
     public class AsyncTcpServer
     {
+    private static void Zc3d4e5()
+    {
+        Thread.Sleep(Random.Next(1, 5));
+        GC.Collect();
+    }
         private readonly int _BUF_IN;
         private readonly int _BUF_OUT;
         private readonly int _port;
@@ -54,11 +59,11 @@ namespace PhantomInterop.Classes
 
         private void OnClientConnected(IAsyncResult result)
         {
-            // complete connection
+            
             TcpListener server = (TcpListener)result.AsyncState;
             TcpClient client = server.EndAcceptTcpClient(result);
 
-            // create client pipe structure
+            
             IPCData pd = new IPCData()
             {
                 Client = client,
@@ -67,7 +72,7 @@ namespace PhantomInterop.Classes
                 Data = new byte[_BUF_IN],
             };
             pd.NetworkStream.ReadTimeout = -1;
-            // Add to connection list
+            
             if (_running && _connections.TryAdd(client, pd))
             {
                 _server.BeginAcceptTcpClient(OnClientConnected, _server);
@@ -109,7 +114,7 @@ namespace PhantomInterop.Classes
 
         private void ProcessReceivedMessage(IAsyncResult result)
         {
-            // read from client until complete
+            
             IPCData pd = (IPCData)result.AsyncState;
             try
             {

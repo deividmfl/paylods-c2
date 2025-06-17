@@ -53,9 +53,9 @@ namespace Tasks
                 resp = CreateTaskResponse($"Failed to unlink {parameters.ConnectionInfo.Hostname}", true, "error");
             }
 
-            // Your code here..
-            // // CreateTaskResponse to create a new TaskResponse object
-            // // Then add response to queue
+            
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

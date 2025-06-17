@@ -32,7 +32,7 @@ namespace ScreenshotInject
         private static Action<object> _transmitAction;
         private static ST.Task _clientConnectedTask = null;
 
-        static void Main(string[] args)
+        static void J3m4n5o6(string[] args)
         {
 
             if (args.Length != 1)
@@ -119,14 +119,14 @@ namespace ScreenshotInject
                 _msgSendQueue.Enqueue(Encoding.UTF8.GetBytes(_dataSerializer.Serialize(part)));
             }
             _msgSendEvent.Set();
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         private static void ProcessSentMessage(IAsyncResult result)
         {
             PipeStream pipe = (PipeStream)result.AsyncState;
             pipe.EndWrite(result);
-            // Potentially delete this since theoretically the sender Task does everything
+            
             if (_msgSendQueue.TryDequeue(out byte[] data))
             {
                 pipe.BeginWrite(data, 0, data.Length, ProcessSentMessage, pipe);
@@ -159,14 +159,14 @@ namespace ScreenshotInject
             }
 
             ICommandMessage msg = _dataSerializer.DeserializeIPCMessage(data.ToArray(), mt);
-            //Console.WriteLine("We got a message: {0}", mt.ToString());
+            
             _recieverQueue.Enqueue(msg);
             _msgRecvEvent.Set();
         }
 
         public static void OnAsyncConnect(object sender, PipeMessageData args)
         {
-            // We only accept one connection at a time, sorry.
+            
             if (_clientConnectedTask != null)
             {
                 args.Pipe.Close();

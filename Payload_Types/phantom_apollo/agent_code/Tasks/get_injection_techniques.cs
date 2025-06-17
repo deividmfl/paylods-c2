@@ -47,8 +47,8 @@ namespace Tasks
 
             resp = CreateTaskResponse(
                 _dataSerializer.Serialize(results.ToArray()), true);
-            // Your code here..
-            // Then add response to queue
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

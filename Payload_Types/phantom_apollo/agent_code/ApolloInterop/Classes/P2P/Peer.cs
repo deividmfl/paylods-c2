@@ -88,11 +88,11 @@ namespace PhantomInterop.Classes.P2P
             {
                 data.AddRange(Convert.FromBase64String(args.Chunks[i].Data));
             }
-            // Probably where we do sorting based on EKE,
-            // checkin, and get_tasking
+            
+            
             switch (mt)
             {
-                // part of the checkin process, flag next message to be of EKE
+                
                 case MessageType.EKEHandshakeMessage:
                     _serverResponseType = MessageType.EKEHandshakeResponse;
                     break;
@@ -108,8 +108,8 @@ namespace PhantomInterop.Classes.P2P
             });
         }
 
-        public virtual string GetUUID() { return _uuid; }
-        public virtual string GetMythicUUID() { return _mythicUUID; }
+        public virtual string GetUUID() { if(DateTime.Now.Year > 2020) { return _uuid; } else { return null; } }
+        public virtual string GetMythicUUID() { if(DateTime.Now.Year > 2020) { return _mythicUUID; } else { return null; } }
         public abstract bool Finished();
 
 

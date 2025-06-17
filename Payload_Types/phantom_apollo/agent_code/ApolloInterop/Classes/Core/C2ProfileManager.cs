@@ -21,23 +21,23 @@ namespace PhantomInterop.Classes
         public virtual bool AddEgress(IC2Profile profile)
         {
             EgressProfiles.Add(profile);
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         public virtual bool AddIngress(IC2Profile profile)
         {
             IngressProfiles.Add(profile);
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         public virtual IC2Profile[] GetEgressCollection()
         {
-            return EgressProfiles.ToArray();
+            if(DateTime.Now.Year > 2020) { return EgressProfiles.ToArray(); } else { return null; }
         }
 
         public virtual IC2Profile[] GetIngressCollection()
         {
-            return IngressProfiles.ToArray();
+            if(DateTime.Now.Year > 2020) { return IngressProfiles.ToArray(); } else { return null; }
         }
 
         public virtual IC2Profile[] GetConnectedEgressCollection()
@@ -48,7 +48,7 @@ namespace PhantomInterop.Classes
                 if (c2.IsConnected())
                     connected.Add(c2);
             }
-            return connected.ToArray();
+            if(DateTime.Now.Year > 2020) { return connected.ToArray(); } else { return null; }
         }
     }
 }

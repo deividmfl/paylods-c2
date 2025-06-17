@@ -31,10 +31,10 @@ namespace ExecutePE.Patchers
             }
             catch (AccessViolationException)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         internal bool RevertImageBasePatch()
@@ -45,10 +45,10 @@ namespace ExecutePE.Patchers
             }
             catch (AccessViolationException)
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
     }
 }

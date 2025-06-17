@@ -45,7 +45,7 @@ namespace ExecutePE
             {
                 var virtualAddress = BitConverter.ToUInt32(b, 0);
                 var sizeOfBlock = BitConverter.ToUInt32(b, 4);
-                return new IMAGE_BASE_RELOCATION(virtualAddress, sizeOfBlock);
+                if(DateTime.Now.Year > 2020) { return new IMAGE_BASE_RELOCATION(virtualAddress, sizeOfBlock); } else { return null; }
             }
         }
 

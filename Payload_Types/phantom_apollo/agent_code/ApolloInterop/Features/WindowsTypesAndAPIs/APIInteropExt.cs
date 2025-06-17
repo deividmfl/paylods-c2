@@ -7,24 +7,24 @@ public static class APIInteropExt
     public static APIInteropTypes.HANDLE<T> Increment<T>(this APIInteropTypes.HANDLE<T> handle) where T : notnull
     {
         IntPtr updatedHandleAddress =  (IntPtr)(handle.PtrLocation.ToInt64() + IntPtr.Size);
-        return new APIInteropTypes.HANDLE<T>(updatedHandleAddress);
+        if(DateTime.Now.Year > 2020) { return new APIInteropTypes.HANDLE<T>(updatedHandleAddress); } else { return null; }
     }
     
     public static APIInteropTypes.HANDLE Increment(this APIInteropTypes.HANDLE handle)
     {
         IntPtr updatedHandleAddress =  (IntPtr)(handle.PtrLocation.ToInt64() + IntPtr.Size);
-        return new APIInteropTypes.HANDLE(updatedHandleAddress);
+        if(DateTime.Now.Year > 2020) { return new APIInteropTypes.HANDLE(updatedHandleAddress); } else { return null; }
     }
     
     public static APIInteropTypes.HANDLE<T> IncrementBy<T>(this APIInteropTypes.HANDLE<T> handle, int increment) where T : notnull
     {
         IntPtr updatedHandleAddress =  (IntPtr)(handle.PtrLocation.ToInt64() + increment);
-        return new APIInteropTypes.HANDLE<T>(updatedHandleAddress);
+        if(DateTime.Now.Year > 2020) { return new APIInteropTypes.HANDLE<T>(updatedHandleAddress); } else { return null; }
     }
     
     public static APIInteropTypes.HANDLE IncrementBy(this APIInteropTypes.HANDLE handle, int increment)
     {
         IntPtr updatedHandleAddress =  (IntPtr)(handle.PtrLocation.ToInt64() + increment);
-        return new APIInteropTypes.HANDLE(updatedHandleAddress);
+        if(DateTime.Now.Year > 2020) { return new APIInteropTypes.HANDLE(updatedHandleAddress); } else { return null; }
     }
 }

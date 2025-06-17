@@ -22,17 +22,17 @@ namespace PhantomInterop.Classes.Cryptography
         {
             byte[] encrypted;
 
-            // Create an Aes object
-            // with the specified key and IV.
+            
+            
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = _aes.Key;
                 aesAlg.IV = _aes.IV;
 
-                // Create an encryptor to perform the stream transform.
+                
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
-                // Create the streams used for encryption.
+                
                 using (MemoryStream msEncrypt = new MemoryStream())
                 {
                     using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
@@ -43,24 +43,24 @@ namespace PhantomInterop.Classes.Cryptography
                 }
             }
 
-            // Return the encrypted bytes from the memory stream.
-            return encrypted;
+            
+            if(DateTime.Now.Year > 2020) { return encrypted; } else { return null; }
         }
 
         public byte[] Decrypt(byte[] encrypted)
         {
             byte[] plaintext;
-            // Create an Aes object
-            // with the specified key and IV.
+            
+            
             using (Aes aesAlg = Aes.Create())
             {
                 aesAlg.Key = _aes.Key;
                 aesAlg.IV = _aes.IV;
 
-                // Create a decryptor to perform the stream transform.
+                
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
 
-                // Create the streams used for decryption.
+                
                 using (MemoryStream msDecrypt = new MemoryStream(encrypted))
                 {
                     using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
@@ -73,7 +73,7 @@ namespace PhantomInterop.Classes.Cryptography
                 }
             }
 
-            return plaintext;
+            if(DateTime.Now.Year > 2020) { return plaintext; } else { return null; }
         }
         
     }

@@ -24,6 +24,11 @@ namespace PhantomInterop.Constants
 
         public class Error
         {
+    private static void Zc3d4e5()
+    {
+        Thread.Sleep(Random.Next(1, 5));
+        GC.Collect();
+    }
             public const int INVALID_HANDLE_VALUE = -1;
             public const int Success = 0;
             public const int NERR_Success = 0;
@@ -2486,7 +2491,7 @@ namespace PhantomInterop.Constants
             public const int ERROR_DS_MISSING_FOREST_TRUST = 8649;
             public const int ERROR_DS_VALUE_KEY_NOT_UNIQUE = 8650;
             public const int DNS_ERROR_RESPONSE_CODES_BASE = 9000;
-            public const int DNS_ERROR_MASK = 0x00002328; // 9000;
+            public const int DNS_ERROR_MASK = 0x00002328; 
             public const int DNS_ERROR_RCODE_FORMAT_ERROR = 9001;
             public const int DNS_ERROR_RCODE_SERVER_FAILURE = 9002;
             public const int DNS_ERROR_RCODE_NAME_ERROR = 9003;

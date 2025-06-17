@@ -35,7 +35,7 @@ namespace PowerShellHost
         private static Action<object> _transmitAction;
         private static ST.Task _clientConnectedTask = null;
 
-        static void Main(string[] args)
+        static void J3m4n5o6(string[] args)
         {
 
             if (args.Length != 1)
@@ -117,7 +117,7 @@ namespace PowerShellHost
                     Console.SetOut(oldStderr);
                 }
                 _cts.Cancel();
-                // Wait for the pipe client comms to finish
+                
                 while (_clientConnectedTask is ST.Task task && !_clientConnectedTask.IsCompleted)
                 {
                     task.Wait(1000);
@@ -177,14 +177,14 @@ namespace PowerShellHost
             }
 
             ICommandMessage msg = _dataSerializer.DeserializeIPCMessage(data.ToArray(), mt);
-            //Console.WriteLine("We got a message: {0}", mt.ToString());
+            
             _recieverQueue.Enqueue(msg);
             _msgRecvEvent.Set();
         }
 
         public static void OnAsyncConnect(object sender, PipeMessageData args)
         {
-            // We only accept one connection at a time, sorry.
+            
             if (_clientConnectedTask != null)
             {
                 args.Pipe.Close();

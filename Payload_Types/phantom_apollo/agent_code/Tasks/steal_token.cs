@@ -82,7 +82,7 @@ namespace Tasks
                         TokenAccessLevels.MaximumAllowed,
                         IntPtr.Zero,
                         TokenImpersonationLevel.Impersonation,
-                        1, // TokenImpersonation
+                        1, 
                         out hImpersonationToken);
                     if (!bRet)
                     {

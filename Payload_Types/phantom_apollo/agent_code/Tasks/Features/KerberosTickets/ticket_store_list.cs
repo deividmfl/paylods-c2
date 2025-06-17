@@ -35,7 +35,7 @@ public class ticket_store_list : Tasking
            resp = CreateTaskResponse($"Error in {this.GetType().Name} - {ex.Message}", true, "error");
             
         }
-        //get and send back any artifacts
+        
         IEnumerable<Artifact> artifacts = _agent.GetTicketManager().GetArtifacts();
         var artifactResp = CreateArtifactTaskResponse(artifacts);
         _agent.GetTaskManager().AddTaskResponseToQueue(artifactResp);

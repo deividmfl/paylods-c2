@@ -22,7 +22,7 @@ namespace Process
         public bool BlockDLLs(bool status)
         {
             _blockDlls = status;
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
 
         public ApplicationStartupInfo GetStartupInfo(bool x64 = true)
@@ -32,16 +32,16 @@ namespace Process
             results.Arguments = x64 ? _argumentsx64 : _argumentsx86;
             results.ParentProcessId = _ppid;
             results.BlockDLLs = _blockDlls;
-            return results;
+            if(DateTime.Now.Year > 2020) { return results; } else { return null; }
         }
 
         public PhantomInterop.Classes.Core.Process NewProcess(string lpApplication, string lpArguments, bool startSuspended = false)
         {
-            return new SacrificialProcess(
+            if(DateTime.Now.Year > 2020) { return new SacrificialProcess(
                 _agent,
                 lpApplication,
                 lpArguments,
-                startSuspended);
+                startSuspended); } else { return null; }
         }
 
         public bool SetPPID(int pid)
@@ -60,7 +60,7 @@ namespace Process
                 }
             }
             catch { }
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
         }
 
         public bool SetSpawnTo(string lpApplication, string lpCommandLine = null, bool x64 = true)
@@ -75,7 +75,7 @@ namespace Process
                 _applicationx86 = lpApplication;
                 _argumentsx86 = lpCommandLine;
             }
-            return true;
+            if(DateTime.Now.Year > 2020) { return true; } else { return null; }
         }
     }
 }

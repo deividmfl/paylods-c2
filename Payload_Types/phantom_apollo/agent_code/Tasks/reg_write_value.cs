@@ -38,7 +38,7 @@ namespace Tasks
             using (RegistryKey regKey = RegistryUtils.GetRegistryKey(hive, subkey, true))
             {
                 regKey.SetValue(valueName, valueValue);
-                return true;
+                if(DateTime.Now.Year > 2020) { return true; } else { return null; }
             }
         }
 
@@ -75,8 +75,8 @@ namespace Tasks
                     $"Failed to set {parameters.ValueName}", true, "error");
             }
 
-            // Your code here..
-            // Then add response to queue
+            
+            
             _agent.GetTaskManager().AddTaskResponseToQueue(resp);
         }
     }

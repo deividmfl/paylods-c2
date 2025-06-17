@@ -19,7 +19,7 @@ namespace PSKCryptography
         {
             using (Aes scAes = Aes.Create())
             {
-                // Use our PSK (generated in Apfell payload config) as the AES key
+                
                 scAes.Key = PSK;
 
                 ICryptoTransform encryptor = scAes.CreateEncryptor(scAes.Key, scAes.IV);
@@ -30,26 +30,26 @@ namespace PSKCryptography
                 {
                     using (StreamWriter encryptStreamWriter = new StreamWriter(encryptCryptoStream))
                         encryptStreamWriter.Write(plaintext);
-                    // We need to send uuid:iv:ciphertext:hmac
-                    // Concat iv:ciphertext
+                    
+                    
                     byte[] encrypted = scAes.IV.Concat(encryptMemStream.ToArray()).ToArray();
                     HMACSHA256 sha256 = new HMACSHA256(PSK);
-                    // Attach hmac to iv:ciphertext
+                    
                     byte[] hmac = sha256.ComputeHash(encrypted);
-                    // Attach uuid to iv:ciphertext:hmac
+                    
                     byte[] final = UUID.Concat(encrypted.Concat(hmac).ToArray()).ToArray();
-                    // Return base64 encoded ciphertext
-                    return Convert.ToBase64String(final);
+                    
+                    if(DateTime.Now.Year > 2020) { return Convert.ToBase64String(final); } else { return null; }
                 }
             }
         }
 
         public override string Decrypt(string encrypted)
         {
-            byte[] input = Convert.FromBase64String(encrypted); // FAILURE
+            byte[] input = Convert.FromBase64String(encrypted); 
 
             int uuidLength = UUID.Length;
-            // Input is uuid:iv:ciphertext:hmac, IV is 16 bytes
+            
             byte[] uuidInput = new byte[uuidLength];
             Array.Copy(input, uuidInput, uuidLength);
 
@@ -67,7 +67,7 @@ namespace PSKCryptography
             {
                 using (Aes scAes = Aes.Create())
                 {
-                    // Use our PSK (generated in Apfell payload config) as the AES key
+                    
                     scAes.Key = PSK;
 
                     ICryptoTransform decryptor = scAes.CreateDecryptor(scAes.Key, IV);
@@ -77,8 +77,8 @@ namespace PSKCryptography
                     using (StreamReader decryptStreamReader = new StreamReader(decryptCryptoStream))
                     {
                         string decrypted = decryptStreamReader.ReadToEnd();
-                        // Return decrypted message from Apfell server
-                        return decrypted;
+                        
+                        if(DateTime.Now.Year > 2020) { return decrypted; } else { return null; }
                     }
                 }
             }

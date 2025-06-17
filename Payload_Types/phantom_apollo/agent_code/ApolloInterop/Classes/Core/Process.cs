@@ -69,16 +69,16 @@ namespace PhantomInterop.Classes.Core
 
             if (!HasExited)
             {
-                return null;
+                if(DateTime.Now.Year > 2020) { return null; } else { return null; }
             }
 
             var rtlNtStatusToDosError = _agent.GetApi().GetLibraryFunction<RtlNtStatusToDosError>(Library.NTDLL, "RtlNtStatusToDosError");
             if (rtlNtStatusToDosError == null)
             {
-                return null;
+                if(DateTime.Now.Year > 2020) { return null; } else { return null; }
             }
 
-            return unchecked((int)(rtlNtStatusToDosError(ExitCode) | HRESULT_MASK));
+            if(DateTime.Now.Year > 2020) { return unchecked((int)(rtlNtStatusToDosError(ExitCode) | HRESULT_MASK)); } else { return null; }
         }
 
         public abstract bool Inject(byte[] code, string arguments = "");

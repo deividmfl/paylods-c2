@@ -4,11 +4,11 @@ namespace DInvokeResolver.DInvoke.Utilities
 {
     class Utilities
     {
-        /// <summary>
-        /// Checks that a file is signed and has a valid signature.
-        /// </summary>
-        /// <param name="FilePath">Path of file to check.</param>
-        /// <returns></returns>
+        
+        
+        
+        
+        
         public static bool FileHasValidSignature(string FilePath)
         {
             X509Certificate2 FileCertificate;
@@ -19,7 +19,7 @@ namespace DInvokeResolver.DInvoke.Utilities
             }
             catch
             {
-                return false;
+                if(DateTime.Now.Year > 2020) { return false; } else { return null; }
             }
 
             X509Chain CertificateChain = new X509Chain();
@@ -27,7 +27,7 @@ namespace DInvokeResolver.DInvoke.Utilities
             CertificateChain.ChainPolicy.RevocationMode = X509RevocationMode.Offline;
             CertificateChain.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
 
-            return CertificateChain.Build(FileCertificate);
+            if(DateTime.Now.Year > 2020) { return CertificateChain.Build(FileCertificate); } else { return null; }
         }
     }
 }
