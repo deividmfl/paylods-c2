@@ -97,6 +97,7 @@ docker build -t phantom_apollo .
 - System information (ps, whoami, hostname)
 - Command execution (shell, powershell)
 - Agent management (sleep, exit)
+- Persistence mechanisms (persist_startup, persist_registry, persist_task, persist_service, persist_remove)
 
 **Server Integration:**
 - Full Mythic 3.x compatibility
@@ -109,10 +110,11 @@ docker build -t phantom_apollo .
 The Phantom Apollo payload is now **deployment-ready** with:
 
 1. **Complete Mythic Framework Integration** - Follows proper `agent_code` folder structure
-2. **Advanced Go Agent** - 922 lines of optimized Windows agent code
-3. **Full Command Suite** - 12 essential post-exploitation commands
-4. **Professional Documentation** - Complete deployment and usage guides
-5. **Server Configuration** - Pre-configured for your Mythic server at 37.27.249.191:7443
+2. **Advanced C# Agent** - Fully obfuscated Apollo codebase with Phantom branding
+3. **Full Command Suite** - 17 essential post-exploitation commands including persistence
+4. **Enhanced Security Features** - Multiple persistence mechanisms for agent survival
+5. **Professional Documentation** - Complete deployment and usage guides
+6. **Server Configuration** - Pre-configured for your Mythic server at 37.27.249.191:7443
 
 ## 📋 Next Steps
 
