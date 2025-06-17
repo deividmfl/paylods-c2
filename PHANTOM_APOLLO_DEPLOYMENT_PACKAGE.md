@@ -36,6 +36,20 @@ O Phantom Apollo agora está **100% completo** baseado exatamente no código ori
 - ✅ Métodos: DeserializeToReceiverQueue → HandleIncomingData
 - ✅ Configurações: Config.PayloadUUID → Settings.AgentIdentifier
 
+**Novos Recursos de Persistência:**
+- ✅ `persist_startup` - Pasta de inicialização do Windows
+- ✅ `persist_registry` - Chave Run do Registro (HKCU)
+- ✅ `persist_task` - Tarefa agendada do Windows
+- ✅ `persist_service` - Serviço do Windows (requer admin)
+- ✅ `persist_remove` - Remove todos os mecanismos de persistência
+
+**Comandos Disponíveis (17 total):**
+- ✅ Basic: `ls`, `cd`, `pwd`, `ps`, `whoami`, `hostname`
+- ✅ File Operations: `download`, `upload`
+- ✅ Execution: `shell`, `powershell`
+- ✅ Agent Control: `sleep`, `exit`
+- ✅ Persistence: `persist_startup`, `persist_registry`, `persist_task`, `persist_service`, `persist_remove`
+
 ## 🚀 Immediate Deployment Steps
 
 ### 1. Server Upload
