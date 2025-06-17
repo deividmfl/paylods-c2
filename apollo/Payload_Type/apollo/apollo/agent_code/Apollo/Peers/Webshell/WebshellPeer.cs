@@ -1,23 +1,23 @@
-using ApolloInterop.Classes;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
+using SystemInterop.Classes;
+using SystemInterop.Interfaces;
+using SystemInterop.Structs.MythicStructs;
 using System;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
-using AI = ApolloInterop;
-using AS = ApolloInterop.Structs.ApolloStructs;
+using AI = SystemInterop;
+using AS = SystemInterop.Structs.SystemStructs;
 using TTasks = System.Threading.Tasks;
-using ApolloInterop.Classes.Core;
-using ApolloInterop.Structs.ApolloStructs;
+using SystemInterop.Classes.Core;
+using SystemInterop.Structs.SystemStructs;
 using Tasks;
-using ApolloInterop.Utils;
+using SystemInterop.Utils;
 using System.Net;
 using System.IO;
 using System.Security.Policy;
-using ApolloInterop.Types.Delegates;
+using SystemInterop.Types.Delegates;
 
-namespace Apollo.Peers.Webshell
+namespace System.Peers.Webshell
 {
     public class WebshellPeer : AI.Classes.P2P.Peer
     {

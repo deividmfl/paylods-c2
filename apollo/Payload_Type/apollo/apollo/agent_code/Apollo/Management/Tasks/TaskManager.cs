@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Concurrent;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Types.Delegates;
-using ApolloInterop.Structs.MythicStructs;
-using ApolloInterop.Enums.ApolloEnums;
-using ApolloInterop.Classes;
+using SystemInterop.Interfaces;
+using SystemInterop.Types.Delegates;
+using SystemInterop.Structs.MythicStructs;
+using SystemInterop.Enums.SystemEnums;
+using SystemInterop.Classes;
 using System.Threading;
 using  System.Threading.Tasks;
 using System.Reflection;
-using ApolloInterop.Classes.Collections;
-using ApolloInterop.Utils;
+using SystemInterop.Classes.Collections;
+using SystemInterop.Utils;
 
-namespace Apollo.Management.Tasks
+namespace System.Management.Tasks
 {
     public class TaskManager : ITaskManager
     {
@@ -109,7 +109,7 @@ namespace Apollo.Management.Tasks
 
         private void InitializeTaskLibrary()
         {
-            // Annoying note - if there's an assembly in the Tasks DLL that isn't in the Apollo
+            // Annoying note - if there's an assembly in the Tasks DLL that isn't in the System
             // reference assemblies, then you'll run into loading errors.
             _tasksAsm = Assembly.Load("Tasks, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
             if (_tasksAsm == null)

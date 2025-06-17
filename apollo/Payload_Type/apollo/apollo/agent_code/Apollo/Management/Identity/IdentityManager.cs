@@ -1,16 +1,16 @@
-﻿using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.ApolloStructs;
+﻿using SystemInterop.Interfaces;
+using SystemInterop.Structs.SystemStructs;
 using System;
 using System.Security.Principal;
-using ApolloInterop.Classes.Api;
-using static ApolloInterop.Enums.Win32;
-using static ApolloInterop.Constants.Win32;
+using SystemInterop.Classes.Api;
+using static SystemInterop.Enums.Win32;
+using static SystemInterop.Constants.Win32;
 using System.Runtime.InteropServices;
-using static ApolloInterop.Structs.Win32;
-using ApolloInterop.Structs.MythicStructs;
-using ApolloInterop.Utils;
+using static SystemInterop.Structs.Win32;
+using SystemInterop.Structs.MythicStructs;
+using SystemInterop.Utils;
 
-namespace Apollo.Management.Identity;
+namespace System.Management.Identity;
 
 public class IdentityManager : IIdentityManager
 {

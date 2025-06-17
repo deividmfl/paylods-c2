@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
-using ApolloInterop.Classes;
+using SystemInterop.Classes;
 
-namespace Apollo.Api.Cryptography
+namespace System.Api.Cryptography
 {
     public static class RSA
     {

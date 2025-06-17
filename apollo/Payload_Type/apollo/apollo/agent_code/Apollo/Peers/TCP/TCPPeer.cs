@@ -1,21 +1,21 @@
-﻿using ApolloInterop.Classes;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
+﻿using SystemInterop.Classes;
+using SystemInterop.Interfaces;
+using SystemInterop.Structs.MythicStructs;
 using System;
 using System.Linq;
 using System.Text;
-using AI = ApolloInterop;
-using AS = ApolloInterop.Structs.ApolloStructs;
+using AI = SystemInterop;
+using AS = SystemInterop.Structs.SystemStructs;
 using TTasks = System.Threading.Tasks;
 using System.Net.Sockets;
-using ApolloInterop.Classes.Api;
-using ApolloInterop.Classes.Core;
+using SystemInterop.Classes.Api;
+using SystemInterop.Classes.Core;
 using System.Xml.Linq;
-using ApolloInterop.Utils;
-using ApolloInterop.Structs.ApolloStructs;
+using SystemInterop.Utils;
+using SystemInterop.Structs.SystemStructs;
 using System.Net;
 
-namespace Apollo.Peers.TCP
+namespace System.Peers.TCP
 {
     public class TCPPeer : AI.Classes.P2P.Peer
     {

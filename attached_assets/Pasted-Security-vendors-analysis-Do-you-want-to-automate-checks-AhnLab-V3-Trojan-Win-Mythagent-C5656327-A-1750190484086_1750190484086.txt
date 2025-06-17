@@ -1,0 +1,154 @@
+Security vendors' analysis
+Do you want to automate checks?
+AhnLab-V3
+Trojan/Win.Mythagent.C5656327
+ALYac
+Generic.Trojan.Apollo.Marte.A.5AEE38A3
+Arcabit
+Generic.Trojan.Apollo.Marte.A.5AEE38A3
+Arctic Wolf
+Unsafe
+Avast
+Win32:MalwareX-gen [Bd]
+AVG
+Win32:MalwareX-gen [Bd]
+Avira (no cloud)
+HEUR/AGEN.1378522
+BitDefender
+Generic.Trojan.Apollo.Marte.A.5AEE38A3
+Bkav Pro
+W32.AIDetectMalware.CS
+CrowdStrike Falcon
+Win/malicious_confidence_70% (D)
+CTX
+Exe.trojan.apollo
+DeepInstinct
+MALICIOUS
+DrWeb
+BackDoor.MythicApolloNET.1
+Elastic
+Malicious (high Confidence)
+Emsisoft
+Generic.Trojan.Apollo.Marte.A.5AEE38A3 (B)
+eScan
+Generic.Trojan.Apollo.Marte.A.5AEE38A3
+ESET-NOD32
+A Variant Of MSIL/Agent.DVI
+Fortinet
+Riskware/Mythic
+GData
+Generic.Trojan.Apollo.Marte.A.5AEE38A3
+Google
+Detected
+Huorong
+Trojan/MSIL.Agent.pe
+Ikarus
+Trojan.MSIL.Agent
+K7AntiVirus
+Trojan ( 005690671 )
+K7GW
+Trojan ( 005690671 )
+Kaspersky
+HEUR:Backdoor.MSIL.Apollo.gen
+Malwarebytes
+Malware.AI.1545270492
+MaxSecure
+Trojan.Malware.300983.susgen
+McAfee Scanner
+Ti!D349F4F96406
+Microsoft
+VirTool:MSIL/Mythagent.B
+Panda
+Trj/GdSda.A
+Rising
+Backdoor.Apollo!8.1B4C0 (TFE:dGZlOgyZAR2+iulESg)
+Sangfor Engine Zero
+Trojan.Win32.Save.a
+SecureAge
+Malicious
+SentinelOne (Static ML)
+Static AI - Malicious PE
+Skyhigh (SWG)
+BehavesLike.Win32.Generic.vc
+Sophos
+ATK/Apollo-D
+Symantec
+Hacktool.Mythic
+TrendMicro-HouseCall
+Trojan.Win32.VSX.PE04C9Z
+Varist
+W32/MSIL_Agent.KLW.gen!Eldorado
+VIPRE
+Generic.Trojan.Apollo.Marte.A.5AEE38A3
+WithSecure
+Heuristic.HEUR/AGEN.1378522
+ZoneAlarm by Check Point
+ATK/Apollo-D
+Acronis (Static ML)
+Undetected
+Alibaba
+Undetected
+AliCloud
+Undetected
+Antiy-AVL
+Undetected
+Baidu
+Undetected
+ClamAV
+Undetected
+CMC
+Undetected
+Cynet
+Undetected
+Gridinsoft (no cloud)
+Undetected
+Jiangmin
+Undetected
+Kingsoft
+Undetected
+Lionic
+Undetected
+NANO-Antivirus
+Undetected
+Palo Alto Networks
+Undetected
+QuickHeal
+Undetected
+SUPERAntiSpyware
+Undetected
+TACHYON
+Undetected
+TEHTRIS
+Undetected
+Tencent
+Undetected
+Trapmine
+Undetected
+Trellix ENS
+Undetected
+TrendMicro
+Undetected
+VBA32
+Undetected
+VirIT
+Undetected
+ViRobot
+Undetected
+Webroot
+Undetected
+Xcitium
+Undetected
+Yandex
+Undetected
+Zillya
+Undetected
+Zoner
+Undetected
+Avast-Mobile
+Unable to process file type
+BitDefenderFalx
+Unable to process file type
+Symantec Mobile Insight
+Unable to process file type
+Trustlook
+Unable to process file type

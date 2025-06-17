@@ -1,15 +1,15 @@
-﻿using ApolloInterop.Classes.Core;
-using ApolloInterop.Classes.Events;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
+﻿using SystemInterop.Classes.Core;
+using SystemInterop.Classes.Events;
+using SystemInterop.Interfaces;
+using SystemInterop.Structs.MythicStructs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ApolloInterop.Classes.Cryptography;
+using SystemInterop.Classes.Cryptography;
 
-namespace Apollo.Management.Files
+namespace System.Management.Files
 {
     public sealed class FileManager : IFileManager
     {

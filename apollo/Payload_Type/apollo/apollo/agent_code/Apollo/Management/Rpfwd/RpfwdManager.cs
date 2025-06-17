@@ -1,14 +1,14 @@
-﻿using AI = ApolloInterop;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
+﻿using AI = SystemInterop;
+using SystemInterop.Interfaces;
+using SystemInterop.Structs.MythicStructs;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System;
-using ApolloInterop.Utils;
+using SystemInterop.Utils;
 using System.Xml.Linq;
-using ApolloInterop.Classes;
+using SystemInterop.Classes;
 
-namespace Apollo.Management.Rpfwd
+namespace System.Management.Rpfwd
 {
     public class RpfwdManager : AI.Classes.RpfwdManager
     {

