@@ -1,0 +1,1315 @@
+{
+  "data": {
+    "__schema": {
+      "mutationType": {
+        "fields": [
+          {
+            "name": "addAttackToTask"
+          },
+          {
+            "name": "c2HostFile"
+          },
+          {
+            "name": "callbackgraphedge_add"
+          },
+          {
+            "name": "callbackgraphedge_remove"
+          },
+          {
+            "name": "consumingServicesTestLog"
+          },
+          {
+            "name": "consumingServicesTestWebhook"
+          },
+          {
+            "name": "containerRemoveFile"
+          },
+          {
+            "name": "containerWriteFile"
+          },
+          {
+            "name": "createAPIToken"
+          },
+          {
+            "name": "createArtifact"
+          },
+          {
+            "name": "createCallback"
+          },
+          {
+            "name": "createCredential"
+          },
+          {
+            "name": "createInviteLink"
+          },
+          {
+            "name": "createOperation"
+          },
+          {
+            "name": "createOperationEventLog"
+          },
+          {
+            "name": "createOperator"
+          },
+          {
+            "name": "createPayload"
+          },
+          {
+            "name": "createRandom"
+          },
+          {
+            "name": "createTag"
+          },
+          {
+            "name": "createTask"
+          },
+          {
+            "name": "create_c2_instance"
+          },
+          {
+            "name": "deleteAPIToken"
+          },
+          {
+            "name": "deleteBlockList"
+          },
+          {
+            "name": "deleteBlockListEntry"
+          },
+          {
+            "name": "deleteFile"
+          },
+          {
+            "name": "deleteInviteLink"
+          },
+          {
+            "name": "deleteTagtype"
+          },
+          {
+            "name": "deleteTasksAndCallbacks"
+          },
+          {
+            "name": "delete_agentstorage"
+          },
+          {
+            "name": "delete_agentstorage_by_pk"
+          },
+          {
+            "name": "delete_apitokens"
+          },
+          {
+            "name": "delete_apitokens_by_pk"
+          },
+          {
+            "name": "delete_attack"
+          },
+          {
+            "name": "delete_attack_by_pk"
+          },
+          {
+            "name": "delete_attackcommand"
+          },
+          {
+            "name": "delete_attackcommand_by_pk"
+          },
+          {
+            "name": "delete_attacktask"
+          },
+          {
+            "name": "delete_attacktask_by_pk"
+          },
+          {
+            "name": "delete_browserscript"
+          },
+          {
+            "name": "delete_browserscript_by_pk"
+          },
+          {
+            "name": "delete_browserscriptoperation"
+          },
+          {
+            "name": "delete_browserscriptoperation_by_pk"
+          },
+          {
+            "name": "delete_buildparameter"
+          },
+          {
+            "name": "delete_buildparameter_by_pk"
+          },
+          {
+            "name": "delete_buildparameterinstance"
+          },
+          {
+            "name": "delete_buildparameterinstance_by_pk"
+          },
+          {
+            "name": "delete_c2profile"
+          },
+          {
+            "name": "delete_c2profile_by_pk"
+          },
+          {
+            "name": "delete_c2profileparameters"
+          },
+          {
+            "name": "delete_c2profileparameters_by_pk"
+          },
+          {
+            "name": "delete_c2profileparametersinstance"
+          },
+          {
+            "name": "delete_c2profileparametersinstance_by_pk"
+          },
+          {
+            "name": "delete_callback"
+          },
+          {
+            "name": "delete_callback_by_pk"
+          },
+          {
+            "name": "delete_callbackc2profiles"
+          },
+          {
+            "name": "delete_callbackc2profiles_by_pk"
+          },
+          {
+            "name": "delete_callbackgraphedge"
+          },
+          {
+            "name": "delete_callbackgraphedge_by_pk"
+          },
+          {
+            "name": "delete_callbackport"
+          },
+          {
+            "name": "delete_callbackport_by_pk"
+          },
+          {
+            "name": "delete_callbacktoken"
+          },
+          {
+            "name": "delete_callbacktoken_by_pk"
+          },
+          {
+            "name": "delete_command"
+          },
+          {
+            "name": "delete_command_by_pk"
+          },
+          {
+            "name": "delete_commandparameters"
+          },
+          {
+            "name": "delete_commandparameters_by_pk"
+          },
+          {
+            "name": "delete_consuming_container"
+          },
+          {
+            "name": "delete_consuming_container_by_pk"
+          },
+          {
+            "name": "delete_credential"
+          },
+          {
+            "name": "delete_credential_by_pk"
+          },
+          {
+            "name": "delete_disabledcommandsprofile"
+          },
+          {
+            "name": "delete_disabledcommandsprofile_by_pk"
+          },
+          {
+            "name": "delete_eventgroup"
+          },
+          {
+            "name": "delete_eventgroup_by_pk"
+          },
+          {
+            "name": "delete_eventgroupapproval"
+          },
+          {
+            "name": "delete_eventgroupapproval_by_pk"
+          },
+          {
+            "name": "delete_eventgroupconsumingcontainer"
+          },
+          {
+            "name": "delete_eventgroupconsumingcontainer_by_pk"
+          },
+          {
+            "name": "delete_eventgroupinstance"
+          },
+          {
+            "name": "delete_eventgroupinstance_by_pk"
+          },
+          {
+            "name": "delete_eventstep"
+          },
+          {
+            "name": "delete_eventstep_by_pk"
+          },
+          {
+            "name": "delete_eventstepinstance"
+          },
+          {
+            "name": "delete_eventstepinstance_by_pk"
+          },
+          {
+            "name": "delete_filemeta"
+          },
+          {
+            "name": "delete_filemeta_by_pk"
+          },
+          {
+            "name": "delete_keylog"
+          },
+          {
+            "name": "delete_keylog_by_pk"
+          },
+          {
+            "name": "delete_loadedcommands"
+          },
+          {
+            "name": "delete_loadedcommands_by_pk"
+          },
+          {
+            "name": "delete_mythic_server_migration_tracking"
+          },
+          {
+            "name": "delete_mythic_server_migration_tracking_by_pk"
+          },
+          {
+            "name": "delete_mythictree"
+          },
+          {
+            "name": "delete_mythictree_by_pk"
+          },
+          {
+            "name": "delete_operation"
+          },
+          {
+            "name": "delete_operation_by_pk"
+          },
+          {
+            "name": "delete_operationeventlog"
+          },
+          {
+            "name": "delete_operationeventlog_by_pk"
+          },
+          {
+            "name": "delete_operator"
+          },
+          {
+            "name": "delete_operator_by_pk"
+          },
+          {
+            "name": "delete_operatoroperation"
+          },
+          {
+            "name": "delete_operatoroperation_by_pk"
+          },
+          {
+            "name": "delete_payload"
+          },
+          {
+            "name": "delete_payload_build_step"
+          },
+          {
+            "name": "delete_payload_build_step_by_pk"
+          },
+          {
+            "name": "delete_payload_by_pk"
+          },
+          {
+            "name": "delete_payloadc2profiles"
+          },
+          {
+            "name": "delete_payloadc2profiles_by_pk"
+          },
+          {
+            "name": "delete_payloadcommand"
+          },
+          {
+            "name": "delete_payloadcommand_by_pk"
+          },
+          {
+            "name": "delete_payloadonhost"
+          },
+          {
+            "name": "delete_payloadonhost_by_pk"
+          },
+          {
+            "name": "delete_payloadtype"
+          },
+          {
+            "name": "delete_payloadtype_by_pk"
+          },
+          {
+            "name": "delete_payloadtypec2profile"
+          },
+          {
+            "name": "delete_payloadtypec2profile_by_pk"
+          },
+          {
+            "name": "delete_response"
+          },
+          {
+            "name": "delete_response_by_pk"
+          },
+          {
+            "name": "delete_staginginfo"
+          },
+          {
+            "name": "delete_staginginfo_by_pk"
+          },
+          {
+            "name": "delete_tag"
+          },
+          {
+            "name": "delete_tag_by_pk"
+          },
+          {
+            "name": "delete_tagtype"
+          },
+          {
+            "name": "delete_tagtype_by_pk"
+          },
+          {
+            "name": "delete_task"
+          },
+          {
+            "name": "delete_task_by_pk"
+          },
+          {
+            "name": "delete_taskartifact"
+          },
+          {
+            "name": "delete_taskartifact_by_pk"
+          },
+          {
+            "name": "delete_token"
+          },
+          {
+            "name": "delete_token_by_pk"
+          },
+          {
+            "name": "delete_translationcontainer"
+          },
+          {
+            "name": "delete_translationcontainer_by_pk"
+          },
+          {
+            "name": "delete_wrappedpayloadtypes"
+          },
+          {
+            "name": "delete_wrappedpayloadtypes_by_pk"
+          },
+          {
+            "name": "download_bulk"
+          },
+          {
+            "name": "dynamic_query_function"
+          },
+          {
+            "name": "eventingImportContainerWorkflow"
+          },
+          {
+            "name": "eventingTriggerCancel"
+          },
+          {
+            "name": "eventingTriggerKeyword"
+          },
+          {
+            "name": "eventingTriggerManual"
+          },
+          {
+            "name": "eventingTriggerRetry"
+          },
+          {
+            "name": "eventingTriggerRetryFromStep"
+          },
+          {
+            "name": "eventingTriggerRunAgain"
+          },
+          {
+            "name": "eventingTriggerUpdate"
+          },
+          {
+            "name": "generateReport"
+          },
+          {
+            "name": "importCallbackConfig"
+          },
+          {
+            "name": "importTagtypes"
+          },
+          {
+            "name": "import_c2_instance"
+          },
+          {
+            "name": "insert_agentstorage"
+          },
+          {
+            "name": "insert_agentstorage_one"
+          },
+          {
+            "name": "insert_apitokens"
+          },
+          {
+            "name": "insert_apitokens_one"
+          },
+          {
+            "name": "insert_attack"
+          },
+          {
+            "name": "insert_attack_one"
+          },
+          {
+            "name": "insert_attackcommand"
+          },
+          {
+            "name": "insert_attackcommand_one"
+          },
+          {
+            "name": "insert_attacktask"
+          },
+          {
+            "name": "insert_attacktask_one"
+          },
+          {
+            "name": "insert_browserscript"
+          },
+          {
+            "name": "insert_browserscript_one"
+          },
+          {
+            "name": "insert_browserscriptoperation"
+          },
+          {
+            "name": "insert_browserscriptoperation_one"
+          },
+          {
+            "name": "insert_buildparameter"
+          },
+          {
+            "name": "insert_buildparameter_one"
+          },
+          {
+            "name": "insert_buildparameterinstance"
+          },
+          {
+            "name": "insert_buildparameterinstance_one"
+          },
+          {
+            "name": "insert_c2profile"
+          },
+          {
+            "name": "insert_c2profile_one"
+          },
+          {
+            "name": "insert_c2profileparameters"
+          },
+          {
+            "name": "insert_c2profileparameters_one"
+          },
+          {
+            "name": "insert_c2profileparametersinstance"
+          },
+          {
+            "name": "insert_c2profileparametersinstance_one"
+          },
+          {
+            "name": "insert_callback"
+          },
+          {
+            "name": "insert_callback_one"
+          },
+          {
+            "name": "insert_callbackc2profiles"
+          },
+          {
+            "name": "insert_callbackc2profiles_one"
+          },
+          {
+            "name": "insert_callbackgraphedge"
+          },
+          {
+            "name": "insert_callbackgraphedge_one"
+          },
+          {
+            "name": "insert_callbackport"
+          },
+          {
+            "name": "insert_callbackport_one"
+          },
+          {
+            "name": "insert_callbacktoken"
+          },
+          {
+            "name": "insert_callbacktoken_one"
+          },
+          {
+            "name": "insert_command"
+          },
+          {
+            "name": "insert_command_one"
+          },
+          {
+            "name": "insert_commandparameters"
+          },
+          {
+            "name": "insert_commandparameters_one"
+          },
+          {
+            "name": "insert_consuming_container"
+          },
+          {
+            "name": "insert_consuming_container_one"
+          },
+          {
+            "name": "insert_credential"
+          },
+          {
+            "name": "insert_credential_one"
+          },
+          {
+            "name": "insert_disabledcommandsprofile"
+          },
+          {
+            "name": "insert_disabledcommandsprofile_one"
+          },
+          {
+            "name": "insert_eventgroup"
+          },
+          {
+            "name": "insert_eventgroup_one"
+          },
+          {
+            "name": "insert_eventgroupapproval"
+          },
+          {
+            "name": "insert_eventgroupapproval_one"
+          },
+          {
+            "name": "insert_eventgroupconsumingcontainer"
+          },
+          {
+            "name": "insert_eventgroupconsumingcontainer_one"
+          },
+          {
+            "name": "insert_eventgroupinstance"
+          },
+          {
+            "name": "insert_eventgroupinstance_one"
+          },
+          {
+            "name": "insert_eventstep"
+          },
+          {
+            "name": "insert_eventstep_one"
+          },
+          {
+            "name": "insert_eventstepinstance"
+          },
+          {
+            "name": "insert_eventstepinstance_one"
+          },
+          {
+            "name": "insert_filemeta"
+          },
+          {
+            "name": "insert_filemeta_one"
+          },
+          {
+            "name": "insert_keylog"
+          },
+          {
+            "name": "insert_keylog_one"
+          },
+          {
+            "name": "insert_loadedcommands"
+          },
+          {
+            "name": "insert_loadedcommands_one"
+          },
+          {
+            "name": "insert_mythic_server_migration_tracking"
+          },
+          {
+            "name": "insert_mythic_server_migration_tracking_one"
+          },
+          {
+            "name": "insert_mythictree"
+          },
+          {
+            "name": "insert_mythictree_one"
+          },
+          {
+            "name": "insert_operation"
+          },
+          {
+            "name": "insert_operation_one"
+          },
+          {
+            "name": "insert_operationeventlog"
+          },
+          {
+            "name": "insert_operationeventlog_one"
+          },
+          {
+            "name": "insert_operator"
+          },
+          {
+            "name": "insert_operator_one"
+          },
+          {
+            "name": "insert_operatoroperation"
+          },
+          {
+            "name": "insert_operatoroperation_one"
+          },
+          {
+            "name": "insert_payload"
+          },
+          {
+            "name": "insert_payload_build_step"
+          },
+          {
+            "name": "insert_payload_build_step_one"
+          },
+          {
+            "name": "insert_payload_one"
+          },
+          {
+            "name": "insert_payloadc2profiles"
+          },
+          {
+            "name": "insert_payloadc2profiles_one"
+          },
+          {
+            "name": "insert_payloadcommand"
+          },
+          {
+            "name": "insert_payloadcommand_one"
+          },
+          {
+            "name": "insert_payloadonhost"
+          },
+          {
+            "name": "insert_payloadonhost_one"
+          },
+          {
+            "name": "insert_payloadtype"
+          },
+          {
+            "name": "insert_payloadtype_one"
+          },
+          {
+            "name": "insert_payloadtypec2profile"
+          },
+          {
+            "name": "insert_payloadtypec2profile_one"
+          },
+          {
+            "name": "insert_response"
+          },
+          {
+            "name": "insert_response_one"
+          },
+          {
+            "name": "insert_staginginfo"
+          },
+          {
+            "name": "insert_staginginfo_one"
+          },
+          {
+            "name": "insert_tag"
+          },
+          {
+            "name": "insert_tag_one"
+          },
+          {
+            "name": "insert_tagtype"
+          },
+          {
+            "name": "insert_tagtype_one"
+          },
+          {
+            "name": "insert_task"
+          },
+          {
+            "name": "insert_task_one"
+          },
+          {
+            "name": "insert_taskartifact"
+          },
+          {
+            "name": "insert_taskartifact_one"
+          },
+          {
+            "name": "insert_token"
+          },
+          {
+            "name": "insert_token_one"
+          },
+          {
+            "name": "insert_translationcontainer"
+          },
+          {
+            "name": "insert_translationcontainer_one"
+          },
+          {
+            "name": "insert_wrappedpayloadtypes"
+          },
+          {
+            "name": "insert_wrappedpayloadtypes_one"
+          },
+          {
+            "name": "previewFile"
+          },
+          {
+            "name": "rebuild_payload"
+          },
+          {
+            "name": "reissue_task"
+          },
+          {
+            "name": "reissue_task_handler"
+          },
+          {
+            "name": "requestOpsecBypass"
+          },
+          {
+            "name": "sendExternalWebhook"
+          },
+          {
+            "name": "startStopProfile"
+          },
+          {
+            "name": "testProxy"
+          },
+          {
+            "name": "toggleProxy"
+          },
+          {
+            "name": "typedarray_parse_function"
+          },
+          {
+            "name": "updateCallback"
+          },
+          {
+            "name": "updateCurrentOperation"
+          },
+          {
+            "name": "updateEventGroupApproval"
+          },
+          {
+            "name": "updateGlobalSettings"
+          },
+          {
+            "name": "updateInviteLink"
+          },
+          {
+            "name": "updateOperation"
+          },
+          {
+            "name": "updateOperatorOperation"
+          },
+          {
+            "name": "updateOperatorPreferences"
+          },
+          {
+            "name": "updateOperatorSecrets"
+          },
+          {
+            "name": "updateOperatorStatus"
+          },
+          {
+            "name": "updatePasswordAndEmail"
+          },
+          {
+            "name": "updatePayload"
+          },
+          {
+            "name": "update_agentstorage"
+          },
+          {
+            "name": "update_agentstorage_by_pk"
+          },
+          {
+            "name": "update_agentstorage_many"
+          },
+          {
+            "name": "update_apitokens"
+          },
+          {
+            "name": "update_apitokens_by_pk"
+          },
+          {
+            "name": "update_apitokens_many"
+          },
+          {
+            "name": "update_attack"
+          },
+          {
+            "name": "update_attack_by_pk"
+          },
+          {
+            "name": "update_attack_many"
+          },
+          {
+            "name": "update_attackcommand"
+          },
+          {
+            "name": "update_attackcommand_by_pk"
+          },
+          {
+            "name": "update_attackcommand_many"
+          },
+          {
+            "name": "update_attacktask"
+          },
+          {
+            "name": "update_attacktask_by_pk"
+          },
+          {
+            "name": "update_attacktask_many"
+          },
+          {
+            "name": "update_browserscript"
+          },
+          {
+            "name": "update_browserscript_by_pk"
+          },
+          {
+            "name": "update_browserscript_many"
+          },
+          {
+            "name": "update_browserscriptoperation"
+          },
+          {
+            "name": "update_browserscriptoperation_by_pk"
+          },
+          {
+            "name": "update_browserscriptoperation_many"
+          },
+          {
+            "name": "update_buildparameter"
+          },
+          {
+            "name": "update_buildparameter_by_pk"
+          },
+          {
+            "name": "update_buildparameter_many"
+          },
+          {
+            "name": "update_buildparameterinstance"
+          },
+          {
+            "name": "update_buildparameterinstance_by_pk"
+          },
+          {
+            "name": "update_buildparameterinstance_many"
+          },
+          {
+            "name": "update_c2profile"
+          },
+          {
+            "name": "update_c2profile_by_pk"
+          },
+          {
+            "name": "update_c2profile_many"
+          },
+          {
+            "name": "update_c2profileparameters"
+          },
+          {
+            "name": "update_c2profileparameters_by_pk"
+          },
+          {
+            "name": "update_c2profileparameters_many"
+          },
+          {
+            "name": "update_c2profileparametersinstance"
+          },
+          {
+            "name": "update_c2profileparametersinstance_by_pk"
+          },
+          {
+            "name": "update_c2profileparametersinstance_many"
+          },
+          {
+            "name": "update_callback"
+          },
+          {
+            "name": "update_callback_by_pk"
+          },
+          {
+            "name": "update_callback_many"
+          },
+          {
+            "name": "update_callbackc2profiles"
+          },
+          {
+            "name": "update_callbackc2profiles_by_pk"
+          },
+          {
+            "name": "update_callbackc2profiles_many"
+          },
+          {
+            "name": "update_callbackgraphedge"
+          },
+          {
+            "name": "update_callbackgraphedge_by_pk"
+          },
+          {
+            "name": "update_callbackgraphedge_many"
+          },
+          {
+            "name": "update_callbackport"
+          },
+          {
+            "name": "update_callbackport_by_pk"
+          },
+          {
+            "name": "update_callbackport_many"
+          },
+          {
+            "name": "update_callbacktoken"
+          },
+          {
+            "name": "update_callbacktoken_by_pk"
+          },
+          {
+            "name": "update_callbacktoken_many"
+          },
+          {
+            "name": "update_command"
+          },
+          {
+            "name": "update_command_by_pk"
+          },
+          {
+            "name": "update_command_many"
+          },
+          {
+            "name": "update_commandparameters"
+          },
+          {
+            "name": "update_commandparameters_by_pk"
+          },
+          {
+            "name": "update_commandparameters_many"
+          },
+          {
+            "name": "update_consuming_container"
+          },
+          {
+            "name": "update_consuming_container_by_pk"
+          },
+          {
+            "name": "update_consuming_container_many"
+          },
+          {
+            "name": "update_credential"
+          },
+          {
+            "name": "update_credential_by_pk"
+          },
+          {
+            "name": "update_credential_many"
+          },
+          {
+            "name": "update_disabledcommandsprofile"
+          },
+          {
+            "name": "update_disabledcommandsprofile_by_pk"
+          },
+          {
+            "name": "update_disabledcommandsprofile_many"
+          },
+          {
+            "name": "update_eventgroup"
+          },
+          {
+            "name": "update_eventgroup_by_pk"
+          },
+          {
+            "name": "update_eventgroup_many"
+          },
+          {
+            "name": "update_eventgroupapproval"
+          },
+          {
+            "name": "update_eventgroupapproval_by_pk"
+          },
+          {
+            "name": "update_eventgroupapproval_many"
+          },
+          {
+            "name": "update_eventgroupconsumingcontainer"
+          },
+          {
+            "name": "update_eventgroupconsumingcontainer_by_pk"
+          },
+          {
+            "name": "update_eventgroupconsumingcontainer_many"
+          },
+          {
+            "name": "update_eventgroupinstance"
+          },
+          {
+            "name": "update_eventgroupinstance_by_pk"
+          },
+          {
+            "name": "update_eventgroupinstance_many"
+          },
+          {
+            "name": "update_eventstep"
+          },
+          {
+            "name": "update_eventstep_by_pk"
+          },
+          {
+            "name": "update_eventstep_many"
+          },
+          {
+            "name": "update_eventstepinstance"
+          },
+          {
+            "name": "update_eventstepinstance_by_pk"
+          },
+          {
+            "name": "update_eventstepinstance_many"
+          },
+          {
+            "name": "update_filemeta"
+          },
+          {
+            "name": "update_filemeta_by_pk"
+          },
+          {
+            "name": "update_filemeta_many"
+          },
+          {
+            "name": "update_keylog"
+          },
+          {
+            "name": "update_keylog_by_pk"
+          },
+          {
+            "name": "update_keylog_many"
+          },
+          {
+            "name": "update_loadedcommands"
+          },
+          {
+            "name": "update_loadedcommands_by_pk"
+          },
+          {
+            "name": "update_loadedcommands_many"
+          },
+          {
+            "name": "update_mythic_server_migration_tracking"
+          },
+          {
+            "name": "update_mythic_server_migration_tracking_by_pk"
+          },
+          {
+            "name": "update_mythic_server_migration_tracking_many"
+          },
+          {
+            "name": "update_mythictree"
+          },
+          {
+            "name": "update_mythictree_by_pk"
+          },
+          {
+            "name": "update_mythictree_many"
+          },
+          {
+            "name": "update_operation"
+          },
+          {
+            "name": "update_operation_by_pk"
+          },
+          {
+            "name": "update_operation_many"
+          },
+          {
+            "name": "update_operationeventlog"
+          },
+          {
+            "name": "update_operationeventlog_by_pk"
+          },
+          {
+            "name": "update_operationeventlog_many"
+          },
+          {
+            "name": "update_operator"
+          },
+          {
+            "name": "update_operator_by_pk"
+          },
+          {
+            "name": "update_operator_many"
+          },
+          {
+            "name": "update_operatoroperation"
+          },
+          {
+            "name": "update_operatoroperation_by_pk"
+          },
+          {
+            "name": "update_operatoroperation_many"
+          },
+          {
+            "name": "update_payload"
+          },
+          {
+            "name": "update_payload_build_step"
+          },
+          {
+            "name": "update_payload_build_step_by_pk"
+          },
+          {
+            "name": "update_payload_build_step_many"
+          },
+          {
+            "name": "update_payload_by_pk"
+          },
+          {
+            "name": "update_payload_many"
+          },
+          {
+            "name": "update_payloadc2profiles"
+          },
+          {
+            "name": "update_payloadc2profiles_by_pk"
+          },
+          {
+            "name": "update_payloadc2profiles_many"
+          },
+          {
+            "name": "update_payloadcommand"
+          },
+          {
+            "name": "update_payloadcommand_by_pk"
+          },
+          {
+            "name": "update_payloadcommand_many"
+          },
+          {
+            "name": "update_payloadonhost"
+          },
+          {
+            "name": "update_payloadonhost_by_pk"
+          },
+          {
+            "name": "update_payloadonhost_many"
+          },
+          {
+            "name": "update_payloadtype"
+          },
+          {
+            "name": "update_payloadtype_by_pk"
+          },
+          {
+            "name": "update_payloadtype_many"
+          },
+          {
+            "name": "update_payloadtypec2profile"
+          },
+          {
+            "name": "update_payloadtypec2profile_by_pk"
+          },
+          {
+            "name": "update_payloadtypec2profile_many"
+          },
+          {
+            "name": "update_response"
+          },
+          {
+            "name": "update_response_by_pk"
+          },
+          {
+            "name": "update_response_many"
+          },
+          {
+            "name": "update_staginginfo"
+          },
+          {
+            "name": "update_staginginfo_by_pk"
+          },
+          {
+            "name": "update_staginginfo_many"
+          },
+          {
+            "name": "update_tag"
+          },
+          {
+            "name": "update_tag_by_pk"
+          },
+          {
+            "name": "update_tag_many"
+          },
+          {
+            "name": "update_tagtype"
+          },
+          {
+            "name": "update_tagtype_by_pk"
+          },
+          {
+            "name": "update_tagtype_many"
+          },
+          {
+            "name": "update_task"
+          },
+          {
+            "name": "update_task_by_pk"
+          },
+          {
+            "name": "update_task_many"
+          },
+          {
+            "name": "update_taskartifact"
+          },
+          {
+            "name": "update_taskartifact_by_pk"
+          },
+          {
+            "name": "update_taskartifact_many"
+          },
+          {
+            "name": "update_token"
+          },
+          {
+            "name": "update_token_by_pk"
+          },
+          {
+            "name": "update_token_many"
+          },
+          {
+            "name": "update_translationcontainer"
+          },
+          {
+            "name": "update_translationcontainer_by_pk"
+          },
+          {
+            "name": "update_translationcontainer_many"
+          },
+          {
+            "name": "update_wrappedpayloadtypes"
+          },
+          {
+            "name": "update_wrappedpayloadtypes_by_pk"
+          },
+          {
+            "name": "update_wrappedpayloadtypes_many"
+          }
+        ]
+      }
+    }
+  }
+}

