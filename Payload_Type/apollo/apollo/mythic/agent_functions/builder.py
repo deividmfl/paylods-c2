@@ -235,17 +235,36 @@ NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since t
                                 StepSuccess=True
                             ))
                             
-                            # Run advanced obfuscation on the C# source
+                            # Run comprehensive obfuscation pipeline
                             if self.get_parameter('phantom_evasion'):
+                                # Step 1: Assembly rewriting (pre-compilation)
+                                rewriter_path = pathlib.Path(".") / "assembly_rewriter.py"
+                                if rewriter_path.exists():
+                                    command = f"python3 {rewriter_path}"
+                                    proc = await asyncio.create_subprocess_shell(command, 
+                                        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+                                    stdout, stderr = await proc.communicate()
+                                    stdout_err += f'[Assembly Rewriter]\n{stdout.decode()}\n{stderr.decode()}\n'
+                                
+                                # Step 2: Advanced source obfuscation
                                 obfuscator_path = pathlib.Path(".") / "advanced_obfuscator.py"
                                 if obfuscator_path.exists():
                                     command = f"python3 {obfuscator_path} {agent_build_path.name}"
                                     proc = await asyncio.create_subprocess_shell(command, 
                                         stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
                                     stdout, stderr = await proc.communicate()
-                                    stdout_err += f'[Phantom Obfuscation]\n{stdout.decode()}\n{stderr.decode()}\n'
+                                    stdout_err += f'[Advanced Obfuscation]\n{stdout.decode()}\n{stderr.decode()}\n'
                             
-                            # Apply crypting and packing
+                            # Step 3: Binary obfuscation (post-compilation)
+                            binary_obfuscator_path = pathlib.Path(".") / "binary_obfuscator.py"
+                            if binary_obfuscator_path.exists():
+                                command = f"python3 {binary_obfuscator_path} {output_path}"
+                                proc = await asyncio.create_subprocess_shell(command,
+                                    stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+                                stdout, stderr = await proc.communicate()
+                                stdout_err += f'[Binary Obfuscation]\n{stdout.decode()}\n{stderr.decode()}\n'
+                            
+                            # Step 4: Apply crypting and packing
                             if self.get_parameter('phantom_crypter'):
                                 crypter_path = pathlib.Path(".") / "phantom_crypter.py"
                                 if crypter_path.exists():

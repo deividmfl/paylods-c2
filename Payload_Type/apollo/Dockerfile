@@ -14,6 +14,7 @@ WORKDIR /Mythic/
 RUN python3 -m venv /venv
 RUN /venv/bin/python -m pip install mythic-container==0.5.29  mslex impacket
 RUN /venv/bin/python -m pip install git+https://github.com/MEhrn00/donut.git@v2.0.0
+RUN /venv/bin/python -m pip install pycryptodome
 
 COPY [".", "."]
 
