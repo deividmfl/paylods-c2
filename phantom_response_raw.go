@@ -97,7 +97,6 @@ func registerCallback() error {
                         newCallback: $newCallback
                 ) {
                         status
-                        id
                         error
                 }
         }`
@@ -105,13 +104,9 @@ func registerCallback() error {
         variables := map[string]interface{}{
                 "payloadUuid": "9df7dfc4-f21d-4b03-9962-9f3272669b85",
                 "newCallback": map[string]interface{}{
-                        "user":         user.Username,
-                        "host":         hostname,
-                        "pid":          os.Getpid(),
-                        "ip":           "192.168.1.100",
-                        "external_ip":  "203.0.113.1",
-                        "process_name": "phantom_response_raw.exe",
-                        "os":           fmt.Sprintf("%s %s", runtime.GOOS, runtime.GOARCH),
+                        "user": user.Username,
+                        "host": hostname,
+                        "ip":   "192.168.1.100",
                 },
         }
 
