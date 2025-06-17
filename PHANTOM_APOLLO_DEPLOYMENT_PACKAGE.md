@@ -29,12 +29,29 @@ O Phantom Apollo agora está **100% completo** baseado exatamente no código ori
 - ✅ Port forwarding reverso
 - ✅ Comunicação P2P (SMB, TCP, Named Pipes)
 
-**Obfuscação Aplicada:**
-- ✅ Namespaces: Apollo → Phantom, ApolloInterop → PhantomInterop
-- ✅ Classes: TaskManager → CommandProcessor, FileManager → DataHandler
-- ✅ Variáveis: _jsonSerializer → _dataSerializer, _receiverQueue → _msgRecvQueue
-- ✅ Métodos: DeserializeToReceiverQueue → HandleIncomingData
-- ✅ Configurações: Config.PayloadUUID → Settings.AgentIdentifier
+**Obfuscação Avançada Aplicada:**
+- ✅ Substituição completa de identificadores (Apollo → X1a2b3c4, etc.)
+- ✅ Ofuscação de strings e literais
+- ✅ Injeção de código lixo (junk code)
+- ✅ Embaralhamento de fluxo de controle
+- ✅ Remoção de comentários e metadados
+- ✅ Renomeação de métodos com hash MD5
+
+**Técnicas Anti-Detecção Implementadas:**
+- ✅ **Anti-VM/Sandbox**: Detecção de VMware, VirtualBox, QEMU, Xen
+- ✅ **Anti-Debug**: IsDebuggerPresent, CheckRemoteDebuggerPresent
+- ✅ **Verificações de Hardware**: RAM < 2GB, CPUs < 2, HDD < 50GB
+- ✅ **Detecção de Processos**: Wireshark, Fiddler, ProcMon, análise tools
+- ✅ **Verificação de Ambiente**: Nomes de usuário/máquina suspeitos
+- ✅ **Delayed Execution**: Sleep aleatório 2-5 segundos
+
+**Sistema de Build Evasivo:**
+- ✅ **UPX Packing**: Compressão ultra-brute com strip-relocs
+- ✅ **ConfuserEx**: Obfuscação .NET avançada com anti-debug
+- ✅ **Crypter Polimórfico**: Criptografia AES-256 com chaves aleatórias
+- ✅ **Injeção de Entropia**: 2-8KB de dados aleatórios
+- ✅ **Manipulação de Timestamps**: Datas aparentando legitimidade
+- ✅ **Certificados Auto-Assinados**: Aparência de código assinado
 
 **Novos Recursos de Persistência:**
 - ✅ `persist_startup` - Pasta de inicialização do Windows
@@ -49,6 +66,11 @@ O Phantom Apollo agora está **100% completo** baseado exatamente no código ori
 - ✅ Execution: `shell`, `powershell`
 - ✅ Agent Control: `sleep`, `exit`
 - ✅ Persistence: `persist_startup`, `persist_registry`, `persist_task`, `persist_service`, `persist_remove`
+
+**Redução Esperada de Detecção:**
+- 🎯 **Taxa de Detecção Original**: 47/76 (61.8%)
+- 🎯 **Taxa de Detecção Estimada**: <15/76 (<20%)
+- 🎯 **Melhoria**: >65% de redução em detecções
 
 ## 🚀 Immediate Deployment Steps
 
