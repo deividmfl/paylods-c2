@@ -65,6 +65,18 @@ NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since t
             parameter_type=BuildParameterType.Boolean,
             default_value=False,
             description="Create a DEBUG version.",
+        ),
+        BuildParameter(
+            name="phantom_evasion",
+            parameter_type=BuildParameterType.Boolean,
+            default_value=True,
+            description="Enable Phantom anti-detection and evasion features.",
+        ),
+        BuildParameter(
+            name="phantom_crypter",
+            parameter_type=BuildParameterType.Boolean,
+            default_value=True,
+            description="Apply Phantom crypting and packing for enhanced evasion.",
         )
     ]
     c2_profiles = ["http", "smb", "tcp", "websocket"]
@@ -211,7 +223,52 @@ NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since t
                         StepStdout="Not converting to Shellcode through donut, passing through.",
                         StepSuccess=True
                     ))
-                    resp.payload = open(output_path, 'rb').read()
+                    
+                    # Apply Phantom evasion if enabled
+                    final_payload_path = output_path
+                    if self.get_parameter('phantom_evasion') or self.get_parameter('phantom_crypter'):
+                        try:
+                            await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
+                                PayloadUUID=self.uuid,
+                                StepName="Phantom Evasion",
+                                StepStdout="Applying advanced obfuscation and evasion techniques...",
+                                StepSuccess=True
+                            ))
+                            
+                            # Run advanced obfuscation on the C# source
+                            if self.get_parameter('phantom_evasion'):
+                                obfuscator_path = pathlib.Path(".") / "advanced_obfuscator.py"
+                                if obfuscator_path.exists():
+                                    command = f"python3 {obfuscator_path} {agent_build_path.name}"
+                                    proc = await asyncio.create_subprocess_shell(command, 
+                                        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+                                    stdout, stderr = await proc.communicate()
+                                    stdout_err += f'[Phantom Obfuscation]\n{stdout.decode()}\n{stderr.decode()}\n'
+                            
+                            # Apply crypting and packing
+                            if self.get_parameter('phantom_crypter'):
+                                crypter_path = pathlib.Path(".") / "phantom_crypter.py"
+                                if crypter_path.exists():
+                                    crypted_output = f"{agent_build_path.name}/phantom_crypted.exe"
+                                    command = f"python3 {crypter_path} {output_path} {crypted_output}"
+                                    proc = await asyncio.create_subprocess_shell(command,
+                                        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+                                    stdout, stderr = await proc.communicate()
+                                    stdout_err += f'[Phantom Crypter]\n{stdout.decode()}\n{stderr.decode()}\n'
+                                    
+                                    if os.path.exists(crypted_output):
+                                        final_payload_path = crypted_output
+                                        
+                            await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
+                                PayloadUUID=self.uuid,
+                                StepName="Phantom Evasion",
+                                StepStdout="Successfully applied Phantom evasion techniques",
+                                StepSuccess=True
+                            ))
+                        except Exception as e:
+                            stdout_err += f'[Phantom Evasion Error]\n{str(e)}\n'
+                    
+                    resp.payload = open(final_payload_path, 'rb').read()
                     resp.build_message = success_message
                     resp.status = BuildStatus.Success
                     resp.build_stdout = stdout_err

