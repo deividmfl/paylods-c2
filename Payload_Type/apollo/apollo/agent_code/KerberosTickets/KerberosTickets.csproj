@@ -8,6 +8,6 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ApolloInterop\ApolloInterop.csproj" />
+    <ProjectReference Include="..\PhantomInterop\PhantomInterop.csproj" />
   </ItemGroup>
 </Project>

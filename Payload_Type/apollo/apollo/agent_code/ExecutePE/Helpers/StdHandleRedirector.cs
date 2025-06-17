@@ -5,7 +5,7 @@ using System.IO;
 using static ExecutePE.Internals.NativeDeclarations;
 using System.Threading.Tasks;
 using System.Threading;
-using ApolloInterop.Classes.Events;
+using PhantomInterop.Classes.Events;
 
 namespace ExecutePE.Helpers
 {

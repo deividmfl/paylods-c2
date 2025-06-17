@@ -6,10 +6,10 @@
 
 #if REG_WRITE_VALUE
 
-using ApolloInterop.Classes;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
-using ApolloInterop.Utils;
+using PhantomInterop.Classes;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Structs.MythicStructs;
+using PhantomInterop.Utils;
 using Microsoft.Win32;
 using System.Runtime.Serialization;
 
@@ -29,7 +29,7 @@ namespace Tasks
             [DataMember(Name = "value_value")]
             public string ValueValue;
         }
-        public reg_write_value(IAgent agent, ApolloInterop.Structs.MythicStructs.MythicTask data) : base(agent, data)
+        public reg_write_value(IAgent agent, PhantomInterop.Structs.MythicStructs.MythicTask data) : base(agent, data)
         {
         }
 

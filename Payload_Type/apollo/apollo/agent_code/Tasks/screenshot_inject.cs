@@ -6,14 +6,14 @@
 
 #if SCREENSHOT_INJECT
 
-using ApolloInterop.Classes;
-using ApolloInterop.Classes.Core;
-using ApolloInterop.Classes.Events;
-using ApolloInterop.Enums.ApolloEnums;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Serializers;
-using ApolloInterop.Structs.ApolloStructs;
-using ApolloInterop.Structs.MythicStructs;
+using PhantomInterop.Classes;
+using PhantomInterop.Classes.Core;
+using PhantomInterop.Classes.Events;
+using PhantomInterop.Enums.PhantomEnums;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Serializers;
+using PhantomInterop.Structs.PhantomStructs;
+using PhantomInterop.Structs.MythicStructs;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -59,7 +59,7 @@ namespace Tasks
 
         private bool _completed = false;
 
-        public screenshot_inject(IAgent agent, ApolloInterop.Structs.MythicStructs.MythicTask data) : base(agent, data)
+        public screenshot_inject(IAgent agent, PhantomInterop.Structs.MythicStructs.MythicTask data) : base(agent, data)
         {
             _sendAction = (object p) =>
             {

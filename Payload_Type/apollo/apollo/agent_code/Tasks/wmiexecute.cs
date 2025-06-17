@@ -9,10 +9,10 @@
 using System;
 using System.Management;
 using System.Runtime.Serialization;
-using ApolloInterop.Classes;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
-using ApolloInterop.Utils;
+using PhantomInterop.Classes;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Structs.MythicStructs;
+using PhantomInterop.Utils;
 using System.Runtime.InteropServices;
 using OleViewDotNet.Marshaling;
 using OleViewDotNet.Interop;

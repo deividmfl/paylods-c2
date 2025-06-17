@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Threading;
-using ApolloInterop.Serializers;
+using PhantomInterop.Serializers;
 using System.Collections.Concurrent;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Classes;
-using ApolloInterop.Classes.Core;
-using ApolloInterop.Structs.ApolloStructs;
-using ApolloInterop.Classes.Events;
-using ApolloInterop.Enums.ApolloEnums;
-using ApolloInterop.Constants;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Classes;
+using PhantomInterop.Classes.Core;
+using PhantomInterop.Structs.PhantomStructs;
+using PhantomInterop.Classes.Events;
+using PhantomInterop.Enums.PhantomEnums;
+using PhantomInterop.Constants;
 using ST = System.Threading.Tasks;
 using System.IO.Pipes;
 using ExecutePE.Helpers;
@@ -61,7 +61,7 @@ namespace ExecutePE
                     pipe.BeginWrite(message, 0, message.Length, OnAsyncMessageSent, pipe);
                 }
 
-                // Wait for all messages to be read by Apollo
+                // Wait for all messages to be read by Phantom
                 pipe.WaitForPipeDrain();
                 pipe.Close();
             };

@@ -16,7 +16,7 @@
     <Reference Include="System.ServiceProcess" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ApolloInterop\ApolloInterop.csproj" />
+    <ProjectReference Include="..\PhantomInterop\PhantomInterop.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Costura.Fody" Version="5.7.0" PrivateAssets="All" />

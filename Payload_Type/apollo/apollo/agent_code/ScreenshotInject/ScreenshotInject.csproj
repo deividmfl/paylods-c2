@@ -10,7 +10,7 @@
     <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ApolloInterop\ApolloInterop.csproj" />
+    <ProjectReference Include="..\PhantomInterop\PhantomInterop.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />

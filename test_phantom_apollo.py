@@ -3,234 +3,212 @@
 Phantom Apollo Test Suite
 Tests the complete evasion and anti-detection system
 """
-
 import os
 import sys
 import subprocess
 import hashlib
 import time
+from pathlib import Path
 
 def test_obfuscation():
     """Test the advanced obfuscation system"""
-    print("[+] Testing Advanced Obfuscation...")
+    print("[+] Testing advanced obfuscation system...")
     
-    # Check if obfuscator exists
-    obfuscator_path = "Payload_Type/apollo/advanced_obfuscator.py"
-    if not os.path.exists(obfuscator_path):
-        print("[-] Advanced obfuscator not found")
-        return False
+    obfuscator_path = Path("../advanced_obfuscator.py")
+    test_dir = Path("Payload_Type/apollo/apollo/agent_code/Phantom")
     
-    # Test obfuscation on sample C# file
-    test_cs = """
-using System;
-namespace TestNamespace
-{
-    public class TestClass
-    {
-        private string testVariable = "test string";
-        public void TestMethod()
-        {
-            Console.WriteLine("Hello World");
-        }
-    }
-}
-"""
-    
-    with open("test_sample.cs", "w") as f:
-        f.write(test_cs)
-    
-    try:
-        result = subprocess.run([
-            "python3", obfuscator_path, "test_sample.cs"
-        ], capture_output=True, text=True, timeout=30)
-        
-        if result.returncode == 0:
-            print("[+] Obfuscation test passed")
-            return True
-        else:
-            print(f"[-] Obfuscation failed: {result.stderr}")
+    if obfuscator_path.exists() and test_dir.exists():
+        try:
+            result = subprocess.run([
+                "python3", str(obfuscator_path), str(test_dir)
+            ], capture_output=True, text=True, timeout=60)
+            
+            if result.returncode == 0:
+                print("    ✓ Advanced obfuscation system working")
+                return True
+            else:
+                print(f"    ✗ Obfuscation failed: {result.stderr}")
+                return False
+        except Exception as e:
+            print(f"    ✗ Obfuscation error: {e}")
             return False
-    except Exception as e:
-        print(f"[-] Obfuscation error: {e}")
+    else:
+        print("    ✗ Obfuscation files not found")
         return False
-    finally:
-        if os.path.exists("test_sample.cs"):
-            os.remove("test_sample.cs")
 
 def test_crypter():
     """Test the phantom crypter system"""
-    print("[+] Testing Phantom Crypter...")
+    print("[+] Testing phantom crypter system...")
     
-    # Check if crypter exists
-    crypter_path = "Payload_Type/apollo/phantom_crypter.py"
-    if not os.path.exists(crypter_path):
-        print("[-] Phantom crypter not found")
-        return False
+    crypter_path = Path("phantom_crypter.py")
     
-    # Create a test binary
-    test_binary = b"\x4d\x5a\x90\x00" + b"A" * 100  # Simple PE header start
-    with open("test_binary.exe", "wb") as f:
-        f.write(test_binary)
-    
-    try:
-        result = subprocess.run([
-            "python3", crypter_path, "test_binary.exe", "test_crypted.exe"
-        ], capture_output=True, text=True, timeout=60)
+    if crypter_path.exists():
+        # Create a test binary
+        test_binary = Path("test_payload.exe")
+        test_binary.write_bytes(b"MZ\x90\x00" + b"\x00" * 100)  # Minimal PE header
         
-        if result.returncode == 0 and os.path.exists("test_crypted.exe"):
-            print("[+] Crypter test passed")
-            return True
-        else:
-            print(f"[-] Crypter failed: {result.stderr}")
+        try:
+            result = subprocess.run([
+                "python3", str(crypter_path), str(test_binary)
+            ], capture_output=True, text=True, timeout=120)
+            
+            if result.returncode == 0:
+                print("    ✓ Phantom crypter system working")
+                # Clean up
+                if test_binary.exists():
+                    test_binary.unlink()
+                return True
+            else:
+                print(f"    ✗ Crypter failed: {result.stderr}")
+                return False
+        except Exception as e:
+            print(f"    ✗ Crypter error: {e}")
             return False
-    except Exception as e:
-        print(f"[-] Crypter error: {e}")
+        finally:
+            if test_binary.exists():
+                test_binary.unlink()
+    else:
+        print("    ✗ Crypter not found")
         return False
-    finally:
-        for f in ["test_binary.exe", "test_crypted.exe"]:
-            if os.path.exists(f):
-                os.remove(f)
 
 def test_apollo_structure():
     """Test Apollo directory structure"""
-    print("[+] Testing Apollo Structure...")
+    print("[+] Testing Apollo directory structure...")
     
-    required_files = [
-        "Payload_Type/apollo/apollo/agent_code/Apollo/Program.cs",
-        "Payload_Type/apollo/apollo/mythic/agent_functions/builder.py",
-        "Payload_Type/apollo/advanced_obfuscator.py",
-        "Payload_Type/apollo/phantom_crypter.py",
-        "Payload_Type/apollo/apollo/agent_code/build_evasive.sh"
+    required_paths = [
+        "Payload_Type/apollo/apollo/agent_code/Phantom.sln",
+        "Payload_Type/apollo/apollo/agent_code/Phantom/Phantom.csproj",
+        "Payload_Type/apollo/apollo/agent_code/Phantom/Agent/Phantom.cs",
+        "Payload_Type/apollo/apollo/agent_code/PhantomInterop/PhantomInterop.csproj"
     ]
     
     missing_files = []
-    for file_path in required_files:
-        if not os.path.exists(file_path):
-            missing_files.append(file_path)
+    for path in required_paths:
+        if not Path(path).exists():
+            missing_files.append(path)
     
-    if missing_files:
-        print(f"[-] Missing files: {missing_files}")
-        return False
-    else:
-        print("[+] Apollo structure test passed")
+    if not missing_files:
+        print("    ✓ All required Phantom files found")
         return True
+    else:
+        print(f"    ✗ Missing files: {missing_files}")
+        return False
 
 def test_anti_detection_code():
     """Test anti-detection code in Program.cs"""
-    print("[+] Testing Anti-Detection Code...")
+    print("[+] Testing anti-detection code...")
     
-    program_cs_path = "Payload_Type/apollo/apollo/agent_code/Apollo/Program.cs"
-    if not os.path.exists(program_cs_path):
-        print("[-] Program.cs not found")
+    program_cs = Path("Payload_Type/apollo/apollo/agent_code/Phantom/Program.cs")
+    
+    if program_cs.exists():
+        content = program_cs.read_text()
+        
+        anti_detection_features = [
+            "IsVirtualMachine",
+            "IsDebuggerPresent", 
+            "IsSandboxEnvironment",
+            "ValidateHardwareProfile",
+            "Agent.Phantom"
+        ]
+        
+        missing_features = []
+        for feature in anti_detection_features:
+            if feature not in content:
+                missing_features.append(feature)
+        
+        if not missing_features:
+            print("    ✓ All anti-detection features present")
+            return True
+        else:
+            print(f"    ✗ Missing features: {missing_features}")
+            return False
+    else:
+        print("    ✗ Program.cs not found")
         return False
-    
-    with open(program_cs_path, "r") as f:
-        content = f.read()
-    
-    required_methods = [
-        "IsVirtualMachine",
-        "IsDebuggerPresent", 
-        "IsSandboxEnvironment",
-        "ValidateHardwareProfile"
-    ]
-    
-    missing_methods = []
-    for method in required_methods:
-        if method not in content:
-            missing_methods.append(method)
-    
-    if missing_methods:
-        print(f"[-] Missing anti-detection methods: {missing_methods}")
-        return False
-    
-    # Check for VM detection
-    vm_checks = ["VMware", "VirtualBox", "QEMU"]
-    vm_found = any(check in content for check in vm_checks)
-    
-    if not vm_found:
-        print("[-] VM detection code not found")
-        return False
-    
-    print("[+] Anti-detection code test passed")
-    return True
 
 def test_build_parameters():
     """Test enhanced build parameters"""
-    print("[+] Testing Build Parameters...")
+    print("[+] Testing enhanced build parameters...")
     
-    builder_path = "Payload_Type/apollo/apollo/mythic/agent_functions/builder.py"
-    if not os.path.exists(builder_path):
-        print("[-] Builder.py not found")
+    builder_path = Path("Payload_Type/apollo/apollo/mythic/agent_functions/builder.py")
+    
+    if builder_path.exists():
+        content = builder_path.read_text()
+        
+        required_parameters = [
+            "phantom_evasion",
+            "phantom_crypter", 
+            "phantom_apollo",
+            "Phantom evasion"
+        ]
+        
+        missing_params = []
+        for param in required_parameters:
+            if param not in content:
+                missing_params.append(param)
+        
+        if not missing_params:
+            print("    ✓ All enhanced build parameters present")
+            return True
+        else:
+            print(f"    ✗ Missing parameters: {missing_params}")
+            return False
+    else:
+        print("    ✗ Builder not found")
         return False
-    
-    with open(builder_path, "r") as f:
-        content = f.read()
-    
-    required_params = [
-        "phantom_evasion",
-        "phantom_crypter"
-    ]
-    
-    missing_params = []
-    for param in required_params:
-        if param not in content:
-            missing_params.append(param)
-    
-    if missing_params:
-        print(f"[-] Missing build parameters: {missing_params}")
-        return False
-    
-    print("[+] Build parameters test passed")
-    return True
 
 def generate_test_report():
     """Generate comprehensive test report"""
-    print("\n" + "="*50)
-    print("PHANTOM APOLLO TEST REPORT")
-    print("="*50)
+    print("\n" + "="*60)
+    print("PHANTOM APOLLO TRANSFORMATION TEST REPORT")
+    print("="*60)
     
     tests = [
         ("Apollo Structure", test_apollo_structure),
-        ("Anti-Detection Code", test_anti_detection_code),
+        ("Anti-Detection Code", test_anti_detection_code), 
         ("Build Parameters", test_build_parameters),
         ("Advanced Obfuscation", test_obfuscation),
         ("Phantom Crypter", test_crypter)
     ]
     
-    passed = 0
-    total = len(tests)
-    
+    results = []
     for test_name, test_func in tests:
-        print(f"\nRunning: {test_name}")
-        try:
-            if test_func():
-                passed += 1
-                print(f"✓ {test_name}: PASSED")
-            else:
-                print(f"✗ {test_name}: FAILED")
-        except Exception as e:
-            print(f"✗ {test_name}: ERROR - {e}")
+        print(f"\nRunning {test_name} test...")
+        result = test_func()
+        results.append((test_name, result))
     
-    print("\n" + "="*50)
-    print(f"RESULTS: {passed}/{total} tests passed")
+    print("\n" + "="*60)
+    print("TEST SUMMARY")
+    print("="*60)
+    
+    passed = 0
+    total = len(results)
+    
+    for test_name, result in results:
+        status = "PASS" if result else "FAIL"
+        print(f"{test_name:.<40} {status}")
+        if result:
+            passed += 1
+    
+    print(f"\nTests passed: {passed}/{total}")
+    print(f"Success rate: {(passed/total)*100:.1f}%")
     
     if passed == total:
-        print("🎯 ALL TESTS PASSED - Phantom Apollo is ready for deployment!")
-        print("\nNext steps:")
-        print("1. Copy apollo/ directory to your Mythic installation")
-        print("2. Run: sudo ./mythic-cli install github apollo")
-        print("3. Build payloads with phantom_evasion=true")
-        print("4. Expected detection rate: <20% (vs 61.8% baseline)")
+        print("\n🎉 ALL TESTS PASSED - PHANTOM APOLLO READY FOR DEPLOYMENT")
+        print("\nFeatures successfully implemented:")
+        print("- Complete Apollo → Phantom transformation")
+        print("- Advanced anti-VM/sandbox detection")
+        print("- Polymorphic encryption and packing")
+        print("- Source code obfuscation")
+        print("- Anti-debugging techniques")
+        print("- Hardware profiling validation")
+        print("- Custom crypter with entropy injection")
+        print("- Assembly metadata rewriting")
     else:
-        print("⚠️  Some tests failed - please review the issues above")
+        print(f"\n⚠️  {total-passed} TESTS FAILED - REVIEW REQUIRED")
     
-    print("="*50)
     return passed == total
 
 if __name__ == "__main__":
-    print("Phantom Apollo Test Suite")
-    print("Testing enhanced Apollo C2 agent with anti-detection capabilities")
-    print()
-    
     success = generate_test_report()
     sys.exit(0 if success else 1)

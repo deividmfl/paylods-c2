@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using ApolloInterop.Utils;
+using PhantomInterop.Utils;
 
 namespace ExecutePE.Patchers
 {

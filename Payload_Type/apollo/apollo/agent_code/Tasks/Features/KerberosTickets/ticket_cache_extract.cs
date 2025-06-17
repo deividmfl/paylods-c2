@@ -9,11 +9,11 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using ApolloInterop.Classes;
-using ApolloInterop.Features.KerberosTickets;
-using ApolloInterop.Interfaces;
-using ApolloInterop.Structs.MythicStructs;
-using ApolloInterop.Utils;
+using PhantomInterop.Classes;
+using PhantomInterop.Features.KerberosTickets;
+using PhantomInterop.Interfaces;
+using PhantomInterop.Structs.MythicStructs;
+using PhantomInterop.Utils;
 
 namespace Tasks;
 
