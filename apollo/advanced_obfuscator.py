@@ -203,7 +203,7 @@ def main():
     print("[+] Phantom Apollo Advanced Obfuscator")
     
     # Obfuscate agent code directory
-    agent_code_dir = "apollo/agent_code"
+    agent_code_dir = "agent_code"
     if os.path.exists(agent_code_dir):
         obfuscator = AdvancedObfuscator()
         obfuscator.obfuscate_directory(agent_code_dir)
