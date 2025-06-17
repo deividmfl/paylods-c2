@@ -531,10 +531,30 @@ func takeScreenshot() string {
         return fmt.Sprintf("Screenshot captured successfully (PNG base64): %s", base64Data)
 }
 
-func listDirectory(path string) string {
-        if path == "" {
+func listDirectory(params string) string {
+        var path string
+        
+        // Check if params is JSON
+        if strings.HasPrefix(params, "{") {
+                var lsParams struct {
+                        Path string `json:"path"`
+                        Host string `json:"host"`
+                }
+                if err := json.Unmarshal([]byte(params), &lsParams); err == nil {
+                        path = lsParams.Path
+                } else {
+                        path = params
+                }
+        } else {
+                path = params
+        }
+        
+        if path == "" || path == "." {
                 path, _ = os.Getwd()
         }
+        
+        // Expand environment variables
+        path = os.ExpandEnv(path)
         
         files, err := ioutil.ReadDir(path)
         if err != nil {
@@ -565,7 +585,26 @@ func getCurrentDirectory() string {
         return dir
 }
 
-func changeDirectory(path string) string {
+func changeDirectory(params string) string {
+        var path string
+        
+        // Check if params is JSON
+        if strings.HasPrefix(params, "{") {
+                var cdParams struct {
+                        Path string `json:"path"`
+                }
+                if err := json.Unmarshal([]byte(params), &cdParams); err == nil {
+                        path = cdParams.Path
+                } else {
+                        path = params
+                }
+        } else {
+                path = params
+        }
+        
+        // Expand environment variables
+        path = os.ExpandEnv(path)
+        
         if err := os.Chdir(path); err != nil {
                 return fmt.Sprintf("Error changing directory: %v", err)
         }
@@ -654,7 +693,26 @@ func copyFile(params string) string {
 }
 
 func readFile(params string) string {
-        data, err := ioutil.ReadFile(params)
+        var path string
+        
+        // Check if params is JSON
+        if strings.HasPrefix(params, "{") {
+                var catParams struct {
+                        Path string `json:"path"`
+                }
+                if err := json.Unmarshal([]byte(params), &catParams); err == nil {
+                        path = catParams.Path
+                } else {
+                        path = params
+                }
+        } else {
+                path = params
+        }
+        
+        // Expand environment variables
+        path = os.ExpandEnv(path)
+        
+        data, err := ioutil.ReadFile(path)
         if err != nil {
                 return fmt.Sprintf("Error reading file: %v", err)
         }
